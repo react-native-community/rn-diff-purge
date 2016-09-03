@@ -1,9 +1,9 @@
 #!/bin/bash
 
-newVersion=$1
+newVersion=$2
 
 # Get the last branch
-lastGitBranch=`git for-each-ref --sort='-committerdate' --format='%(refname)' refs/remotes/origin | grep 'rn-' | head -1 | sed -e 's-refs/remotes/origin/--'`
+lastGitBranch=$1
 
 #  Checkout it
 git checkout $lastGitBranch
@@ -12,6 +12,9 @@ git checkout $lastGitBranch
 reactVersion=`npm view react-native@$newVersion peerDependencies.react | sed -e 's/[\~\^]//'`
 
 cd RnDiffApp
+
+# Save package.json for later use (for not being taken into account when computing stats)
+cp package.json ../package.json.temp
 
 # Replace versions in package.json
 sed -i "" "s/\"react\": \"[0-9]*\.[0-9]*\.[0-9]*\",/\"react\": \"${reactVersion}\",/" ./package.json
@@ -37,6 +40,16 @@ git add RnDiffApp
 # Commit
 git commit -m "Output version ${newVersion}"
 
+# Compute diff stats pour README.md
+## Restore the old package.json (we don't want to take it into account for stats)
+cp package.json.temp RnDiffApp/package.json
+## Save the stats
+diffStat=`git --no-pager diff HEAD~1 --shortstat`
+## Clean old package.json
+rm package.json.temp
+## Restore the new package.json
+git checkout -- RnDiffApp/package.json
+
 # Print diff
 git --no-pager diff HEAD~1
 
@@ -54,3 +67,17 @@ then
   # Push the branch
   git push origin rn-$newVersion
 fi
+
+# Come back to master branch
+git checkout master
+
+# Update README.md
+diffUrl="[${lastGitBranch}...rn-${newVersion}](https://github.com/ncuillery/rn-diff/compare/${lastGitBranch}...rn-${newVersion})"
+patchUrl="[${lastGitBranch}...rn-${newVersion}](https://github.com/ncuillery/rn-diff/compare/${lastGitBranch}...rn-${newVersion}.diff)"
+
+# Insert a row in the version table
+## Insert a new line (a bit tricky but compatible with either OSX sed and GNU sed)
+sed -i '' 's/----|----|----|----/----|----|----|----\
+NEWLINE/g' README.md
+## Edit the new line with the version info
+sed -i "" "s@NEWLINE@${newVersion}|${diffUrl}|${patchUrl}|${diffStat}@" README.md

@@ -14,7 +14,36 @@ to watch. For example:
 * https://github.com/ncuillery/rn-diff/compare/rn-0.30.0...rn-0.31.0
 (minor change in `.flowconfig` )
 
+See table below for the complete list.
+
 Please :star: this repository if I helped you ;)
+
+## Version changes
+
+Version|Compare view|Patch|Stats
+----|----|----|----
+0.32.0|[rn-0.31.0...rn-0.32.0](https://github.com/ncuillery/rn-diff/compare/rn-0.31.0...rn-0.32.0)|[rn-0.31.0...rn-0.32.0](https://github.com/ncuillery/rn-diff/compare/rn-0.31.0...rn-0.32.0.diff)| 1 file changed, 4 insertions(+), 4 deletions(-)
+0.31.0|[rn-0.30.0...rn-0.31.0](https://github.com/ncuillery/rn-diff/compare/rn-0.30.0...rn-0.31.0)|[rn-0.30.0...rn-0.31.0](https://github.com/ncuillery/rn-diff/compare/rn-0.30.0...rn-0.31.0.diff)| 1 file changed, 20 insertions(+), 3 deletions(-)
+0.30.0|[rn-0.29.2...rn-0.30.0](https://github.com/ncuillery/rn-diff/compare/rn-0.29.2...rn-0.30.0)|[rn-0.29.2...rn-0.30.0](https://github.com/ncuillery/rn-diff/compare/rn-0.29.2...rn-0.30.0.diff)| 2 files changed, 1 insertion(+), 2 deletions(-)
+0.29.2|[rn-0.29.1...rn-0.29.2](https://github.com/ncuillery/rn-diff/compare/rn-0.29.1...rn-0.29.2)|[rn-0.29.1...rn-0.29.2](https://github.com/ncuillery/rn-diff/compare/rn-0.29.1...rn-0.29.2.diff)|
+0.29.1|[rn-0.29.0...rn-0.29.1](https://github.com/ncuillery/rn-diff/compare/rn-0.29.0...rn-0.29.1)|[rn-0.29.0...rn-0.29.1](https://github.com/ncuillery/rn-diff/compare/rn-0.29.0...rn-0.29.1.diff)|
+0.29.0|[rn-0.28.0...rn-0.29.0](https://github.com/ncuillery/rn-diff/compare/rn-0.28.0...rn-0.29.0)|[rn-0.28.0...rn-0.29.0](https://github.com/ncuillery/rn-diff/compare/rn-0.28.0...rn-0.29.0.diff)| 5 files changed, 45 insertions(+), 113 deletions(-)
+0.28.0|[rn-0.27.2...rn-0.28.0](https://github.com/ncuillery/rn-diff/compare/rn-0.27.2...rn-0.28.0)|[rn-0.27.2...rn-0.28.0](https://github.com/ncuillery/rn-diff/compare/rn-0.27.2...rn-0.28.0.diff)| 7 files changed, 31 insertions(+), 11 deletions(-)
+0.27.2|[rn-0.27.1...rn-0.27.2](https://github.com/ncuillery/rn-diff/compare/rn-0.27.1...rn-0.27.2)|[rn-0.27.1...rn-0.27.2](https://github.com/ncuillery/rn-diff/compare/rn-0.27.1...rn-0.27.2.diff)|
+0.27.1|[rn-0.27.0...rn-0.27.1](https://github.com/ncuillery/rn-diff/compare/rn-0.27.0...rn-0.27.1)|[rn-0.27.0...rn-0.27.1](https://github.com/ncuillery/rn-diff/compare/rn-0.27.0...rn-0.27.1.diff)|
+0.27.0|[rn-0.26.3...rn-0.27.0](https://github.com/ncuillery/rn-diff/compare/rn-0.26.3...rn-0.27.0)|[rn-0.26.3...rn-0.27.0](https://github.com/ncuillery/rn-diff/compare/rn-0.26.3...rn-0.27.0.diff)| 3 files changed, 10 insertions(+), 6 deletions(-)
+0.26.3|[rn-0.26.2...rn-0.26.3](https://github.com/ncuillery/rn-diff/compare/rn-0.26.2...rn-0.26.3)|[rn-0.26.2...rn-0.26.3](https://github.com/ncuillery/rn-diff/compare/rn-0.26.2...rn-0.26.3.diff)|
+0.26.2|[rn-0.26.1...rn-0.26.2](https://github.com/ncuillery/rn-diff/compare/rn-0.26.1...rn-0.26.2)|[rn-0.26.1...rn-0.26.2](https://github.com/ncuillery/rn-diff/compare/rn-0.26.1...rn-0.26.2.diff)|
+0.26.1|[rn-0.26.0...rn-0.26.1](https://github.com/ncuillery/rn-diff/compare/rn-0.26.0...rn-0.26.1)|[rn-0.26.0...rn-0.26.1](https://github.com/ncuillery/rn-diff/compare/rn-0.26.0...rn-0.26.1.diff)|
+0.26.0|[rn-0.25.1...rn-0.26.0](https://github.com/ncuillery/rn-diff/compare/rn-0.25.1...rn-0.26.0)|[rn-0.25.1...rn-0.26.0](https://github.com/ncuillery/rn-diff/compare/rn-0.25.1...rn-0.26.0.diff)| 2 files changed, 12 insertions(+), 16 deletions(-)
+0.25.1|[rn-0.24.1...rn-0.25.1](https://github.com/ncuillery/rn-diff/compare/rn-0.24.1...rn-0.25.1)|[rn-0.24.1...rn-0.25.1](https://github.com/ncuillery/rn-diff/compare/rn-0.24.1...rn-0.25.1.diff)| 4 files changed, 5 insertions(+), 9 deletions(-)
+0.24.1|[rn-0.24.0...rn-0.24.1](https://github.com/ncuillery/rn-diff/compare/rn-0.24.0...rn-0.24.1)|[rn-0.24.0...rn-0.24.1](https://github.com/ncuillery/rn-diff/compare/rn-0.24.0...rn-0.24.1.diff)|
+0.24.0|[rn-0.23.1...rn-0.24.0](https://github.com/ncuillery/rn-diff/compare/rn-0.23.1...rn-0.24.0)|[rn-0.23.1...rn-0.24.0](https://github.com/ncuillery/rn-diff/compare/rn-0.23.1...rn-0.24.0.diff)| 5 files changed, 95 insertions(+), 3 deletions(-)
+0.23.1|[rn-0.23.0...rn-0.23.1](https://github.com/ncuillery/rn-diff/compare/rn-0.23.0...rn-0.23.1)|[rn-0.23.0...rn-0.23.1](https://github.com/ncuillery/rn-diff/compare/rn-0.23.0...rn-0.23.1.diff)|
+0.23.0|X|X|X
+
+Note that the diff stat (last column) doesn't take the `package.json` into account (it
+doesn't have to: the `package.json` must be updated by hand before upgrading React Native).
 
 ## Why this repository ?
 
@@ -36,7 +65,7 @@ know which option is the best for you. For example, from
 [the 0.28.0 to the 0.29.0](https://github.com/ncuillery/rn-diff/compare/rn-0.28.0...rn-0.29.0)
 the changes in the `android` files are huge so it may be easier for you to override
 and reapplied your changes (relinking your 3-rd parties, etc.) **BUT** if you
-look at the `project.pbjproj`, there is only one flag added, so the best decision
+look at the `project.pbxproj`, there is only one flag added, so the best decision
 for this file is to keep it untouched and report the flag yourself on the right
 position.
 
@@ -64,4 +93,4 @@ the new diff. I guess having 3 or 4 collaborators on this project will help in t
 If you're interested, please open an issue to discuss.
 
 Of course, the above doesn't concern suggesting changes on the `master` branch (script or
-README.md). Pull Requests are highly welcomed !
+README.md). Pull Requests are highly welcome !
