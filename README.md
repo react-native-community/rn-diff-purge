@@ -1,7 +1,7 @@
 # RN diff
 
 This repository exposes an untouched React Native app generated with the CLI
-`react-native init RnDiffApp` and upgraded by the CLI `react-native upgrade`
+`react-native init RnDiffApp` and upgraded with the CLI `react-native upgrade`
 after each version of React Native.
 
 A dedicated branch per version makes changes very easy
@@ -15,6 +15,10 @@ to watch. For example:
 (minor change in `.flowconfig` )
 
 See table below for the complete list.
+
+This repository can also be used to upgrade React Native with a git-like interface which is
+faster and easier than running the `react-native upgrade` command.
+See [USAGE.md](https://github.com/ncuillery/rn-diff/blob/master/USAGE.md) for details.
 
 Please :star: this repository if I helped you ;)
 
@@ -74,8 +78,8 @@ position.
 ### Why starting from 0.23.0 ?
 
 The starting point is the generation of an app with the CLI tool. I've started from the first
-version of `react-native` since the release 0.2.0 the `react-native-cli` (March 2016) which
-is the first to seem mature and stable (3 months after the previous release).
+version of `react-native` since the release 0.2.0 the `react-native-cli` (March 2016), the first
+to seem mature and stable (3 months after the previous release).
 
 ### How did you do this ?
 
