@@ -86,6 +86,18 @@ look at the `project.pbxproj`, there is only one flag added, so the best decisio
 for this file is to keep it untouched and report the flag yourself on the right
 position.
 
+## Known issues
+
+### AndroidManifest.xml
+
+Due to an issue with the Yeoman generator used before 0.39.0 (the `AndroidManifest.xml`
+file was never updated), the diff of this file
+[from 0.38.0 to 0.39.0](https://github.com/ncuillery/rn-diff/compare/rn-0.38.0...rn-0.39.0#diff-ce925d749acbf5fb99afc2d465a0f352)
+is irrelevant. It shows the diff from **0.23.0** to 0.39.0 because the RnDiffApp has been
+generated with 0.23.0. You'll probably have less changes on this file when upgrading from 0.38.0 to
+0.39.0 depending of the version your app has been generated with. See
+[#8](https://github.com/ncuillery/rn-diff/issues/8) for details.
+
 ## FAQ
 
 ### Why starting from 0.23.0 ?
