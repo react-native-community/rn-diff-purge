@@ -8,23 +8,20 @@ lastGitBranch=$1
 #  Checkout it
 git checkout $lastGitBranch
 
-# Get the version of React (and strip the version qualifier)
-reactVersion=`npm view react-native@$newVersion peerDependencies.react | sed -e 's/[\~\^]//'`
-
 cd RnDiffApp
 
 # Save package.json for later use (for not being taken into account when computing stats)
 cp package.json ../package.json.temp
 
-# Replace versions in package.json
-sed -i "" "s/\"react\": \"[0-9]*\.[0-9]*\.[0-9]*\",/\"react\": \"${reactVersion}\",/" ./package.json
-sed -i "" "s/\"react-native\": \"[0-9]*\.[0-9]*\.[0-9]*\"/\"react-native\": \"${newVersion}\"/" ./package.json
-
 # Install dependencies
 npm install
 
-# Launch RN upgrade and automatically overwrite all files
-echo "a" | react-native upgrade
+# Launch RN upgrade
+react-native-git-upgrade $newVersion
+
+# Strip version qualifier
+sed -i "" "s/\"react\": \"[\~\^]/\"react\": \"/" ./package.json
+sed -i "" "s/\"react-native\": \"[\~\^]/\"react-native\": \"/" ./package.json
 
 cd ..
 
