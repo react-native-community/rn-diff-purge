@@ -19,6 +19,9 @@ npm install
 # Launch RN upgrade
 react-native-git-upgrade $newVersion
 
+# Remove lock file, it is irrelevant for computing the diff
+rm package-lock.json
+
 # Strip version qualifier
 sed -i "" "s/\"react\": \"[\~\^]/\"react\": \"/" ./package.json
 sed -i "" "s/\"react-native\": \"[\~\^]/\"react-native\": \"/" ./package.json
