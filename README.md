@@ -36,7 +36,7 @@ Version|Compare view|Patch|Stats
 0.49.3|[rn-0.49.2...rn-0.49.3](https://github.com/ncuillery/rn-diff/compare/rn-0.49.2...rn-0.49.3)|[rn-0.49.2...rn-0.49.3](https://github.com/ncuillery/rn-diff/compare/rn-0.49.2...rn-0.49.3.diff)|
 0.49.2|[rn-0.49.1...rn-0.49.2](https://github.com/ncuillery/rn-diff/compare/rn-0.49.1...rn-0.49.2)|[rn-0.49.1...rn-0.49.2](https://github.com/ncuillery/rn-diff/compare/rn-0.49.1...rn-0.49.2.diff)|
 0.49.1|[rn-0.49.0...rn-0.49.1](https://github.com/ncuillery/rn-diff/compare/rn-0.49.0...rn-0.49.1)|[rn-0.49.0...rn-0.49.1](https://github.com/ncuillery/rn-diff/compare/rn-0.49.0...rn-0.49.1.diff)|
-0.49.0|[rn-0.48.4...rn-0.49.0](https://github.com/ncuillery/rn-diff/compare/rn-0.48.4...rn-0.49.0)|[rn-0.48.4...rn-0.49.0](https://github.com/ncuillery/rn-diff/compare/rn-0.48.4...rn-0.49.0.diff)| 5 files changed, 23 insertions(+), 11 deletions(-)
+0.49.0[:warning:](https://github.com/ncuillery/rn-diff#indexjs)|[rn-0.48.4...rn-0.49.0](https://github.com/ncuillery/rn-diff/compare/rn-0.48.4...rn-0.49.0)|[rn-0.48.4...rn-0.49.0](https://github.com/ncuillery/rn-diff/compare/rn-0.48.4...rn-0.49.0.diff)| 5 files changed, 23 insertions(+), 11 deletions(-)
 0.48.4|[rn-0.48.3...rn-0.48.4](https://github.com/ncuillery/rn-diff/compare/rn-0.48.3...rn-0.48.4)|[rn-0.48.3...rn-0.48.4](https://github.com/ncuillery/rn-diff/compare/rn-0.48.3...rn-0.48.4.diff)|
 0.48.3|[rn-0.48.2...rn-0.48.3](https://github.com/ncuillery/rn-diff/compare/rn-0.48.2...rn-0.48.3)|[rn-0.48.2...rn-0.48.3](https://github.com/ncuillery/rn-diff/compare/rn-0.48.2...rn-0.48.3.diff)|
 0.48.2|[rn-0.48.1...rn-0.48.2](https://github.com/ncuillery/rn-diff/compare/rn-0.48.1...rn-0.48.2)|[rn-0.48.1...rn-0.48.2](https://github.com/ncuillery/rn-diff/compare/rn-0.48.1...rn-0.48.2.diff)|
@@ -70,7 +70,7 @@ Version|Compare view|Patch|Stats
 0.40.0|[rn-0.39.2...rn-0.40.0](https://github.com/ncuillery/rn-diff/compare/rn-0.39.2...rn-0.40.0)|[rn-0.39.2...rn-0.40.0](https://github.com/ncuillery/rn-diff/compare/rn-0.39.2...rn-0.40.0.diff)| 6 files changed, 235 insertions(+), 23 deletions(-)
 0.39.2|[rn-0.39.1...rn-0.39.2](https://github.com/ncuillery/rn-diff/compare/rn-0.39.1...rn-0.39.2)|[rn-0.39.1...rn-0.39.2](https://github.com/ncuillery/rn-diff/compare/rn-0.39.1...rn-0.39.2.diff)|
 0.39.1|[rn-0.39.0...rn-0.39.1](https://github.com/ncuillery/rn-diff/compare/rn-0.39.0...rn-0.39.1)|[rn-0.39.0...rn-0.39.1](https://github.com/ncuillery/rn-diff/compare/rn-0.39.0...rn-0.39.1.diff)|
-0.39.0|[rn-0.38.0...rn-0.39.0](https://github.com/ncuillery/rn-diff/compare/rn-0.38.0...rn-0.39.0)|[rn-0.38.0...rn-0.39.0](https://github.com/ncuillery/rn-diff/compare/rn-0.38.0...rn-0.39.0.diff)| 8 files changed, 97 insertions(+), 52 deletions(-)
+0.39.0[:warning:](https://github.com/ncuillery/rn-diff#androidmanifestxml)|[rn-0.38.0...rn-0.39.0](https://github.com/ncuillery/rn-diff/compare/rn-0.38.0...rn-0.39.0)|[rn-0.38.0...rn-0.39.0](https://github.com/ncuillery/rn-diff/compare/rn-0.38.0...rn-0.39.0.diff)| 8 files changed, 97 insertions(+), 52 deletions(-)
 0.38.0|[rn-0.37.0...rn-0.38.0](https://github.com/ncuillery/rn-diff/compare/rn-0.37.0...rn-0.38.0)|[rn-0.37.0...rn-0.38.0](https://github.com/ncuillery/rn-diff/compare/rn-0.37.0...rn-0.38.0.diff)| 3 files changed, 10 insertions(+), 2 deletions(-)
 0.37.0|[rn-0.36.1...rn-0.37.0](https://github.com/ncuillery/rn-diff/compare/rn-0.36.1...rn-0.37.0)|[rn-0.36.1...rn-0.37.0](https://github.com/ncuillery/rn-diff/compare/rn-0.36.1...rn-0.37.0.diff)| 1 file changed, 2 insertions(+), 2 deletions(-)
 0.36.1|[rn-0.36.0...rn-0.36.1](https://github.com/ncuillery/rn-diff/compare/rn-0.36.0...rn-0.36.1)|[rn-0.36.0...rn-0.36.1](https://github.com/ncuillery/rn-diff/compare/rn-0.36.0...rn-0.36.1.diff)|
@@ -129,6 +129,16 @@ for this file is to keep it untouched and report the flag yourself on the right
 position.
 
 ## Known issues
+
+### index.js
+
+The version 0.49.0 introduces a unified entry-point: `index.ios.js` and `index.android.js` were replaced by `index.js`.
+
+rn-diff doesn't show that change because the concerned files are [skipped during the upgrade process](https://github.com/facebook/react-native/blob/0cd69e8a02d254577fac9ccd3ff8a1727a024cc8/local-cli/generator/copyProjectTemplateAndReplace.js#L45-L47).
+
+That change is referenced in some native files though, so you have to follow the update guide in the [0.49.0 release notes](https://github.com/facebook/react-native/releases/tag/v0.49.0).
+
+
 
 ### AndroidManifest.xml
 
