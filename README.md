@@ -26,6 +26,7 @@ Please :star: this repository if I helped you ;)
 
 Version|Compare view|Patch|Stats
 ----|----|----|----
+0.54.2|[rn-0.54.1...rn-0.54.2](https://github.com/ncuillery/rn-diff/compare/rn-0.54.1...rn-0.54.2)|[rn-0.54.1...rn-0.54.2](https://github.com/ncuillery/rn-diff/compare/rn-0.54.1...rn-0.54.2.diff)|
 0.54.1|[rn-0.54.0...rn-0.54.1](https://github.com/ncuillery/rn-diff/compare/rn-0.54.0...rn-0.54.1)|[rn-0.54.0...rn-0.54.1](https://github.com/ncuillery/rn-diff/compare/rn-0.54.0...rn-0.54.1.diff)|
 0.54.0|[rn-0.53.3...rn-0.54.0](https://github.com/ncuillery/rn-diff/compare/rn-0.53.3...rn-0.54.0)|[rn-0.53.3...rn-0.54.0](https://github.com/ncuillery/rn-diff/compare/rn-0.53.3...rn-0.54.0.diff)| 2 files changed, 3 insertions(+), 9 deletions(-)
 0.53.3|[rn-0.53.2...rn-0.53.3](https://github.com/ncuillery/rn-diff/compare/rn-0.53.2...rn-0.53.3)|[rn-0.53.2...rn-0.53.3](https://github.com/ncuillery/rn-diff/compare/rn-0.53.2...rn-0.53.3.diff)|
