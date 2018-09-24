@@ -27,7 +27,7 @@ Please :star: this repository if I helped you ;)
 Version|Compare view|Patch|Stats
 ----|----|----|----
 0.57.1|[rn-0.57.0...rn-0.57.1](https://github.com/ncuillery/rn-diff/compare/rn-0.57.0...rn-0.57.1)|[rn-0.57.0...rn-0.57.1](https://github.com/ncuillery/rn-diff/compare/rn-0.57.0...rn-0.57.1.diff)|
-0.57.0|[rn-0.55.4...rn-0.57.0](https://github.com/ncuillery/rn-diff/compare/rn-0.55.4...rn-0.57.0)|[rn-0.55.4...rn-0.57.0](https://github.com/ncuillery/rn-diff/compare/rn-0.55.4...rn-0.57.0.diff)| 17 files changed, 42 insertions(+), 65 deletions(-)
+0.57.0[:warning:](https://github.com/ncuillery/rn-diff#babel)|[rn-0.55.4...rn-0.57.0](https://github.com/ncuillery/rn-diff/compare/rn-0.55.4...rn-0.57.0)|[rn-0.55.4...rn-0.57.0](https://github.com/ncuillery/rn-diff/compare/rn-0.55.4...rn-0.57.0.diff)| 17 files changed, 42 insertions(+), 65 deletions(-)
 0.56.0|[rn-0.55.4...rn-0.56.0](https://github.com/ncuillery/rn-diff/compare/rn-0.55.4...rn-0.56.0)|[rn-0.55.4...rn-0.56.0](https://github.com/ncuillery/rn-diff/compare/rn-0.55.4...rn-0.56.0.diff)| 17 files changed, 42 insertions(+), 65 deletions(-)
 0.55.4|[rn-0.55.3...rn-0.55.4](https://github.com/ncuillery/rn-diff/compare/rn-0.55.3...rn-0.55.4)|[rn-0.55.3...rn-0.55.4](https://github.com/ncuillery/rn-diff/compare/rn-0.55.3...rn-0.55.4.diff)|
 0.55.3|[rn-0.55.2...rn-0.55.3](https://github.com/ncuillery/rn-diff/compare/rn-0.55.2...rn-0.55.3)|[rn-0.55.2...rn-0.55.3](https://github.com/ncuillery/rn-diff/compare/rn-0.55.2...rn-0.55.3.diff)|
@@ -149,6 +149,12 @@ position.
 
 ## Known issues
 
+### babel
+
+The version 0.56.0 and 0.57.0 changed a lot about the packager and babel. Because the upgrade was not easy or successful, I created a new project over the existing, and got the diff that way.
+
+The version jumps from 0.55.4 to 0.57.0.
+
 ### index.js
 
 The version 0.49.0 introduces a unified entry-point: `index.ios.js` and `index.android.js` were replaced by `index.js`.
@@ -156,7 +162,6 @@ The version 0.49.0 introduces a unified entry-point: `index.ios.js` and `index.a
 rn-diff doesn't show that change because the concerned files are [skipped during the upgrade process](https://github.com/facebook/react-native/blob/0cd69e8a02d254577fac9ccd3ff8a1727a024cc8/local-cli/generator/copyProjectTemplateAndReplace.js#L45-L47).
 
 That change is referenced in some native files though, so you have to follow the update guide in the [0.49.0 release notes](https://github.com/facebook/react-native/releases/tag/v0.49.0).
-
 
 
 ### AndroidManifest.xml
