@@ -1,4 +1,4 @@
-# RN diff
+# RN diff PURGE
 
 This repository exposes an untouched React Native app generated with the CLI
 `react-native init RnDiffApp` and upgraded with the CLI `react-native upgrade`

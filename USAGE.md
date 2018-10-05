@@ -1,4 +1,4 @@
-# Using rn-diff patches
+# Using rn-diff-purge patches
 
 The git patches can be used as a replacement of `react-native upgrade`. The procedure isn't really
 straightforward but it's still more efficient than using the upgrade command.
@@ -38,7 +38,7 @@ conflicts with your favorite merge tool.
 
 To do this, git needs to know the blob referenced in the patch
 (line `index 4c88077..e49e881 100644` for example). So you have to add rn-diff as a remote
-repository and fetch it (see this [SO question](http://stackoverflow.com/questions/33577383/git-apply-3way-error-repository-lacks-the-necessary-blob-to-fall-back-on-3-way) 
+repository and fetch it (see this [SO question](http://stackoverflow.com/questions/33577383/git-apply-3way-error-repository-lacks-the-necessary-blob-to-fall-back-on-3-way)
 for details).
 
 ```shell
