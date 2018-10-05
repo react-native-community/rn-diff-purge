@@ -26,6 +26,7 @@ Please :star: this repository if I helped you ;)
 
 Version|Compare view|Patch|Stats
 ----|----|----|----
+0.24.0|[0.23.1...0.24.0](https://github.com/pvinis/rn-diff-purge/compare/version0.23.1...version/0.24.0)|[0.23.1...0.24.0](https://github.com/pvinis/rn-diff-purge/compare/version0.23.1...version/0.24.0.diff)| 11 files changed, 117 insertions(+), 102 deletions(-)
 0.23.0|X|X|X
 
 Note that the diff stat (last column) doesn't take the `package.json` into account (it
