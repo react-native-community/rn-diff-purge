@@ -36,10 +36,10 @@ read -r confirmation
 
 if [ -z "$confirmation" ] || [ "$confirmation" = "y" ] || [ "$confirmation" = "Y" ]
 then
-  echo -e "Pushing branch..."
+  echo -e "Pushing project branch.."
 
   # push the project branch
-  git push origin project
+  git push origin project --tags
 fi
 
 # come back to master branch
@@ -55,3 +55,22 @@ sed -i '' 's/----|----|----|----/----|----|----|----\
 NEWLINE/g' README.md
 # edit the new line with the version info
 sed -i "" "s@NEWLINE@${newVersion}|${diffUrl}|${patchUrl}|${diffStat}@" README.md
+
+# prepare readme update
+git add README.md
+git commit -m "Add version ${newVersion}"
+
+# print diff
+git --no-pager diff HEAD~1
+
+# ask for confirmation before pushing
+echo -e "\\nIs that also OK ? (Yn)"
+read -r confirmation
+
+if [ -z "$confirmation" ] || [ "$confirmation" = "y" ] || [ "$confirmation" = "Y" ]
+then
+  echo -e "Pushing master branch.."
+
+  # push the master branch
+  git push origin master
+fi
