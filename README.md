@@ -26,6 +26,7 @@ Please :star: this repository if I helped you ;)
 
 Version|Compare view|Patch|Stats
 ----|----|----|----
+0.53.0|[0.52.2...0.53.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.52.2...version/0.53.0)|[0.52.2...0.53.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.52.2...version/0.53.0.diff)| 3 files changed, 4 insertions(+), 5 deletions(-)
 0.52.2|[0.52.0...0.52.2](https://github.com/pvinis/rn-diff-purge/compare/version/0.52.0...version/0.52.2)|[0.52.0...0.52.2](https://github.com/pvinis/rn-diff-purge/compare/version/0.52.0...version/0.52.2.diff)| 1 file changed, 1 insertion(+), 1 deletion(-)
 0.52.0|[0.51.0...0.52.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.51.0...version/0.52.0)|[0.51.0...0.52.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.51.0...version/0.52.0.diff)| 3 files changed, 77 insertions(+), 15 deletions(-)
 0.51.0|[0.50.4...0.51.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.50.4...version/0.51.0)|[0.50.4...0.51.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.50.4...version/0.51.0.diff)| 2 files changed, 23 insertions(+), 23 deletions(-)
