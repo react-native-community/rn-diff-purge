@@ -46,8 +46,8 @@ fi
 git checkout master
 
 # update readme
-diffUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version${prevVersion}...version/${newVersion})"
-patchUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version${prevVersion}...version/${newVersion}.diff)"
+diffUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion})"
+patchUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion}.diff)"
 
 # insert a row in the version table
 # shellcheck disable=SC1004
