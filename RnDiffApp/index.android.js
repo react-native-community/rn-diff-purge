@@ -12,7 +12,7 @@ import {
   View
 } from 'react-native';
 
-class RnDiffApp extends Component {
+export default class RnDiffApp extends Component {
   render() {
     return (
       <View style={styles.container}>
