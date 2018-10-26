@@ -1,10 +1,12 @@
 # New version generation instructions
 
-To generate `0.46.4 -> 0.47.0`
+To generate `0.57.2 -> 0.57.3`:
 
 ```sh
-./new-version.sh rn-0.46.4 0.47.0
+./new-version.sh 0.57.3
 ```
+
+Note: Always go one by one.
 
 Verify the commit is ok, with the `package.json` file updated and any other file changes.
 
