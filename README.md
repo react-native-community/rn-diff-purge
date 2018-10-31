@@ -1,6 +1,8 @@
 # RN diff PURGE
 
+[![Build Status](https://travis-ci.org/pvinis/rn-diff-purge.svg?branch=master)](https://travis-ci.org/pvinis/rn-diff-purge)
 [![Greenkeeper badge](https://badges.greenkeeper.io/pvinis/rn-diff-purge.svg)](https://greenkeeper.io/)
+
 
 This repository exposes an untouched React Native app generated with the CLI
 `react-native init RnDiffApp` and upgraded with the CLI `react-native upgrade`
