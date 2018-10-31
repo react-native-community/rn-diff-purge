@@ -1,5 +1,7 @@
 # RN diff PURGE
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/pvinis/rn-diff-purge.svg)](https://greenkeeper.io/)
+
 This repository exposes an untouched React Native app generated with the CLI
 `react-native init RnDiffApp` and upgraded with the CLI `react-native upgrade`
 after each version of React Native.
