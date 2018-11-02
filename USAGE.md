@@ -63,7 +63,7 @@ git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 ```
 
 
-## Wrap up
+### Wrap up
 
 ```shell
 # Download the patch
@@ -83,5 +83,5 @@ git fetch rn-diff-purge
 git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 ```
 
-## :warning: Known issues
+### :warning: Known issues
 Sometimes there are new files that reference the project's name. Whenever there is a new file, make sure to check for this, and replace it with your project's name.
