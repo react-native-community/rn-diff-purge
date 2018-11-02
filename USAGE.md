@@ -3,7 +3,7 @@
 The git patches can be used as a replacement of `react-native-git-upgrade`. The procedure is
 straightforward and more trusted than using the upgrade command.
 
-## Recommended way
+## Recommended method
 
 #### 1 Check the diff
 Check the diff of your current version and the version you want to upgrade to.
@@ -14,7 +14,7 @@ They are usually no more than 10 lines, so it's pretty quick and easy.
 If it's more than that, you could try the alternative method below.  
 :warning: In any case, make sure you pay attention to the changes made. It's always imporant to know what an upgrade actually changed.
 
-## Alternative Procedure (using patch)
+## Alternative method (using patch)
 
 #### 1 Download the git patch
 
