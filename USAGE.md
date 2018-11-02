@@ -1,16 +1,27 @@
 # Using rn-diff-purge patches
 
-The git patches can be used as a replacement of `react-native upgrade`. The procedure isn't really
-straightforward but it's still more efficient than using the upgrade command.
+The git patches can be used as a replacement of `react-native-git-upgrade`. The procedure is
+straightforward and more trusted than using the upgrade command.
 
-## Procedure
+## Recommended way
+
+#### 1 Check the diff
+Check the diff of your current version and the version you want to upgrade to.
+
+#### 2 Manually do the changes
+Do the changes from the diff in your project.  
+They are usually no more than 10 lines, so it's pretty quick and easy.  
+If it's more than that, you could try the alternative method below.  
+:warning: In any case, make sure you pay attention to the changes made. It's always imporant to know what an upgrade actually changed.
+
+## Alternative Procedure (using patch)
 
 #### 1 Download the git patch
 
 Download the patch for your version, for example:
 
 ```shell
-curl https://github.com/ncuillery/rn-diff/compare/rn-0.29.0...rn-0.30.0.diff > upgrade-rn.patch
+curl https://github.com/pvinis/rn-diff-purge/compare/rn-0.29.0...rn-0.30.0.diff > upgrade-rn.patch
 ```
 
 #### 2 Prepare the patch
@@ -42,8 +53,8 @@ repository and fetch it (see this [SO question](http://stackoverflow.com/questio
 for details).
 
 ```shell
-git remote add rn-diff https://github.com/ncuillery/rn-diff.git
-git fetch rn-diff
+git remote add rn-diff https://github.com/pvinis/rn-diff-purge.git
+git fetch rn-diff-purge
 ```
 
 #### 4 Run the apply command
@@ -56,7 +67,7 @@ git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 
 ```shell
 # Download the patch
-curl https://github.com/ncuillery/rn-diff/compare/rn-0.29.0...rn-0.30.0.diff > upgrade-rn.patch
+curl https://github.com/pvinis/rn-diff-purge/compare/rn-0.29.0...rn-0.30.0.diff > upgrade-rn.patch
 
 # Replace RnDiffApp occurences
 appNameCamelCase=MyApp
@@ -65,15 +76,12 @@ sed -i "" "s-ios/RnDiffApp-ios/${appNameCamelCase}-" upgrade-rn.patch
 sed -i "" "s-java/com/rndiffapp-java/com/${appNameLowerCase}-" upgrade-rn.patch
 
 # Set up the 3-way merge
-git remote add rn-diff https://github.com/ncuillery/rn-diff.git
-git fetch rn-diff
+git remote add rn-diff https://github.com/pvinis/rn-diff-purge.git
+git fetch rn-diff-purge
 
 # Run the apply command
 git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 ```
 
 ## :warning: Known issues
-
-- A new Java file has been added in [0.29.0](https://github.com/ncuillery/rn-diff/compare/rn-0.28.0...rn-0.29.0#diff-dc772a7e567909f837c8078e7db52a27R1).
-It contains the name of the app (package declaration) at line 1. You have to replace
-it after applying the patch.
+Sometimes there are new files that reference the project's name. Whenever there is a new file, make sure to check for this, and replace it with your project's name.
