@@ -21,8 +21,8 @@ to watch. For example:
 See table below for the complete list.
 
 This repository can also be used to upgrade React Native with a git-like interface which is
-faster and easier than running the `react-native upgrade` command.
-See [USAGE.md](https://github.com/ncuillery/rn-diff/blob/master/USAGE.md) for details.
+faster and easier than running the `react-native-git-upgrade` command.
+See [USAGE.md](https://github.com/pvinis/rn-diff-purge/blob/master/USAGE.md) for details.
 
 Please :star: this repository if I helped you ;)
 
