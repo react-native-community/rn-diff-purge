@@ -6,6 +6,7 @@ projectName=RnDiffApp
 
 # go to project branch
 git checkout project
+git pull
 
 # get previous version
 prevTag=$(git tag --points-at HEAD)
