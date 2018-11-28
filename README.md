@@ -11,11 +11,11 @@ after each version of React Native.
 A dedicated branch per version makes changes very easy
 to watch. For example:
 
-* https://github.com/pvinis/rn-diff-purge/compare/rn-0.28.0...rn-0.29.0
+* https://github.com/pvinis/rn-diff-purge/compare/version/0.28.0...version/0.29.0
 (Change in Android template)
-* https://github.com/pvinis/rn-diff-purge/compare/rn-0.29.0...rn-0.29.2
+* https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.29.2
 (no change)
-* https://github.com/pvinis/rn-diff-purge/compare/rn-0.30.0...rn-0.31.0
+* https://github.com/pvinis/rn-diff-purge/compare/version/0.30.0...version/0.31.0
 (minor change in `.flowconfig` )
 
 See table below for the complete list.
