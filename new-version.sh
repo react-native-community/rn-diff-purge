@@ -49,13 +49,14 @@ git checkout master
 # update readme
 diffUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion})"
 patchUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion}.diff)"
+rnDiffUrl="[${prevVersion}...${newVersion}](https://github.com/facebook/react-native/compare/v${prevVersion}...v${newVersion})"
 
 # insert a row in the version table
 # shellcheck disable=SC1004
-sed -i '' 's/----|----|----|----/----|----|----|----\
+sed -i '' 's/----|----|----|----|----/----|----|----|----|----\
 NEWLINE/g' README.md
 # edit the new line with the version info
-sed -i "" "s@NEWLINE@${newVersion}|${diffUrl}|${patchUrl}|${diffStat}@" README.md
+sed -i "" "s@NEWLINE@${newVersion}|${diffUrl}|${patchUrl}|${diffStat}|${rnDiffUrl}@" README.md
 
 # prepare readme update
 git add README.md
