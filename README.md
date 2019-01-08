@@ -117,7 +117,7 @@ Note that the diff stat (last column) doesn't take the `package.json` into accou
 doesn't have to: the `package.json` must be updated by hand before upgrading React Native).
 
 ## Why this repository?
-`react-native-git-upgrade` is painful. A simple diff by recreating the project is a much muvh simpler way to get a diff on every new React Native version.
+`react-native-git-upgrade` is painful. A simple diff by recreating the project is a much much simpler way to get a diff on every new React Native version.
 
 ## Known issues
 None so far.
