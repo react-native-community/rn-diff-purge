@@ -145,4 +145,12 @@ the new diff. I guess having 3 or 4 collaborators on this project will help in t
 If you're interested, please open an issue to discuss.
 
 Of course, the above doesn't concern suggesting changes on the `master` branch (script or
-README.md). Pull Requests are highly welcome !
+README.md). Pull Requests are highly welcome!
+
+
+If you have: 
+- questions
+- suggestions
+- ideas to make this even better
+- the urge to just to say hello to me :)
+feel free to make an issue or contact me. I'm pretty easy to find!
