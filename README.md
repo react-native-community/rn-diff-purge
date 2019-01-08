@@ -153,4 +153,5 @@ If you have:
 - suggestions
 - ideas to make this even better
 - the urge to just to say hello to me :)
+
 feel free to make an issue or contact me. I'm pretty easy to find!
