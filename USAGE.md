@@ -1,4 +1,4 @@
-# Using rn-diff-purge patches
+# Using rn-diff-purge
 
 The git patches can be used as a replacement of `react-native-git-upgrade`. The procedure is
 straightforward and more trusted than using the upgrade command.
