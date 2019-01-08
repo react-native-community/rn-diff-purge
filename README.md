@@ -124,17 +124,17 @@ None so far.
 
 ## FAQ
 
-### Why starting from 0.23.0 ?
+### Why starting from 0.23.0?
 
 The starting point is the generation of an app with the CLI tool. I've started from the oldest
 version of `react-native` I could go with `react-native-cli` (October 2018).
 
-### How did you do this ?
+### How did you do this?
 
 I initialized the 3 or 4 first commits manually to see where was it going. Then I automated
 things with this [script](https://github.com/pvinis/rn-diff-purge/blob/master/new-version.sh).
 
-### How can I contribute ?
+### How can I contribute?
 
 Unfortunately you can't ;). Correct me if I'm wrong but due to the particular structure of the
 branch tree, it's impossible to collaborate in the classic way (Pull Request on a non-existing
@@ -147,6 +147,8 @@ If you're interested, please open an issue to discuss.
 Of course, the above doesn't concern suggesting changes on the `master` branch (script or
 README.md). Pull Requests are highly welcome!
 
+
+### Down here!
 
 If you have: 
 - questions
