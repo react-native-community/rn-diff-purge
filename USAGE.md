@@ -21,7 +21,7 @@ If it's more than that, you could try the alternative method below.
 Download the patch for your version, for example:
 
 ```shell
-curl https://github.com/pvinis/rn-diff-purge/compare/rn-0.29.0...rn-0.30.0.diff > upgrade-rn.patch
+curl https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
 ```
 
 #### 2 Prepare the patch
@@ -67,7 +67,7 @@ git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 
 ```shell
 # Download the patch
-curl https://github.com/pvinis/rn-diff-purge/compare/rn-0.29.0...rn-0.30.0.diff > upgrade-rn.patch
+curl https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
 
 # Replace RnDiffApp occurences
 appNameCamelCase=MyApp
