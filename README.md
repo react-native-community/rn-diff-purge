@@ -22,6 +22,8 @@ See table below for the complete list.
 This repository can also be used to upgrade React Native without the often broken `react-native-git-upgrade` command.
 See [USAGE.md](https://github.com/pvinis/rn-diff-purge/blob/master/USAGE.md) for details.
 
+For some more info about the benefits of this repo's way versus the default way and rn-diff's way, read some of the conversation around [here](https://github.com/react-native-community/discussions-and-proposals/issues/68#issuecomment-452227478).
+
 Please :star: this repository if I helped you ;)
 
 ## Version changes
