@@ -30,6 +30,7 @@ Please :star: this repository if I helped you ;)
 
 Version|Compare|Patch|Stats|RN Compare
 ----|----|----|----|----
+0.58.3|[0.58.2...0.58.3](https://github.com/pvinis/rn-diff-purge/compare/version/0.58.2...version/0.58.3)|[0.58.2...0.58.3](https://github.com/pvinis/rn-diff-purge/compare/version/0.58.2...version/0.58.3.diff)| 1 file changed, 1 insertion(+), 1 deletion(-)|[0.58.2...0.58.3](https://github.com/facebook/react-native/compare/v0.58.2...v0.58.3)
 0.58.2|[0.58.1...0.58.2](https://github.com/pvinis/rn-diff-purge/compare/version/0.58.1...version/0.58.2)|[0.58.1...0.58.2](https://github.com/pvinis/rn-diff-purge/compare/version/0.58.1...version/0.58.2.diff)| 2 files changed, 2 insertions(+), 2 deletions(-)|[0.58.1...0.58.2](https://github.com/facebook/react-native/compare/v0.58.1...v0.58.2)
 0.58.1|[0.58.0...0.58.1](https://github.com/pvinis/rn-diff-purge/compare/version/0.58.0...version/0.58.1)|[0.58.0...0.58.1](https://github.com/pvinis/rn-diff-purge/compare/version/0.58.0...version/0.58.1.diff)| 1 file changed, 3 insertions(+), 3 deletions(-)|[0.58.0...0.58.1](https://github.com/facebook/react-native/compare/v0.58.0...v0.58.1)
 0.58.0|[0.57.8...0.58.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.57.8...version/0.58.0)|[0.57.8...0.58.0](https://github.com/pvinis/rn-diff-purge/compare/version/0.57.8...version/0.58.0.diff)| 18 files changed, 74 insertions(+), 43 deletions(-)|[0.57.8...0.58.0](https://github.com/facebook/react-native/compare/v0.57.8...v0.58.0)
