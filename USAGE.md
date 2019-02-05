@@ -53,7 +53,7 @@ repository and fetch it (see this [SO question](http://stackoverflow.com/questio
 for details).
 
 ```shell
-git remote add rn-diff https://github.com/pvinis/rn-diff-purge.git
+git remote add rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
 git fetch rn-diff-purge
 ```
 
