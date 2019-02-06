@@ -53,7 +53,7 @@ repository and fetch it (see this [SO question](http://stackoverflow.com/questio
 for details).
 
 ```shell
-git remote add rn-diff https://github.com/pvinis/rn-diff-purge.git
+git remote add rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
 git fetch rn-diff-purge
 ```
 
@@ -76,7 +76,7 @@ sed -i "" "s-ios/RnDiffApp-ios/${appNameCamelCase}-" upgrade-rn.patch
 sed -i "" "s-java/com/rndiffapp-java/com/${appNameLowerCase}-" upgrade-rn.patch
 
 # Set up the 3-way merge
-git remote add rn-diff https://github.com/pvinis/rn-diff-purge.git
+git remote add rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
 git fetch rn-diff-purge
 
 # Run the apply command
