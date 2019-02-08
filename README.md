@@ -24,7 +24,7 @@ See [USAGE.md](https://github.com/pvinis/rn-diff-purge/blob/master/USAGE.md) for
 
 For some more info about the benefits of this repo's way versus the default way and rn-diff's way, read some of the conversation around [here](https://github.com/react-native-community/discussions-and-proposals/issues/68#issuecomment-452227478).
 
-Please :star: this repository if I helped you, and if you upgraded successfully because of `purge`, <a href="https://www.buymeacoffee.com/DGWwHVZ4s" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+Please :star: this repository if I helped you, and if you upgraded successfully because of `purge`, [buy me a pizza](https://www.buymeacoffee.com/DGWwHVZ4s) :pizza:
 
 ## Version changes
 
