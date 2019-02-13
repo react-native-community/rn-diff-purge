@@ -131,8 +131,8 @@ doesn't have to: the `package.json` must be updated by hand before upgrading Rea
 
 ## Notes
 
-### hooks
-React Native 0.59.0 gets hooks! 🎉🥳
+### Hooks
+React Native [0.59.0-rc.0](https://github.com/pvinis/rn-diff-purge#version-changes) gets hooks! 🎉🥳
 Here are some docs:
 [Hooks API Reference](https://reactjs.org/docs/hooks-reference.html)
 [Introducing Hooks](https://reactjs.org/docs/hooks-intro.html)
