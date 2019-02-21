@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/pvinis/rn-diff-purge.svg?branch=master)](https://travis-ci.org/pvinis/rn-diff-purge)
 [![Greenkeeper badge](https://badges.greenkeeper.io/pvinis/rn-diff-purge.svg)](https://greenkeeper.io/)
 
-[Vote in the Poll for branches!](https://github.com/pvinis/rn-diff-purge/issues/15)
 
 
 This repository exposes an untouched React Native app generated with the CLI
