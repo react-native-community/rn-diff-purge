@@ -3,7 +3,6 @@ set -euxo pipefail
 
 
 versions=(
-  0.32.0-rc.0
   0.22.2
   0.23.0-rc1
   0.23.0-rc3
