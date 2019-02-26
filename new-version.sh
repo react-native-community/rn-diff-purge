@@ -12,7 +12,7 @@ newVersion=$1
 
 
 function guardExisting () {
-    if grep -q "$newVersion" "$VersionsFile"; then
+    if grep -qFx "$newVersion" "$VersionsFile"; then
         echo "Version $newVersion already exists!"
         exit "$ErrorVersionExists"
     fi
