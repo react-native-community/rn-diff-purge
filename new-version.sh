@@ -31,7 +31,8 @@ function generateNewVersionBranch () {
     rm -rf "$AppName"
 
     # make a new branch
-    git checkout -b version/"$newVersion"
+    branchName=version/"$newVersion"
+    git checkout -b "$branchName"
 
     # generate app
     react-native init "$AppName" --version "$newVersion"
@@ -39,7 +40,7 @@ function generateNewVersionBranch () {
     # commit and push branch
     git add "$AppName"
     git commit -m "Version $newVersion"
-    git push
+    git push --set-upstream origin "$branchName"
 
     # go back to master
     git checkout new-new-master
