@@ -36,9 +36,10 @@ function generateNewVersionBranch () {
     # generate app
     react-native init "$AppName" --version "$newVersion"
 
-    # commit
+    # commit and push branch
     git add "$AppName"
     git commit -m "Version $newVersion"
+    git push
 
     # go back to master
     git checkout new-new-master
@@ -49,6 +50,11 @@ function addVersionToList () {
     #   take each line ->dedup->    sort them         -> reverse them -> save them
     cat "$VersionsFile" | uniq | xargs yarn --silent semver | tac      > tmpfile
     mv tmpfile "$VersionsFile"
+
+    # commit and push
+    git add "$VersionsFile"
+    git commit -m "add version $newVersion"
+    git push
 }
 
 
