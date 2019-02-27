@@ -9,9 +9,9 @@ straightforward and more trusted than using the upgrade command.
 Check the diff of your current version and the version you want to upgrade to.
 
 #### 2 Manually do the changes
-Do the changes from the diff in your project.  
-They are usually no more than 10 lines, so it's pretty quick and easy.  
-If it's more than that, you could try the alternative method below.  
+Do the changes from the diff in your project.
+They are usually no more than 10 lines, so it's pretty quick and easy.
+If it's more than that, you could try the alternative method below.
 :warning: In any case, make sure you pay attention to the changes made. It's always imporant to know what an upgrade actually changed.
 
 ## Alternative method (using patch)
@@ -21,7 +21,7 @@ If it's more than that, you could try the alternative method below.
 Download the patch for your version, for example:
 
 ```shell
-curl https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
+curl https://github.com/react-native-community/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
 ```
 
 #### 2 Prepare the patch
@@ -53,7 +53,7 @@ repository and fetch it (see this [SO question](http://stackoverflow.com/questio
 for details).
 
 ```shell
-git remote add rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
+git remote add rn-diff-purge https://github.com/react-native-community/rn-diff-purge.git
 git fetch rn-diff-purge
 ```
 
@@ -67,7 +67,7 @@ git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 
 ```shell
 # Download the patch
-curl https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
+curl https://github.com/react-native-community/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
 
 # Replace RnDiffApp occurences
 appNameCamelCase=MyApp
@@ -76,7 +76,7 @@ sed -i "" "s-ios/RnDiffApp-ios/${appNameCamelCase}-" upgrade-rn.patch
 sed -i "" "s-java/com/rndiffapp-java/com/${appNameLowerCase}-" upgrade-rn.patch
 
 # Set up the 3-way merge
-git remote add rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
+git remote add rn-diff-purge https://github.com/react-native-community/rn-diff-purge.git
 git fetch rn-diff-purge
 
 # Run the apply command
