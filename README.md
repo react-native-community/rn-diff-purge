@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/pvinis/rn-diff-purge.svg?branch=master)](https://travis-ci.org/pvinis/rn-diff-purge)
 
 # THIS REPO HAS MOVED TO THE OFFICIAL REACT-NATIVE-COMMUNITY ORGANIZATION. 😍
-# FIND IT HERE: https://github.com/react-native-community/rn-diff-purge
+# FIND IT HERE:  
+# https://github.com/react-native-community/rn-diff-purge
+## Huge thanks to everyone involved, and everyone using and praising this repo! No, you are the best!
 
 
 This repository exposes an untouched React Native app generated with the CLI
