@@ -47,8 +47,8 @@ fi
 git checkout master
 
 # update readme
-diffUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion})"
-patchUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion}.diff)"
+diffUrl="[${prevVersion}...${newVersion}](https://github.com/react-native-community/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion})"
+patchUrl="[${prevVersion}...${newVersion}](https://github.com/react-native-community/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion}.diff)"
 rnDiffUrl="[${prevVersion}...${newVersion}](https://github.com/facebook/react-native/compare/v${prevVersion}...v${newVersion})"
 
 # insert a row in the version table
