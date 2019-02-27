@@ -1,8 +1,9 @@
 # RN diff PURGE
 
 [![Build Status](https://travis-ci.org/pvinis/rn-diff-purge.svg?branch=master)](https://travis-ci.org/pvinis/rn-diff-purge)
-[![Greenkeeper badge](https://badges.greenkeeper.io/pvinis/rn-diff-purge.svg)](https://greenkeeper.io/)
 
+# THIS REPO HAS MOVED TO THE OFFICIAL REACT-NATIVE-COMMUNITY ORGANIZATION. 😍
+# FIND IT HERE: https://github.com/react-native-community/rn-diff-purge
 
 
 This repository exposes an untouched React Native app generated with the CLI
