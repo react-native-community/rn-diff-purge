@@ -49,7 +49,7 @@ function generateNewVersionBranch () {
 function addVersionToList () {
     echo "$newVersion" >> "$VersionsFile"
     #   take each line ->dedup->    sort them         -> reverse them -> save them
-    cat "$VersionsFile" | uniq | xargs yarn --silent semver | tac      > tmpfile
+    cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r  > tmpfile
     mv tmpfile "$VersionsFile"
 
     # commit and push
