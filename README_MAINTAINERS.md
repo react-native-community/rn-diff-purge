@@ -2,6 +2,10 @@
 
 To generate `0.57.2 -> 0.57.3`:
 
+make sure you have `tac`.
+install it with `brew install coreutils`
+
+
 ```sh
 ./new-version.sh 0.57.3
 ```
