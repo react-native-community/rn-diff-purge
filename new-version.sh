@@ -3,13 +3,20 @@ set -euxo pipefail
 
 
 ErrorVersionExists=2
+ErrorVersionArgMissing=3
 
 AppName=RnDiffApp
 AppBaseBranch=app-base
 VersionsFile=VERSIONS
+NumberOfVersions=12
 
-newVersion=$1
 
+function guardMissingArg () {
+    if [ "$#" -ne 1 ]; then
+        echo "Version argument missing."
+        exit "$ErrorVersionArgMissing"
+    fi
+}
 
 function guardExisting () {
     if grep -qFx "$newVersion" "$VersionsFile"; then
@@ -58,9 +65,17 @@ function addVersionToList () {
     git push
 }
 
+function generateTable () {
+    head -n "$NumberOfVersions" "$VersionsFile" | ./generate-table.js
+}
 
-guardExisting 
+
+guardMissingArg $*
+newVersion=$1
+
+guardExisting
 
 prepare
 generateNewVersionBranch
 addVersionToList
+generateTable
