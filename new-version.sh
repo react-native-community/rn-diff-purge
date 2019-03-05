@@ -83,8 +83,8 @@ ReadmeHeader=README_HEADER.md
 ReadmeFooter=README_FOOTER.md
 
 function breakUpReadme () {
-    perl -p0e 's/(.*## Diff table\n\n)(.*)/$1/smg' "$ReadmeFile" > "$ReadmeHeader"
-    perl -p0e 's/(.*)(\n## Notes.*)/$2/smg' "$ReadmeFile" > "$ReadmeFooter"
+    perl -p0e 's/(.*## Diff table[^\n]*\n\n)(.*)/$1/smg' "$ReadmeFile" > "$ReadmeHeader"
+    perl -p0e 's/(.*)(\n## To see.*)/$2/smg' "$ReadmeFile" > "$ReadmeFooter"
 }
 
 function makeUpReadme () {
