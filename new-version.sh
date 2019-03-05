@@ -54,7 +54,7 @@ function generateNewVersionBranch () {
     git push --set-upstream origin "$branchName"
 
     # go back to master
-    git checkout new-new-master
+    git checkout master
 }
 
 function addVersionToList () {
