@@ -8,7 +8,11 @@ ErrorVersionArgMissing=3
 AppName=RnDiffApp
 AppBaseBranch=app-base
 VersionsFile=VERSIONS
-NumberOfVersions=12
+ReadmeFile=README.md
+ReadmeTable=README_TABLE.md
+ReadmeTableBig=README_TABLE_BIG.md
+
+NumberOfVersions=12 # the number of versions on the table
 
 
 function guardMissingArg () {
@@ -66,16 +70,45 @@ function addVersionToList () {
 }
 
 function generateTable () {
-    head -n "$NumberOfVersions" "$VersionsFile" | ./generate-table.js
+    head -n "$NumberOfVersions" "$VersionsFile" | ./generate-table.js > "$ReadmeTable"
+}
+
+function generateBigTable () {
+    cat "$VersionsFile" | ./generate-big-table.js > "$ReadmeTableBig"
+}
+
+ReadmeHeader=README_HEADER.md
+ReadmeFooter=README_FOOTER.md
+
+function breakUpReadme () {
+    perl -p0e 's/(.*## Diff table\n\n)(.*)/$1/smg' "$ReadmeFile" > "$ReadmeHeader"
+    perl -p0e 's/(.*)(\n## Notes.*)/$2/smg' "$ReadmeFile" > "$ReadmeFooter"
+}
+
+function makeUpReadme () {
+    cat "$ReadmeHeader" "$ReadmeTable" "$ReadmeFooter" > "$ReadmeFile"
+}
+
+function generateReadme () {
+    breakUpReadme
+    makeUpReadme
+}
+
+function cleanUp () {
+    rm -rf "$ReadmeHeader" "$ReadmeTable" "$ReadmeFooter"
 }
 
 
 guardMissingArg $*
 newVersion=$1
 
-guardExisting
+# guardExisting
 
-prepare
-generateNewVersionBranch
-addVersionToList
+# prepare
+# generateNewVersionBranch
+# addVersionToList
 generateTable
+generateBigTable
+
+generateReadme
+# cleanUp

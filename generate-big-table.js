@@ -6,6 +6,9 @@ const semver = require('semver')
 const getStdin = require('get-stdin')
 
 
+const RepoUrl='https://github.com/pvinis/rn-diff-purge'
+
+
 const generateTable = async () => {
     const input = await getStdin()
     const versions = R.dropLast(1, R.split('\n')(input))
@@ -35,7 +38,7 @@ const generateTable = async () => {
                         if (semver.gt(fromVersion, toVersion)) {
                             return '-'
                         }
-                        return `->${toVersion}`
+                        return `->${toVersion} | [patch](${RepoUrl}/compare/) | [core](https://github.com/facebook/react-native/compare/v${fromVersion}...v${toVersion})` 
                     }),
                 )(R.range(0, length)),
             ]
