@@ -10,6 +10,9 @@ Here are some docs:
 
 Thanks to the RN team!
 
+## Why this repository?
+`react-native-git-upgrade` is painful. A simple diff by recreating the project is a much much simpler way to get a diff on every new React Native version.
+
 
 ## FAQ
 

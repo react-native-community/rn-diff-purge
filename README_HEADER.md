@@ -1,10 +1,12 @@
 # RN diff PURGE
 
-[![Build Status](https://travis-ci.org/pvinis/rn-diff-purge.svg?branch=master)](https://travis-ci.org/pvinis/rn-diff-purge)
-[![Greenkeeper badge](https://badges.greenkeeper.io/pvinis/rn-diff-purge.svg)](https://greenkeeper.io/)
+# THIS REPO HAS MOVED TO THE OFFICIAL REACT-NATIVE-COMMUNITY ORGANIZATION. 😍
+# FIND IT HERE:  
+# 💪 [react-native-community/rn-diff-purge](https://github.com/react-native-community/rn-diff-purge) 🎉
+## Huge thanks to everyone involved, and everyone using and praising this repo! No, you are the best!
 
-[Vote in the Poll for branches!](https://github.com/pvinis/rn-diff-purge/issues/15)
 
+ add ncuillery and make paragraph
 
 This repository exposes an untouched React Native app generated with the CLI
 `react-native init RnDiffApp`. Each new React Native version causes a new project to be created, removing the old one, and getting a diff between them. This way, the diff is always clean, always in sync with the changes of the init template, and there is no reason to use the broken `react-native upgrade` or `git-upgrade` or whatever.

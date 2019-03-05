@@ -59,8 +59,8 @@ function generateNewVersionBranch () {
 
 function addVersionToList () {
     echo "$newVersion" >> "$VersionsFile"
-    #   take each line ->dedup->    sort them         -> reverse them -> save them
-    cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r  > tmpfile
+    #   take each line ->dedup->    sort them              -> reverse them -> save them
+    cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
     mv tmpfile "$VersionsFile"
 
     # commit and push
@@ -94,8 +94,12 @@ function generateReadme () {
     makeUpReadme
 }
 
+function generateGHPages () {
+    yarn --silent markdown "$ReadmeTableBig" > docs/index.html
+}
+
 function cleanUp () {
-    rm -rf "$ReadmeHeader" "$ReadmeTable" "$ReadmeFooter"
+    rm -rf "$ReadmeHeader" "$ReadmeFooter" "$ReadmeTable" "$ReadmeTableBig"
 }
 
 
@@ -107,8 +111,11 @@ guardExisting
 prepare
 generateNewVersionBranch
 addVersionToList
-generateTable
-generateBigTable
 
+generateTable
 generateReadme
+
+generateBigTable
+generateGHPages
+
 cleanUp
