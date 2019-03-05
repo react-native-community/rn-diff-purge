@@ -74,7 +74,7 @@ function generateTable () {
 }
 
 function generateBigTable () {
-    cat "$VersionsFile" | ./generate-big-table.js > "$ReadmeTableBig"
+    cat "$VersionsFile" | ./generate-table.js --big > "$ReadmeTableBig"
 }
 
 ReadmeHeader=README_HEADER.md
