@@ -1,17 +1,11 @@
 # New version generation instructions
 
-To generate `0.57.2 -> 0.57.3`:
-
-
-
+When a new version of `react-native` is out on [npm](https://www.npmjs.com/package/react-native), just run the following:
 ```sh
-./new-version.sh 0.57.3
+./new-version.sh <new-version>
 ```
 
-Note: Always go one by one.
-
-Verify the commit is ok, with the `package.json` file updated and any other file changes.
-
-If all is well, press `y` to push the branch.
-
-Afterwards, commit the new line on `README.md` and push to master.
+So for example, if the new version is `0.79.2`, just run:
+```sh
+./new-version.sh 0.79.2
+```
