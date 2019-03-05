@@ -62,9 +62,11 @@ function addVersionToList () {
     #   take each line ->dedup->    sort them              -> reverse them -> save them
     cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
     mv tmpfile "$VersionsFile"
+}
 
+function pushMaster () {
     # commit and push
-    git add "$VersionsFile"
+    git add .
     git commit -m "add version $newVersion"
     git push
 }
@@ -119,3 +121,4 @@ generateBigTable
 generateGHPages
 
 cleanUp
+pushMaster
