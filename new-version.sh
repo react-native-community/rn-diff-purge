@@ -102,13 +102,13 @@ function cleanUp () {
 guardMissingArg $*
 newVersion=$1
 
-# guardExisting
+guardExisting
 
-# prepare
-# generateNewVersionBranch
-# addVersionToList
+prepare
+generateNewVersionBranch
+addVersionToList
 generateTable
 generateBigTable
 
 generateReadme
-# cleanUp
+cleanUp
