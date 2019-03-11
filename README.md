@@ -24,6 +24,11 @@ For some more info about the benefits of this repo's way versus the default way 
 
 Please :star: this repository if I helped you, and if you upgraded successfully because of `purge`, [buy me a pizza](https://www.buymeacoffee.com/DGWwHVZ4s) :pizza:
 
+## Help us
+Help us make [this](https://pvinis.github.io/rn-diff-purge) full table pretty and more useful.
+
+Probably having some nice alternating row color, having the leftest column stay on top and always visible, and having a nice width for the content of each cell to fit in one line would be some ideas, but you are welcome to try other things!
+
 ## Diff table (full table [HERE](https://pvinis.github.io/rn-diff-purge))
 
 | From->To    | I                                                                                                         |                                                                                                           | L                                                                                                         | O                                                                                                         | V                                                                                               | E                                                                                               |                                                                                                 | D                                                                                               | I                                                                                               | F                                                                                               | F                                                                                               | S   |
@@ -49,7 +54,15 @@ Please :star: this repository if I helped you, and if you upgraded successfully 
 
 Once upon a time there was react-native. Lots of people used it and loved it. And there were ofter updates. As many as one per 2 weeks. People loved the new versions with all the new cool APIs and components and bugfixes. But how did they upgrade?
 
-Many people tried to upgrade and automate the process, and many failed. One succeded. Nicolas Cuillery ([github](https://github.com/ncuillery), [twitter](https://twitter.com/ncuillery)) made a great script and kept it in the [rn-diff](https://github.com/ncuillery/rn-diff) repo. It basically consisted of a `project` branch, which had a react-native project initialized and upgraded
+Many people tried to upgrade and automate the process, and many failed. One succeded.
+
+Nicolas Cuillery ([github](https://github.com/ncuillery), [twitter](https://twitter.com/ncuillery)) made a great script and kept it in the [rn-diff](https://github.com/ncuillery/rn-diff) repo. It basically consisted of a `project` branch, which had a react-native project initialized and upgraded using `react-native-git-upgrade`, which he also created. That worked great until it didn't. Nicolas added a few people including me to help with the repo, and we did update it, adding new upgrade diffs. At some point, the upgrades didn't work anymore, the `react-native-git-upgrade` way got too hard to maintain and make work.
+
+I saw that it was easier to just remove the old project and `react-native init` a new one, and then generate the diff. This way I could see the changes in the template as well, helping my projects follow along with the evolution of the RN project templates. That way, an upgrade was never a big undertaking. I forked [rn-diff](https://github.com/ncuillery/rn-diff) and created [rn-diff-purge](https://github.com/pvinis/rn-diff-purge). The script changed, to remove and recreate the project. This helped me and others by not having to wait for a diff to be generated, they could generate it themselves!
+
+Lastly, the [rn-diff-purge](https://github.com/pvinis/rn-diff-purge) repo got transfered to the react-native-community organization, in the repo with the same name, [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge). Since then I have made the new way to generate and keep track of versions, made a table that allows for releaes to always be diff-able no matter the order. I have kept the [old master](https://github.com/pvinis/rn-diff-purge/tree/old/master) branch and [old project](https://github.com/pvinis/rn-diff-purge/tree/old/project) branch for maintaining history, but I have created the new [master](https://github.com/pvinis/rn-diff-purge/tree/master) branch and the [app-base](https://github.com/pvinis/rn-diff-purge/tree/app-base) that all versions branch off from, and each release gets its own branch, for example [version/0.58.6](https://github.com/pvinis/rn-diff-purge/tree/version/0.58.6). We are already working with [react-native-cli](https://github.com/react-native-community/react-native-cli) to help people upgrade as easily as possible, and we will continue to do our best.
+
+Many thanks to you for using this repo, many thanks to Nicolas for starting this, and many thanks to the React Native Core team and React Native Contributors team for helping make this repo and RN project upgrading awesome.
 
 ### Hooks
 React Native [0.59.0-rc.0](https://github.com/pvinis/rn-diff-purge#version-changes) gets hooks! 🎉🥳  
@@ -62,7 +75,6 @@ Thanks to the RN team!
 
 ## Why this repository?
 `react-native-git-upgrade` is painful. A simple diff by recreating the project is a much much simpler way to get a diff on every new React Native version.
-
 
 ## FAQ
 
