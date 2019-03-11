@@ -40,7 +40,7 @@ const generateTable = async () => {
                             return '-'
                         }
                         return isBig
-                        ? `[->${toVersion}](${RepoUrl}/compare/version/${fromVersion}..version/${toVersion}) | [patch](${RepoUrl}/compare/) | [core](https://github.com/facebook/react-native/compare/v${fromVersion}...v${toVersion})` 
+                        ? `[->${toVersion}](${RepoUrl}/compare/version/${fromVersion}..version/${toVersion}) [core](https://github.com/facebook/react-native/compare/v${fromVersion}...v${toVersion})` 
                         : `[->${toVersion}](${RepoUrl}/compare/version/${fromVersion}..version/${toVersion})`
                     }),
                 )(R.range(0, length)),
