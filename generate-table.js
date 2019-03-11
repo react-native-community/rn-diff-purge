@@ -10,7 +10,7 @@ const RepoUrl='https://github.com/pvinis/rn-diff-purge'
 
 
 const generateTable = async () => {
-    const isBig = process.argv[1] === '--big'
+    const isBig = R.contains('--big', process.argv)
     const input = await getStdin()
     const versions = R.dropLast(1, R.split('\n')(input))
 
