@@ -1,5 +1,6 @@
 # RN diff PURGE
 
+(Technically and temporarily, the latest "version" of this repo is [here](https://github.com/pvinis/rn-diff-purge) despite the note on top. The table view is the way to look at and retrieve the diffs. I am waiting for github support to respond to an issue we are having, and then I'll push everything here and this will be the upgrade go-to repo.)
 
 This repository exposes an untouched React Native app generated with the CLI
 `react-native init RnDiffApp`. Each new React Native version causes a new project to be created, removing the old one, and getting a diff between them. This way, the diff is always clean, always in sync with the changes of the init template, and there is no reason to use the broken `react-native upgrade` or `git-upgrade` or whatever.
