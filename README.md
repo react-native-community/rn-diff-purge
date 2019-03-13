@@ -1,4 +1,4 @@
-# RN diff PURGE
+# RN diff PURGE (Pavlos' playground repo to make PURGE even better)
 
 # THIS REPO HAS MOVED TO THE OFFICIAL REACT-NATIVE-COMMUNITY ORGANIZATION. 😍
 # FIND IT HERE:  
