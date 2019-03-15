@@ -1,0 +1,594 @@
+diff --git a/RnDiffApp/.babelrc b/RnDiffApp/.babelrc
+deleted file mode 100644
+index 8df53fe..0000000
+--- a/RnDiffApp/.babelrc
++++ /dev/null
+@@ -1,3 +0,0 @@
+-{
+-"presets": ["react-native"]
+-}
+\ No newline at end of file
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 3b261e2..45fd3cc 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -1,28 +1,71 @@
+ [ignore]
+ 
+ # We fork some components by platform.
+-.*/*[.]android.js
++.*/*.web.js
++.*/*.android.js
+ 
+-# Ignore templates with `@flow` in header
+-.*/local-cli/generator.*
++# Some modules have their own node_modules with overlap
++.*/node_modules/node-haste/.*
+ 
+-# Ignore malformed json
+-.*/node_modules/y18n/test/.*\.json
++# Ugh
++.*/node_modules/babel.*
++.*/node_modules/babylon.*
++.*/node_modules/invariant.*
++
++# Ignore react and fbjs where there are overlaps, but don't ignore
++# anything that react-native relies on
++.*/node_modules/fbjs/lib/Map.js
++.*/node_modules/fbjs/lib/ErrorUtils.js
++
++# Flow has a built-in definition for the 'react' module which we prefer to use
++# over the currently-untyped source
++.*/node_modules/react/react.js
++.*/node_modules/react/lib/React.js
++.*/node_modules/react/lib/ReactDOM.js
+ 
+-# Ignore the website subdir
+-<PROJECT_ROOT>/website/.*
++.*/__mocks__/.*
++.*/__tests__/.*
+ 
+-# Ignore BUCK generated dirs
+-<PROJECT_ROOT>/\.buckd/
++.*/commoner/test/source/widget/share.js
+ 
+-# Ignore unexpected extra @providesModule
+-.*/node_modules/commoner/test/source/widget/share.js
++# Ignore commoner tests
++.*/node_modules/commoner/test/.*
++
++# See https://github.com/facebook/flow/issues/442
++.*/react-tools/node_modules/commoner/lib/reader.js
++
++# Ignore jest
++.*/node_modules/jest-cli/.*
++
++# Ignore Website
++.*/website/.*
++
++# Ignore generators
++.*/local-cli/generator.*
++
++# Ignore BUCK generated folders
++.*\.buckd/
++
++# Ignore RNPM
++.*/local-cli/rnpm/.*
++
++.*/node_modules/is-my-json-valid/test/.*\.json
++.*/node_modules/iconv-lite/encodings/tables/.*\.json
++.*/node_modules/y18n/test/.*\.json
++.*/node_modules/spdx-license-ids/spdx-license-ids.json
++.*/node_modules/spdx-exceptions/index.json
++.*/node_modules/resolve/test/subdirs/node_modules/a/b/c/x.json
++.*/node_modules/resolve/lib/core.json
++.*/node_modules/jsonparse/samplejson/.*\.json
++.*/node_modules/json5/test/.*\.json
++.*/node_modules/ua-parser-js/test/.*\.json
++.*/node_modules/builtin-modules/builtin-modules.json
++.*/node_modules/binary-extensions/binary-extensions.json
++.*/node_modules/url-regex/tlds.json
++.*/node_modules/joi/.*\.json
++.*/node_modules/isemail/.*\.json
++.*/node_modules/tr46/.*\.json
+ 
+-# Ignore duplicate module providers
+-# For RN Apps installed via npm, "Libraries" folder is inside node_modules/react-native but in the source repo it is in the root
+-.*/Libraries/react-native/React.js
+-.*/Libraries/react-native/ReactNative.js
+-.*/node_modules/jest-runtime/build/__tests__/.*
+ 
+ [include]
+ 
+@@ -37,8 +80,6 @@ module.system=haste
+ esproposal.class_static_fields=enable
+ esproposal.class_instance_fields=enable
+ 
+-experimental.strict_type_args=true
+-
+ munge_underscores=true
+ 
+ module.name_mapper='^image![a-zA-Z0-9$_-]+$' -> 'GlobalImageStub'
+@@ -48,11 +89,9 @@ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+ suppress_type=$FixMe
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(3[0-3]\\|[1-2][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(3[0-3]\\|1[0-9]\\|[1-2][0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-5]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-5]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ 
+-unsafe.enable_getters_and_setters=true
+-
+ [version]
+-^0.33.0
++^0.25.0
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index eb1535e..42c9490 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -24,7 +24,6 @@ project.xcworkspace
+ 
+ # Android/IJ
+ #
+-*.iml
+ .idea
+ .gradle
+ local.properties
+diff --git a/RnDiffApp/__tests__/index.android.js b/RnDiffApp/__tests__/index.android.js
+deleted file mode 100644
+index b49b908..0000000
+--- a/RnDiffApp/__tests__/index.android.js
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import 'react-native';
+-import React from 'react';
+-import Index from '../index.android.js';
+-
+-// Note: test renderer must be required after react-native.
+-import renderer from 'react-test-renderer';
+-
+-it('renders correctly', () => {
+-  const tree = renderer.create(
+-    <Index />
+-  );
+-});
+diff --git a/RnDiffApp/__tests__/index.ios.js b/RnDiffApp/__tests__/index.ios.js
+deleted file mode 100644
+index ba7c5b5..0000000
+--- a/RnDiffApp/__tests__/index.ios.js
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import 'react-native';
+-import React from 'react';
+-import Index from '../index.ios.js';
+-
+-// Note: test renderer must be required after react-native.
+-import renderer from 'react-test-renderer';
+-
+-it('renders correctly', () => {
+-  const tree = renderer.create(
+-    <Index />
+-  );
+-});
+diff --git a/RnDiffApp/android/app/BUCK b/RnDiffApp/android/app/BUCK
+index 6fa2283..6f649a3 100644
+--- a/RnDiffApp/android/app/BUCK
++++ b/RnDiffApp/android/app/BUCK
+@@ -5,7 +5,7 @@ import re
+ # - install Buck
+ # - `npm start` - to start the packager
+ # - `cd android`
+-# - `keytool -genkey -v -keystore keystores/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"`
++# - `keytool -genkey -v -keystore keystores/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US`
+ # - `./gradlew :app:copyDownloadableDepsToLibs` - make all Gradle compile dependencies available to Buck
+ # - `buck install -r android/app` - compile, install and run application
+ #
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 97ad994..f8288cd 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -55,13 +55,7 @@ import com.android.build.OutputFile
+  *   // date; if you have any other folders that you want to ignore for performance reasons (gradle
+  *   // indexes the entire tree), add them here. Alternatively, if you have JS files in android/
+  *   // for example, you might want to remove it from here.
+- *   inputExcludes: ["android/**", "ios/**"],
+- *
+- *   // override which node gets called and with what additional arguments
+- *   nodeExecutableAndArgs: ["node"]
+- *
+- *   // supply additional arguments to the packager
+- *   extraPackagerArgs: []
++ *   inputExcludes: ["android/**", "ios/**"]
+  * ]
+  */
+ 
+@@ -134,6 +128,6 @@ dependencies {
+ // Run this once to be able to run the application with BUCK
+ // puts all compile dependencies into folder libs for BUCK to use
+ task copyDownloadableDepsToLibs(type: Copy) {
+-    from configurations.compile
+-    into 'libs'
++  from configurations.compile
++  into 'libs'
+ }
+diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
+index 48361a9..9852871 100644
+--- a/RnDiffApp/android/app/proguard-rules.pro
++++ b/RnDiffApp/android/app/proguard-rules.pro
+@@ -26,14 +26,11 @@
+ # See http://sourceforge.net/p/proguard/bugs/466/
+ -keep,allowobfuscation @interface com.facebook.proguard.annotations.DoNotStrip
+ -keep,allowobfuscation @interface com.facebook.proguard.annotations.KeepGettersAndSetters
+--keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
+ 
+ # Do not strip any method/class that is annotated with @DoNotStrip
+ -keep @com.facebook.proguard.annotations.DoNotStrip class *
+--keep @com.facebook.common.internal.DoNotStrip class *
+ -keepclassmembers class * {
+     @com.facebook.proguard.annotations.DoNotStrip *;
+-    @com.facebook.common.internal.DoNotStrip *;
+ }
+ 
+ -keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 2e72ab0..a900d02 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -11,7 +11,6 @@
+         android:targetSdkVersion="22" />
+ 
+     <application
+-      android:name=".MainApplication"
+       android:allowBackup="true"
+       android:label="@string/app_name"
+       android:icon="@mipmap/ic_launcher"
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+index e4f5424..89abe8a 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+@@ -1,6 +1,11 @@
+ package com.rndiffapp;
+ 
+ import com.facebook.react.ReactActivity;
++import com.facebook.react.ReactPackage;
++import com.facebook.react.shell.MainReactPackage;
++
++import java.util.Arrays;
++import java.util.List;
+ 
+ public class MainActivity extends ReactActivity {
+ 
+@@ -12,4 +17,24 @@ public class MainActivity extends ReactActivity {
+     protected String getMainComponentName() {
+         return "RnDiffApp";
+     }
++
++    /**
++     * Returns whether dev mode should be enabled.
++     * This enables e.g. the dev menu.
++     */
++    @Override
++    protected boolean getUseDeveloperSupport() {
++        return BuildConfig.DEBUG;
++    }
++
++    /**
++     * A list of packages used by the app. If the app uses additional views
++     * or modules besides the default ones, add more packages here.
++     */
++    @Override
++    protected List<ReactPackage> getPackages() {
++        return Arrays.<ReactPackage>asList(
++            new MainReactPackage()
++        );
++    }
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+deleted file mode 100644
+index f9a1daf..0000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ /dev/null
+@@ -1,35 +0,0 @@
+-package com.rndiffapp;
+-
+-import android.app.Application;
+-import android.util.Log;
+-
+-import com.facebook.react.ReactApplication;
+-import com.facebook.react.ReactInstanceManager;
+-import com.facebook.react.ReactNativeHost;
+-import com.facebook.react.ReactPackage;
+-import com.facebook.react.shell.MainReactPackage;
+-
+-import java.util.Arrays;
+-import java.util.List;
+-
+-public class MainApplication extends Application implements ReactApplication {
+-
+-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+-    @Override
+-    protected boolean getUseDeveloperSupport() {
+-      return BuildConfig.DEBUG;
+-    }
+-
+-    @Override
+-    protected List<ReactPackage> getPackages() {
+-      return Arrays.<ReactPackage>asList(
+-          new MainReactPackage()
+-      );
+-    }
+-  };
+-
+-  @Override
+-  public ReactNativeHost getReactNativeHost() {
+-      return mReactNativeHost;
+-  }
+-}
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index fcba4c5..403a007 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -18,7 +18,7 @@ allprojects {
+         jcenter()
+         maven {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+-            url "$rootDir/../node_modules/react-native/android"
++            url "$projectDir/../../node_modules/react-native/android"
+         }
+     }
+ }
+diff --git a/RnDiffApp/index.android.js b/RnDiffApp/index.android.js
+index 48bcb43..07a8f7b 100644
+--- a/RnDiffApp/index.android.js
++++ b/RnDiffApp/index.android.js
+@@ -12,7 +12,7 @@ import {
+   View
+ } from 'react-native';
+ 
+-export default class RnDiffApp extends Component {
++class RnDiffApp extends Component {
+   render() {
+     return (
+       <View style={styles.container}>
+@@ -23,7 +23,6 @@ export default class RnDiffApp extends Component {
+           To get started, edit index.android.js
+         </Text>
+         <Text style={styles.instructions}>
+-          Double tap R on your keyboard to reload,{'\n'}
+           Shake or press menu button for dev menu
+         </Text>
+       </View>
+diff --git a/RnDiffApp/index.ios.js b/RnDiffApp/index.ios.js
+index f6af596..5ec08c5 100644
+--- a/RnDiffApp/index.ios.js
++++ b/RnDiffApp/index.ios.js
+@@ -12,7 +12,7 @@ import {
+   View
+ } from 'react-native';
+ 
+-export default class RnDiffApp extends Component {
++class RnDiffApp extends Component {
+   render() {
+     return (
+       <View style={styles.container}>
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 60ce037..637c1f3 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -20,7 +20,6 @@
+ 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+ 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+-		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+ 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+ 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+ /* End PBXBuildFile section */
+@@ -134,7 +133,6 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -582,7 +580,7 @@
+ 					"$(inherited)",
+ 				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp.app/RnDiffApp";
+@@ -595,7 +593,7 @@
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp.app/RnDiffApp";
+@@ -606,7 +604,6 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+-				CURRENT_PROJECT_VERSION = 1;
+ 				DEAD_CODE_STRIPPING = NO;
+ 				HEADER_SEARCH_PATHS = (
+ 					"$(inherited)",
+@@ -615,13 +612,11 @@
+ 				);
+ 				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+-				OTHER_LDFLAGS = (
+-					"$(inherited)",
+-					"-ObjC",
+-					"-lc++",
+-				);
++        OTHER_LDFLAGS = (
++          "-ObjC",
++          "-lc++",
++        );
+ 				PRODUCT_NAME = RnDiffApp;
+-				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+ 			name = Debug;
+ 		};
+@@ -629,7 +624,6 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+-				CURRENT_PROJECT_VERSION = 1;
+ 				HEADER_SEARCH_PATHS = (
+ 					"$(inherited)",
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+@@ -637,13 +631,11 @@
+ 				);
+ 				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+-				OTHER_LDFLAGS = (
+-					"$(inherited)",
+-					"-ObjC",
+-					"-lc++",
+-				);
++        OTHER_LDFLAGS = (
++          "-ObjC",
++          "-lc++",
++        );
+ 				PRODUCT_NAME = RnDiffApp;
+-				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+ 			name = Release;
+ 		};
+@@ -686,7 +678,7 @@
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+ 					"$(SRCROOT)/../node_modules/react-native/React/**",
+ 				);
+-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+ 				MTL_ENABLE_DEBUG_INFO = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+ 				SDKROOT = iphoneos;
+@@ -726,7 +718,7 @@
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+ 					"$(SRCROOT)/../node_modules/react-native/React/**",
+ 				);
+-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 4a58440..65ef839 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -9,7 +9,6 @@
+ 
+ #import "AppDelegate.h"
+ 
+-#import "RCTBundleURLProvider.h"
+ #import "RCTRootView.h"
+ 
+ @implementation AppDelegate
+@@ -18,7 +17,31 @@
+ {
+   NSURL *jsCodeLocation;
+ 
+-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
++  /**
++   * Loading JavaScript code - uncomment the one you want.
++   *
++   * OPTION 1
++   * Load from development server. Start the server from the repository root:
++   *
++   * $ npm start
++   *
++   * To run on device, change `localhost` to the IP address of your computer
++   * (you can get this by typing `ifconfig` into the terminal and selecting the
++   * `inet` value under `en0:`) and make sure your computer and iOS device are
++   * on the same Wi-Fi network.
++   */
++
++  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
++
++  /**
++   * OPTION 2
++   * Load from pre-bundled file on disk. The static bundle is automatically
++   * generated by the "Bundle React Native code and images" build step when
++   * running the project on an actual device or running the project on the
++   * simulator in the "Release" build configuration.
++   */
++
++//   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ 
+   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+                                                       moduleName:@"RnDiffApp"
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index 2fb6a11..91963b2 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -38,17 +38,11 @@
+ 	<false/>
+ 	<key>NSLocationWhenInUseUsageDescription</key>
+ 	<string></string>
+-	<key>NSAppTransportSecurity</key>
+-	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
+-	<dict>
+-		<key>NSExceptionDomains</key>
+-		<dict>
+-			<key>localhost</key>
+-			<dict>
+-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+-				<true/>
+-			</dict>
+-		</dict>
+-	</dict>
++  <key>NSAppTransportSecurity</key>
++  <dict>
++    <!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
++    <key>NSAllowsArbitraryLoads</key>
++    <true/>
++  </dict>
+ </dict>
+ </plist>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 4e7d773..3791275 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,23 +1,12 @@
+ {
+-	"name": "RnDiffApp",
+-	"version": "0.0.1",
+-	"private": true,
+-	"scripts": {
+-		"start": "node node_modules/react-native/local-cli/cli.js start",
+-		"test": "jest"
+-	},
+-	"dependencies": {
+-		"react": "15.3.2",
+-		"react-native": "0.37.0-rc.2"
+-	},
+-	"jest": {
+-		"preset": "jest-react-native"
+-	},
+-	"devDependencies": {
+-		"babel-jest": "24.1.0",
+-		"babel-preset-react-native": "4.0.1",
+-		"jest": "24.1.0",
+-		"jest-react-native": "18.0.0",
+-		"react-test-renderer": "15.3.2"
+-	}
++  "name": "RnDiffApp",
++  "version": "0.0.1",
++  "private": true,
++  "scripts": {
++    "start": "node node_modules/react-native/local-cli/cli.js start"
++  },
++  "dependencies": {
++    "react": "^15.1.0",
++    "react-native": "0.27.2"
++  }
+ }

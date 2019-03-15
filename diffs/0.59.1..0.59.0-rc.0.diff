@@ -1,0 +1,92 @@
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 174855f..994a5c1 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -113,7 +113,7 @@ android {
+             reset()
+             enable enableSeparateBuildPerCPUArchitecture
+             universalApk false  // If true, also generate a universal APK
+-            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
++            include "armeabi-v7a", "x86", "arm64-v8a", "x86-64"
+         }
+     }
+     buildTypes {
+@@ -127,7 +127,7 @@ android {
+         variant.outputs.each { output ->
+             // For each separate APK per architecture, set a unique version code as described here:
+             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+-            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
++            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86-64": 4]
+             def abi = output.getFilter(OutputFile.ABI)
+             if (abi != null) {  // null for the universal-debug, universal-release variants
+                 output.versionCodeOverride =
+diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+index 4ea9bc0..1fce564 100644
+--- a/RnDiffApp/android/app/src/debug/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+@@ -1,8 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools">
+-
+-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+-
+     <application tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" android:networkSecurityConfig="@xml/react_native_config" />
+ </manifest>
+\ No newline at end of file
+diff --git a/RnDiffApp/android/app/src/debug/res/xml/react_native_config.xml b/RnDiffApp/android/app/src/debug/res/xml-v28/react_native_config.xml
+similarity index 100%
+rename from RnDiffApp/android/app/src/debug/res/xml/react_native_config.xml
+rename to RnDiffApp/android/app/src/debug/res/xml-v28/react_native_config.xml
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index f3e0d15..20cee31 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -2,6 +2,7 @@
+   package="com.rndiffapp">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
+     <application
+       android:name=".MainApplication"
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index c6e7c7c..d389093 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -13,7 +13,7 @@ buildscript {
+         jcenter()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.3.1'
++        classpath 'com.android.tools.build:gradle:3.3.0'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 9d5f258..ee730e7 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,16 +7,16 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "16.8.3",
+-    "react-native": "0.59.1"
++    "react": "16.8.1",
++    "react-native": "0.59.0-rc.0"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.3.4",
+     "@babel/runtime": "^7.3.4",
+-    "babel-jest": "^24.5.0",
+-    "jest": "^24.5.0",
+-    "metro-react-native-babel-preset": "^0.53.1",
+-    "react-test-renderer": "16.8.3"
++    "babel-jest": "^24.1.0",
++    "jest": "^24.1.0",
++    "metro-react-native-babel-preset": "^0.53.0",
++    "react-test-renderer": "16.8.1"
+   },
+   "jest": {
+     "preset": "react-native"

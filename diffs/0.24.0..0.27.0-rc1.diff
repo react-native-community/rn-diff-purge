@@ -1,0 +1,205 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index ee34009..45fd3cc 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -15,8 +15,6 @@
+ # Ignore react and fbjs where there are overlaps, but don't ignore
+ # anything that react-native relies on
+ .*/node_modules/fbjs/lib/Map.js
+-.*/node_modules/fbjs/lib/fetch.js
+-.*/node_modules/fbjs/lib/ExecutionEnvironment.js
+ .*/node_modules/fbjs/lib/ErrorUtils.js
+ 
+ # Flow has a built-in definition for the 'react' module which we prefer to use
+@@ -48,6 +46,9 @@
+ # Ignore BUCK generated folders
+ .*\.buckd/
+ 
++# Ignore RNPM
++.*/local-cli/rnpm/.*
++
+ .*/node_modules/is-my-json-valid/test/.*\.json
+ .*/node_modules/iconv-lite/encodings/tables/.*\.json
+ .*/node_modules/y18n/test/.*\.json
+@@ -82,15 +83,15 @@ esproposal.class_instance_fields=enable
+ munge_underscores=true
+ 
+ module.name_mapper='^image![a-zA-Z0-9$_-]+$' -> 'GlobalImageStub'
+-module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\)$' -> 'RelativeImageStub'
++module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
+ 
+ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+ suppress_type=$FixMe
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-2]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-2]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-5]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-5]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ 
+ [version]
+-^0.22.0
++^0.25.0
+diff --git a/RnDiffApp/android/app/BUCK b/RnDiffApp/android/app/BUCK
+index a25e895..6f649a3 100644
+--- a/RnDiffApp/android/app/BUCK
++++ b/RnDiffApp/android/app/BUCK
+@@ -5,7 +5,7 @@ import re
+ # - install Buck
+ # - `npm start` - to start the packager
+ # - `cd android`
+-# - `cp ~/.android/debug.keystore keystores/debug.keystore`
++# - `keytool -genkey -v -keystore keystores/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US`
+ # - `./gradlew :app:copyDownloadableDepsToLibs` - make all Gradle compile dependencies available to Buck
+ # - `buck install -r android/app` - compile, install and run application
+ #
+diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
+index 7d72e46..9852871 100644
+--- a/RnDiffApp/android/app/proguard-rules.pro
++++ b/RnDiffApp/android/app/proguard-rules.pro
+@@ -51,9 +51,9 @@
+ 
+ -keepattributes Signature
+ -keepattributes *Annotation*
+--keep class com.squareup.okhttp.** { *; }
+--keep interface com.squareup.okhttp.** { *; }
+--dontwarn com.squareup.okhttp.**
++-keep class okhttp3.** { *; }
++-keep interface okhttp3.** { *; }
++-dontwarn okhttp3.**
+ 
+ # okio
+ 
+@@ -61,7 +61,3 @@
+ -dontwarn java.nio.file.*
+ -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+ -dontwarn okio.**
+-
+-# stetho
+-
+--dontwarn com.facebook.stetho.**
+diff --git a/RnDiffApp/index.android.js b/RnDiffApp/index.android.js
+index 42bdbcf..07a8f7b 100644
+--- a/RnDiffApp/index.android.js
++++ b/RnDiffApp/index.android.js
+@@ -1,11 +1,12 @@
+ /**
+  * Sample React Native App
+  * https://github.com/facebook/react-native
++ * @flow
+  */
+ 
+-import React, {
++import React, { Component } from 'react';
++import {
+   AppRegistry,
+-  Component,
+   StyleSheet,
+   Text,
+   View
+diff --git a/RnDiffApp/index.ios.js b/RnDiffApp/index.ios.js
+index 1ed4f1b..5ec08c5 100644
+--- a/RnDiffApp/index.ios.js
++++ b/RnDiffApp/index.ios.js
+@@ -4,9 +4,9 @@
+  * @flow
+  */
+ 
+-import React, {
++import React, { Component } from 'react';
++import {
+   AppRegistry,
+-  Component,
+   StyleSheet,
+   Text,
+   View
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 56bdd07..637c1f3 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -575,10 +575,6 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+-				FRAMEWORK_SEARCH_PATHS = (
+-					"$(SDKROOT)/Developer/Library/Frameworks",
+-					"$(inherited)",
+-				);
+ 				GCC_PREPROCESSOR_DEFINITIONS = (
+ 					"DEBUG=1",
+ 					"$(inherited)",
+@@ -596,10 +592,6 @@
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+-				FRAMEWORK_SEARCH_PATHS = (
+-					"$(SDKROOT)/Developer/Library/Frameworks",
+-					"$(inherited)",
+-				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+@@ -620,7 +612,10 @@
+ 				);
+ 				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+-				OTHER_LDFLAGS = "-ObjC";
++        OTHER_LDFLAGS = (
++          "-ObjC",
++          "-lc++",
++        );
+ 				PRODUCT_NAME = RnDiffApp;
+ 			};
+ 			name = Debug;
+@@ -636,7 +631,10 @@
+ 				);
+ 				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+-				OTHER_LDFLAGS = "-ObjC";
++        OTHER_LDFLAGS = (
++          "-ObjC",
++          "-lc++",
++        );
+ 				PRODUCT_NAME = RnDiffApp;
+ 			};
+ 			name = Release;
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 6c5e4ac..65ef839 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -47,6 +47,7 @@
+                                                       moduleName:@"RnDiffApp"
+                                                initialProperties:nil
+                                                    launchOptions:launchOptions];
++  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+ 
+   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+   UIViewController *rootViewController = [UIViewController new];
+diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+index 7c10613..da70a57 100644
+--- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
++++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+@@ -13,7 +13,7 @@
+ #import "RCTLog.h"
+ #import "RCTRootView.h"
+ 
+-#define TIMEOUT_SECONDS 240
++#define TIMEOUT_SECONDS 600
+ #define TEXT_TO_LOOK_FOR @"Welcome to React Native!"
+ 
+ @interface RnDiffAppTests : XCTestCase
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index edb52f9..8d69ed5 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -6,7 +6,7 @@
+     "start": "node node_modules/react-native/local-cli/cli.js start"
+   },
+   "dependencies": {
+-    "react": "^0.14.9",
+-    "react-native": "0.24.0"
++    "react": "^15.1.0",
++    "react-native": "0.27.0-rc1"
+   }
+ }

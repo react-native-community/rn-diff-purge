@@ -1,0 +1,76 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 66b57e0..fd62e40 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -42,29 +42,10 @@
+ # Ignore Website
+ .*/website/.*
+ 
+-.*/node_modules/is-my-json-valid/test/.*\.json
+-.*/node_modules/iconv-lite/encodings/tables/.*\.json
+-.*/node_modules/y18n/test/.*\.json
+-.*/node_modules/spdx-license-ids/spdx-license-ids.json
+-.*/node_modules/spdx-exceptions/index.json
+-.*/node_modules/resolve/test/subdirs/node_modules/a/b/c/x.json
+-.*/node_modules/resolve/lib/core.json
+-.*/node_modules/jsonparse/samplejson/.*\.json
+-.*/node_modules/json5/test/.*\.json
+-.*/node_modules/ua-parser-js/test/.*\.json
+-.*/node_modules/builtin-modules/builtin-modules.json
+-.*/node_modules/binary-extensions/binary-extensions.json
+-.*/node_modules/url-regex/tlds.json
+-.*/node_modules/joi/.*\.json
+-.*/node_modules/isemail/.*\.json
+-.*/node_modules/tr46/.*\.json
+-
+ [include]
+ 
+ [libs]
+ node_modules/react-native/Libraries/react-native/react-native-interface.js
+-node_modules/react-native/flow
+-flow/
+ 
+ [options]
+ module.system=haste
+@@ -81,9 +62,9 @@ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+ suppress_type=$FixMe
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-2]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-2]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-1]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-1]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ 
+ [version]
+-0.22.0
++0.21.0
+diff --git a/RnDiffApp/android/app/react.gradle b/RnDiffApp/android/app/react.gradle
+index 850e40d..348fb12 100644
+--- a/RnDiffApp/android/app/react.gradle
++++ b/RnDiffApp/android/app/react.gradle
+@@ -72,10 +72,10 @@ gradle.projectsEvaluated {
+                 // Set up dev mode
+                 def devEnabled = !targetName.toLowerCase().contains("release")
+                 if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+-                    commandLine "cmd", "/c", "node", "node_modules/react-native/local-cli/cli.js", "bundle", "--platform", "android", "--dev", "${devEnabled}",
++                    commandLine "cmd", "/c", "react-native", "bundle", "--platform", "android", "--dev", "${devEnabled}",
+                             "--entry-file", entryFile, "--bundle-output", jsBundleFile, "--assets-dest", resourcesDir
+                 } else {
+-                    commandLine "node", "node_modules/react-native/local-cli/cli.js", "bundle", "--platform", "android", "--dev", "${devEnabled}",
++                    commandLine "react-native", "bundle", "--platform", "android", "--dev", "${devEnabled}",
+                             "--entry-file", entryFile, "--bundle-output", jsBundleFile, "--assets-dest", resourcesDir
+                 }
+ 
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 029053f..54ab719 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,6 +7,6 @@
+   },
+   "dependencies": {
+     "react": "^16.8.3",
+-    "react-native": "0.23.0"
++    "react-native": "0.22.2"
+   }
+ }

@@ -1,0 +1,110 @@
+diff --git a/RnDiffApp/.babelrc b/RnDiffApp/.babelrc
+deleted file mode 100644
+index 8df53fe..0000000
+--- a/RnDiffApp/.babelrc
++++ /dev/null
+@@ -1,3 +0,0 @@
+-{
+-"presets": ["react-native"]
+-}
+\ No newline at end of file
+diff --git a/RnDiffApp/__tests__/index.android.js b/RnDiffApp/__tests__/index.android.js
+deleted file mode 100644
+index b49b908..0000000
+--- a/RnDiffApp/__tests__/index.android.js
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import 'react-native';
+-import React from 'react';
+-import Index from '../index.android.js';
+-
+-// Note: test renderer must be required after react-native.
+-import renderer from 'react-test-renderer';
+-
+-it('renders correctly', () => {
+-  const tree = renderer.create(
+-    <Index />
+-  );
+-});
+diff --git a/RnDiffApp/__tests__/index.ios.js b/RnDiffApp/__tests__/index.ios.js
+deleted file mode 100644
+index ba7c5b5..0000000
+--- a/RnDiffApp/__tests__/index.ios.js
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import 'react-native';
+-import React from 'react';
+-import Index from '../index.ios.js';
+-
+-// Note: test renderer must be required after react-native.
+-import renderer from 'react-test-renderer';
+-
+-it('renders correctly', () => {
+-  const tree = renderer.create(
+-    <Index />
+-  );
+-});
+diff --git a/RnDiffApp/index.android.js b/RnDiffApp/index.android.js
+index 48bcb43..1a5c062 100644
+--- a/RnDiffApp/index.android.js
++++ b/RnDiffApp/index.android.js
+@@ -12,7 +12,7 @@ import {
+   View
+ } from 'react-native';
+ 
+-export default class RnDiffApp extends Component {
++class RnDiffApp extends Component {
+   render() {
+     return (
+       <View style={styles.container}>
+diff --git a/RnDiffApp/index.ios.js b/RnDiffApp/index.ios.js
+index f6af596..5ec08c5 100644
+--- a/RnDiffApp/index.ios.js
++++ b/RnDiffApp/index.ios.js
+@@ -12,7 +12,7 @@ import {
+   View
+ } from 'react-native';
+ 
+-export default class RnDiffApp extends Component {
++class RnDiffApp extends Component {
+   render() {
+     return (
+       <View style={styles.container}>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index ba92055..dcc2831 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,23 +1,12 @@
+ {
+-	"name": "RnDiffApp",
+-	"version": "0.0.1",
+-	"private": true,
+-	"scripts": {
+-		"start": "node node_modules/react-native/local-cli/cli.js start",
+-		"test": "jest"
+-	},
+-	"dependencies": {
+-		"react": "15.3.2",
+-		"react-native": "0.35.0-rc.0"
+-	},
+-	"jest": {
+-		"preset": "jest-react-native"
+-	},
+-	"devDependencies": {
+-		"babel-jest": "24.1.0",
+-		"babel-preset-react-native": "4.0.1",
+-		"jest": "24.1.0",
+-		"jest-react-native": "18.0.0",
+-		"react-test-renderer": "15.3.2"
+-	}
++  "name": "RnDiffApp",
++  "version": "0.0.1",
++  "private": true,
++  "scripts": {
++    "start": "node node_modules/react-native/local-cli/cli.js start"
++  },
++  "dependencies": {
++    "react": "15.3.2",
++    "react-native": "0.34.1"
++  }
+ }

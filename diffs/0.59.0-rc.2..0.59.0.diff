@@ -1,0 +1,52 @@
+diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+index 1fce564..4ea9bc0 100644
+--- a/RnDiffApp/android/app/src/debug/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+@@ -1,5 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools">
++
++    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
++
+     <application tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" android:networkSecurityConfig="@xml/react_native_config" />
+ </manifest>
+\ No newline at end of file
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 20cee31..f3e0d15 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -2,7 +2,6 @@
+   package="com.rndiffapp">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
+     <application
+       android:name=".MainApplication"
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 2013405..27683a8 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,16 +7,16 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "16.8.1",
+-    "react-native": "0.59.0-rc.2"
++    "react": "16.8.3",
++    "react-native": "0.59.0"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.3.4",
+     "@babel/runtime": "^7.3.4",
+-    "babel-jest": "^24.1.0",
+-    "jest": "^24.1.0",
++    "babel-jest": "^24.4.0",
++    "jest": "^24.4.0",
+     "metro-react-native-babel-preset": "^0.53.0",
+-    "react-test-renderer": "16.8.1"
++    "react-test-renderer": "16.8.3"
+   },
+   "jest": {
+     "preset": "react-native"

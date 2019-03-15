@@ -1,0 +1,43 @@
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 874f51e..97ad994 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -134,6 +134,6 @@ dependencies {
+ // Run this once to be able to run the application with BUCK
+ // puts all compile dependencies into folder libs for BUCK to use
+ task copyDownloadableDepsToLibs(type: Copy) {
+-  from configurations.compile
+-  into 'libs'
++    from configurations.compile
++    into 'libs'
+ }
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index e4f0706..e077560 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,17 +7,17 @@
+ 		"test": "jest"
+ 	},
+ 	"dependencies": {
+-		"react": "15.3.2",
+-		"react-native": "0.36.0-rc.1"
+-	},
+-	"jest": {
+-		"preset": "jest-react-native"
++		"react": "~15.3.1",
++		"react-native": "0.37.0"
+ 	},
+ 	"devDependencies": {
+ 		"babel-jest": "24.1.0",
+ 		"babel-preset-react-native": "4.0.1",
+ 		"jest": "24.1.0",
+ 		"jest-react-native": "18.0.0",
+-		"react-test-renderer": "15.3.2"
++		"react-test-renderer": "~15.3.1"
++	},
++	"jest": {
++		"preset": "jest-react-native"
+ 	}
+-}
++}
+\ No newline at end of file

@@ -1,0 +1,1243 @@
+diff --git a/RnDiffApp/.babelrc b/RnDiffApp/.babelrc
+index d4b74b5..a9ce136 100644
+--- a/RnDiffApp/.babelrc
++++ b/RnDiffApp/.babelrc
+@@ -1,3 +1,3 @@
+ {
+-  "presets": ["module:metro-react-native-babel-preset"]
++  "presets": ["react-native"]
+ }
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 1043c82..1ac2a7b 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -16,55 +16,33 @@
+ ; Ignore polyfills
+ .*/Libraries/polyfills/.*
+ 
+-; Ignore metro
+-.*/node_modules/metro/.*
+-
+ [include]
+ 
+ [libs]
+ node_modules/react-native/Libraries/react-native/react-native-interface.js
+ node_modules/react-native/flow/
+-node_modules/react-native/flow-github/
+ 
+ [options]
+ emoji=true
+ 
+-esproposal.optional_chaining=enable
+-esproposal.nullish_coalescing=enable
+-
+ module.system=haste
+-module.system.haste.use_name_reducers=true
+-# get basename
+-module.system.haste.name_reducers='^.*/\([a-zA-Z0-9$_.-]+\.js\(\.flow\)?\)$' -> '\1'
+-# strip .js or .js.flow suffix
+-module.system.haste.name_reducers='^\(.*\)\.js\(\.flow\)?$' -> '\1'
+-# strip .ios suffix
+-module.system.haste.name_reducers='^\(.*\)\.ios$' -> '\1'
+-module.system.haste.name_reducers='^\(.*\)\.android$' -> '\1'
+-module.system.haste.name_reducers='^\(.*\)\.native$' -> '\1'
+-module.system.haste.paths.blacklist=.*/__tests__/.*
+-module.system.haste.paths.blacklist=.*/__mocks__/.*
+-module.system.haste.paths.blacklist=<PROJECT_ROOT>/node_modules/react-native/Libraries/Animated/src/polyfills/.*
+-module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+ 
+ munge_underscores=true
+ 
+ module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
+ 
+-module.file_ext=.js
+-module.file_ext=.jsx
+-module.file_ext=.json
+-module.file_ext=.native.js
+-
+ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+ suppress_type=$FlowFixMeProps
+ suppress_type=$FlowFixMeState
++suppress_type=$FixMe
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(5[0-6]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(5[0-6]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
++unsafe.enable_getters_and_setters=true
++
+ [version]
+-^0.78.0
++^0.56.0
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 5d64756..0826423 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -51,6 +51,3 @@ buck-out/
+ */fastlane/report.xml
+ */fastlane/Preview.html
+ */fastlane/screenshots
+-
+-# Bundle artifact
+-*.jsbundle
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
+index 171d0f0..d4ae45c 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.js
+@@ -1,29 +1,37 @@
+ /**
+  * Sample React Native App
+  * https://github.com/facebook/react-native
+- *
+- * @format
+  * @flow
+  */
+ 
+-import React, {Component} from 'react';
+-import {Platform, StyleSheet, Text, View} from 'react-native';
++import React, { Component } from 'react';
++import {
++  Platform,
++  StyleSheet,
++  Text,
++  View
++} from 'react-native';
+ 
+ const instructions = Platform.select({
+-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
+-  android:
+-    'Double tap R on your keyboard to reload,\n' +
++  ios: 'Press Cmd+R to reload,\n' +
++    'Cmd+D or shake for dev menu',
++  android: 'Double tap R on your keyboard to reload,\n' +
+     'Shake or press menu button for dev menu',
+ });
+ 
+-type Props = {};
+-export default class App extends Component<Props> {
++export default class App extends Component<{}> {
+   render() {
+     return (
+       <View style={styles.container}>
+-        <Text style={styles.welcome}>Welcome to React Native!</Text>
+-        <Text style={styles.instructions}>To get started, edit App.js</Text>
+-        <Text style={styles.instructions}>{instructions}</Text>
++        <Text style={styles.welcome}>
++          Welcome to React Native!
++        </Text>
++        <Text style={styles.instructions}>
++          To get started, edit App.js
++        </Text>
++        <Text style={styles.instructions}>
++          {instructions}
++        </Text>
+       </View>
+     );
+   }
+diff --git a/RnDiffApp/__tests__/App.js b/RnDiffApp/__tests__/App.js
+new file mode 100644
+index 0000000..d0b9ee3
+--- /dev/null
++++ b/RnDiffApp/__tests__/App.js
+@@ -0,0 +1,12 @@
++import 'react-native';
++import React from 'react';
++import App from '../App';
++
++// Note: test renderer must be required after react-native.
++import renderer from 'react-test-renderer';
++
++it('renders correctly', () => {
++  const tree = renderer.create(
++    <App />
++  );
++});
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 4552d81..c8ea1af 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -94,13 +94,13 @@ def enableSeparateBuildPerCPUArchitecture = false
+ def enableProguardInReleaseBuilds = false
+ 
+ android {
+-    compileSdkVersion rootProject.ext.compileSdkVersion
+-    buildToolsVersion rootProject.ext.buildToolsVersion
++    compileSdkVersion 23
++    buildToolsVersion "23.0.1"
+ 
+     defaultConfig {
+         applicationId "com.rndiffapp"
+-        minSdkVersion rootProject.ext.minSdkVersion
+-        targetSdkVersion rootProject.ext.targetSdkVersion
++        minSdkVersion 16
++        targetSdkVersion 22
+         versionCode 1
+         versionName "1.0"
+         ndk {
+@@ -137,9 +137,9 @@ android {
+ }
+ 
+ dependencies {
+-    implementation fileTree(dir: "libs", include: ["*.jar"])
+-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+-    implementation "com.facebook.react:react-native:+"  // From node_modules
++    compile fileTree(dir: "libs", include: ["*.jar"])
++    compile "com.android.support:appcompat-v7:23.0.1"
++    compile "com.facebook.react:react-native:+"  // From node_modules
+ }
+ 
+ // Run this once to be able to run the application with BUCK
+diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
+index a92fa17..6e8516c 100644
+--- a/RnDiffApp/android/app/proguard-rules.pro
++++ b/RnDiffApp/android/app/proguard-rules.pro
+@@ -15,3 +15,56 @@
+ #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+ #   public *;
+ #}
++
++# Disabling obfuscation is useful if you collect stack traces from production crashes
++# (unless you are using a system that supports de-obfuscate the stack traces).
++-dontobfuscate
++
++# React Native
++
++# Keep our interfaces so they can be used by other ProGuard rules.
++# See http://sourceforge.net/p/proguard/bugs/466/
++-keep,allowobfuscation @interface com.facebook.proguard.annotations.DoNotStrip
++-keep,allowobfuscation @interface com.facebook.proguard.annotations.KeepGettersAndSetters
++-keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
++
++# Do not strip any method/class that is annotated with @DoNotStrip
++-keep @com.facebook.proguard.annotations.DoNotStrip class *
++-keep @com.facebook.common.internal.DoNotStrip class *
++-keepclassmembers class * {
++    @com.facebook.proguard.annotations.DoNotStrip *;
++    @com.facebook.common.internal.DoNotStrip *;
++}
++
++-keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
++  void set*(***);
++  *** get*();
++}
++
++-keep class * extends com.facebook.react.bridge.JavaScriptModule { *; }
++-keep class * extends com.facebook.react.bridge.NativeModule { *; }
++-keepclassmembers,includedescriptorclasses class * { native <methods>; }
++-keepclassmembers class *  { @com.facebook.react.uimanager.UIProp <fields>; }
++-keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactProp <methods>; }
++-keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactPropGroup <methods>; }
++
++-dontwarn com.facebook.react.**
++
++# TextLayoutBuilder uses a non-public Android constructor within StaticLayout.
++# See libs/proxy/src/main/java/com/facebook/fbui/textlayoutbuilder/proxy for details.
++-dontwarn android.text.StaticLayout
++
++# okhttp
++
++-keepattributes Signature
++-keepattributes *Annotation*
++-keep class okhttp3.** { *; }
++-keep interface okhttp3.** { *; }
++-dontwarn okhttp3.**
++
++# okio
++
++-keep class sun.misc.Unsafe { *; }
++-dontwarn java.nio.file.*
++-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
++-dontwarn okio.**
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 9c67097..31a894a 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -1,14 +1,20 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.rndiffapp">
++    package="com.rndiffapp"
++    android:versionCode="1"
++    android:versionName="1.0">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
++    <uses-sdk
++        android:minSdkVersion="16"
++        android:targetSdkVersion="22" />
++
+     <application
+       android:name=".MainApplication"
++      android:allowBackup="true"
+       android:label="@string/app_name"
+       android:icon="@mipmap/ic_launcher"
+-      android:allowBackup="false"
+       android:theme="@style/AppTheme">
+       <activity
+         android:name=".MainActivity"
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png b/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+index a2f5908..cde69bc 100644
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png and b/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png b/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+deleted file mode 100644
+index 1b52399..0000000
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png and /dev/null differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png b/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+index ff10afd..c133a0c 100644
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png and b/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png b/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+deleted file mode 100644
+index 115a4c7..0000000
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png and /dev/null differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png b/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+index dcd3cd8..bfa42f0 100644
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png and b/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png b/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+deleted file mode 100644
+index 459ca60..0000000
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png and /dev/null differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png b/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+index 8ca12fe..324e72c 100644
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png and b/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png b/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+deleted file mode 100644
+index 8e19b41..0000000
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png and /dev/null differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png b/RnDiffApp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+deleted file mode 100644
+index b824ebd..0000000
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png and /dev/null differ
+diff --git a/RnDiffApp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png b/RnDiffApp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+deleted file mode 100644
+index 4c19a13..0000000
+Binary files a/RnDiffApp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png and /dev/null differ
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 85d8f2f..eed9972 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -1,19 +1,11 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ 
+ buildscript {
+-    ext {
+-        buildToolsVersion = "27.0.3"
+-        minSdkVersion = 16
+-        compileSdkVersion = 27
+-        targetSdkVersion = 26
+-        supportLibVersion = "27.1.1"
+-    }
+     repositories {
+         jcenter()
+-        google()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.1.4'
++        classpath 'com.android.tools.build:gradle:2.2.3'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -28,12 +20,5 @@ allprojects {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+             url "$rootDir/../node_modules/react-native/android"
+         }
+-        google()
+     }
+ }
+-
+-
+-task wrapper(type: Wrapper) {
+-    gradleVersion = '4.4'
+-    distributionUrl = distributionUrl.replace("bin", "all")
+-}
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index 89e0d99..1fd964e 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -16,3 +16,5 @@
+ # This option should only be used with decoupled projects. More details, visit
+ # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
+ # org.gradle.parallel=true
++
++android.useDeprecatedNdk=true
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar
+index 01b8bf6..b5166da 100644
+Binary files a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar and b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar differ
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index b6517bb..dbdc05d 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -2,4 +2,4 @@ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-4.4-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-2.14.1-all.zip
+diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
+index cccdd3d..91a7e26 100755
+--- a/RnDiffApp/android/gradlew
++++ b/RnDiffApp/android/gradlew
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env sh
++#!/usr/bin/env bash
+ 
+ ##############################################################################
+ ##
+@@ -6,38 +6,20 @@
+ ##
+ ##############################################################################
+ 
+-# Attempt to set APP_HOME
+-# Resolve links: $0 may be a link
+-PRG="$0"
+-# Need this for relative symlinks.
+-while [ -h "$PRG" ] ; do
+-    ls=`ls -ld "$PRG"`
+-    link=`expr "$ls" : '.*-> \(.*\)$'`
+-    if expr "$link" : '/.*' > /dev/null; then
+-        PRG="$link"
+-    else
+-        PRG=`dirname "$PRG"`"/$link"
+-    fi
+-done
+-SAVED="`pwd`"
+-cd "`dirname \"$PRG\"`/" >/dev/null
+-APP_HOME="`pwd -P`"
+-cd "$SAVED" >/dev/null
++# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++DEFAULT_JVM_OPTS=""
+ 
+ APP_NAME="Gradle"
+ APP_BASE_NAME=`basename "$0"`
+ 
+-# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+-DEFAULT_JVM_OPTS=""
+-
+ # Use the maximum available, or set MAX_FD != -1 to use that value.
+ MAX_FD="maximum"
+ 
+-warn () {
++warn ( ) {
+     echo "$*"
+ }
+ 
+-die () {
++die ( ) {
+     echo
+     echo "$*"
+     echo
+@@ -48,7 +30,6 @@ die () {
+ cygwin=false
+ msys=false
+ darwin=false
+-nonstop=false
+ case "`uname`" in
+   CYGWIN* )
+     cygwin=true
+@@ -59,11 +40,31 @@ case "`uname`" in
+   MINGW* )
+     msys=true
+     ;;
+-  NONSTOP* )
+-    nonstop=true
+-    ;;
+ esac
+ 
++# For Cygwin, ensure paths are in UNIX format before anything is touched.
++if $cygwin ; then
++    [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
++fi
++
++# Attempt to set APP_HOME
++# Resolve links: $0 may be a link
++PRG="$0"
++# Need this for relative symlinks.
++while [ -h "$PRG" ] ; do
++    ls=`ls -ld "$PRG"`
++    link=`expr "$ls" : '.*-> \(.*\)$'`
++    if expr "$link" : '/.*' > /dev/null; then
++        PRG="$link"
++    else
++        PRG=`dirname "$PRG"`"/$link"
++    fi
++done
++SAVED="`pwd`"
++cd "`dirname \"$PRG\"`/" >&-
++APP_HOME="`pwd -P`"
++cd "$SAVED" >&-
++
+ CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+ 
+ # Determine the Java command to use to start the JVM.
+@@ -89,7 +90,7 @@ location of your Java installation."
+ fi
+ 
+ # Increase the maximum file descriptors if we can.
+-if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
++if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
+     MAX_FD_LIMIT=`ulimit -H -n`
+     if [ $? -eq 0 ] ; then
+         if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+@@ -113,7 +114,6 @@ fi
+ if $cygwin ; then
+     APP_HOME=`cygpath --path --mixed "$APP_HOME"`
+     CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+-    JAVACMD=`cygpath --unix "$JAVACMD"`
+ 
+     # We build the pattern for arguments to be converted via cygpath
+     ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
+@@ -154,19 +154,11 @@ if $cygwin ; then
+     esac
+ fi
+ 
+-# Escape application args
+-save () {
+-    for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
+-    echo " "
++# Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
++function splitJvmOpts() {
++    JVM_OPTS=("$@")
+ }
+-APP_ARGS=$(save "$@")
+-
+-# Collect all arguments for the java command, following the shell quoting and substitution rules
+-eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
+-
+-# by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
+-if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
+-  cd "$(dirname "$0")"
+-fi
++eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS
++JVM_OPTS[${#JVM_OPTS[*]}]="-Dorg.gradle.appname=$APP_BASE_NAME"
+ 
+-exec "$JAVACMD" "$@"
++exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
+index e95643d..aec9973 100644
+--- a/RnDiffApp/android/gradlew.bat
++++ b/RnDiffApp/android/gradlew.bat
+@@ -8,14 +8,14 @@
+ @rem Set local scope for the variables with windows NT shell
+ if "%OS%"=="Windows_NT" setlocal
+ 
++@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++set DEFAULT_JVM_OPTS=
++
+ set DIRNAME=%~dp0
+ if "%DIRNAME%" == "" set DIRNAME=.
+ set APP_BASE_NAME=%~n0
+ set APP_HOME=%DIRNAME%
+ 
+-@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+-set DEFAULT_JVM_OPTS=
+-
+ @rem Find java.exe
+ if defined JAVA_HOME goto findJavaFromJavaHome
+ 
+@@ -46,9 +46,10 @@ echo location of your Java installation.
+ goto fail
+ 
+ :init
+-@rem Get command-line arguments, handling Windows variants
++@rem Get command-line arguments, handling Windowz variants
+ 
+ if not "%OS%" == "Windows_NT" goto win9xME_args
++if "%@eval[2+2]" == "4" goto 4NT_args
+ 
+ :win9xME_args
+ @rem Slurp the command line arguments.
+@@ -59,6 +60,11 @@ set _SKIP=2
+ if "x%~1" == "x" goto execute
+ 
+ set CMD_LINE_ARGS=%*
++goto execute
++
++:4NT_args
++@rem Get arguments from the 4NT Shell from JP Software
++set CMD_LINE_ARGS=%$
+ 
+ :execute
+ @rem Setup the command line
+diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
+index 802b435..39283d1 100644
+--- a/RnDiffApp/index.js
++++ b/RnDiffApp/index.js
+@@ -1,7 +1,4 @@
+-/** @format */
+-
+-import {AppRegistry} from 'react-native';
++import { AppRegistry } from 'react-native';
+ import App from './App';
+-import {name as appName} from './app.json';
+ 
+-AppRegistry.registerComponent(appName, () => App);
++AppRegistry.registerComponent('RnDiffApp', () => App);
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 1bb07ee..93a8736 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -13,7 +13,6 @@
+ 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
+ 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+ 		00E356F31AD99517003FC87E /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
+-		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+ 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
+ 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
+ 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
+@@ -26,16 +25,16 @@
+ 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+ 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+-		2D02E4C21E0B4AEC006451C7 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
++		2D02E4C21E0B4AEC006451C7 /* libRCTAnimation-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */; };
+ 		2D02E4C31E0B4AEC006451C7 /* libRCTImage-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */; };
+ 		2D02E4C41E0B4AEC006451C7 /* libRCTLinking-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E881DF850E9000B6D8A /* libRCTLinking-tvOS.a */; };
+ 		2D02E4C51E0B4AEC006451C7 /* libRCTNetwork-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E8C1DF850E9000B6D8A /* libRCTNetwork-tvOS.a */; };
+ 		2D02E4C61E0B4AEC006451C7 /* libRCTSettings-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E901DF850E9000B6D8A /* libRCTSettings-tvOS.a */; };
+ 		2D02E4C71E0B4AEC006451C7 /* libRCTText-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E941DF850E9000B6D8A /* libRCTText-tvOS.a */; };
+ 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
+-		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
++		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
+ 		2DCD954D1E0B4F2C00145EB5 /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
+-		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
++		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+ 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+ 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+ /* End PBXBuildFile section */
+@@ -111,83 +110,6 @@
+ 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
+ 			remoteInfo = "RnDiffApp-tvOS";
+ 		};
+-		2D16E6711FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = ADD01A681E09402E00F6D226;
+-			remoteInfo = "RCTBlob-tvOS";
+-		};
+-		2D16E6831FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 3DBE0D001F3B181A0099AA32;
+-			remoteInfo = fishhook;
+-		};
+-		2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 3DBE0D0D1F3B181C0099AA32;
+-			remoteInfo = "fishhook-tvOS";
+-		};
+-		2DF0FFDE2056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = EBF21BDC1FC498900052F4D5;
+-			remoteInfo = jsinspector;
+-		};
+-		2DF0FFE02056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = EBF21BFA1FC4989A0052F4D5;
+-			remoteInfo = "jsinspector-tvOS";
+-		};
+-		2DF0FFE22056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 139D7ECE1E25DB7D00323FB7;
+-			remoteInfo = "third-party";
+-		};
+-		2DF0FFE42056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 3D383D3C1EBD27B6005632C8;
+-			remoteInfo = "third-party-tvOS";
+-		};
+-		2DF0FFE62056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 139D7E881E25C6D100323FB7;
+-			remoteInfo = "double-conversion";
+-		};
+-		2DF0FFE82056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 3D383D621EBD27B9005632C8;
+-			remoteInfo = "double-conversion-tvOS";
+-		};
+-		2DF0FFEA2056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 9936F3131F5F2E4B0010BF04;
+-			remoteInfo = privatedata;
+-		};
+-		2DF0FFEC2056DD460020B375 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 9936F32F1F5F2E5B0010BF04;
+-			remoteInfo = "privatedata-tvOS";
+-		};
+ 		3DAD3E831DF850E9000B6D8A /* PBXContainerItemProxy */ = {
+ 			isa = PBXContainerItemProxy;
+ 			containerPortal = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
+@@ -338,7 +260,6 @@
+ 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+ 		2D02E47B1E0B4A5D006451C7 /* RnDiffApp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RnDiffApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		2D02E4901E0B4A5D006451C7 /* RnDiffApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RnDiffApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+-		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+ 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+ 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+@@ -359,8 +280,9 @@
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
+-				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
++				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+ 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
++				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+ 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+ 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
+ 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
+@@ -377,8 +299,8 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */,
+-				2D02E4C21E0B4AEC006451C7 /* libRCTAnimation.a in Frameworks */,
++				2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */,
++				2D02E4C21E0B4AEC006451C7 /* libRCTAnimation-tvOS.a in Frameworks */,
+ 				2D02E4C31E0B4AEC006451C7 /* libRCTImage-tvOS.a in Frameworks */,
+ 				2D02E4C41E0B4AEC006451C7 /* libRCTLinking-tvOS.a in Frameworks */,
+ 				2D02E4C51E0B4AEC006451C7 /* libRCTNetwork-tvOS.a in Frameworks */,
+@@ -392,7 +314,6 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -472,8 +393,6 @@
+ 			children = (
+ 				139FDEF41B06529B00C62182 /* libRCTWebSocket.a */,
+ 				3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */,
+-				2D16E6841FA4F8DC00B85C8A /* libfishhook.a */,
+-				2D16E6861FA4F8DC00B85C8A /* libfishhook-tvOS.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+@@ -503,31 +422,16 @@
+ 				3DAD3EAB1DF850E9000B6D8A /* libcxxreact.a */,
+ 				3DAD3EAD1DF850E9000B6D8A /* libjschelpers.a */,
+ 				3DAD3EAF1DF850E9000B6D8A /* libjschelpers.a */,
+-				2DF0FFDF2056DD460020B375 /* libjsinspector.a */,
+-				2DF0FFE12056DD460020B375 /* libjsinspector-tvOS.a */,
+-				2DF0FFE32056DD460020B375 /* libthird-party.a */,
+-				2DF0FFE52056DD460020B375 /* libthird-party.a */,
+-				2DF0FFE72056DD460020B375 /* libdouble-conversion.a */,
+-				2DF0FFE92056DD460020B375 /* libdouble-conversion.a */,
+-				2DF0FFEB2056DD460020B375 /* libprivatedata.a */,
+-				2DF0FFED2056DD460020B375 /* libprivatedata-tvOS.a */,
++				3DAD3EA31DF850E9000B6D8A /* libReact-tvOS.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+ 		};
+-		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+-			isa = PBXGroup;
+-			children = (
+-				2D16E6891FA4F8E400B85C8A /* libReact.a */,
+-			);
+-			name = Frameworks;
+-			sourceTree = "<group>";
+-		};
+ 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
+ 			isa = PBXGroup;
+ 			children = (
+ 				5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */,
+-				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */,
++				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+@@ -576,7 +480,6 @@
+ 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+ 				00E356EF1AD99517003FC87E /* RnDiffAppTests */,
+ 				83CBBA001A601CBA00E9B192 /* Products */,
+-				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+ 			);
+ 			indentWidth = 2;
+ 			sourceTree = "<group>";
+@@ -598,7 +501,6 @@
+ 			isa = PBXGroup;
+ 			children = (
+ 				ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */,
+-				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+@@ -684,7 +586,7 @@
+ 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+ 			isa = PBXProject;
+ 			attributes = {
+-				LastUpgradeCheck = 0940;
++				LastUpgradeCheck = 0610;
+ 				ORGANIZATIONNAME = Facebook;
+ 				TargetAttributes = {
+ 					00E356ED1AD99517003FC87E = {
+@@ -830,83 +732,6 @@
+ 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+-		2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libRCTBlob-tvOS.a";
+-			remoteRef = 2D16E6711FA4F8DC00B85C8A /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2D16E6841FA4F8DC00B85C8A /* libfishhook.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = libfishhook.a;
+-			remoteRef = 2D16E6831FA4F8DC00B85C8A /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2D16E6861FA4F8DC00B85C8A /* libfishhook-tvOS.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libfishhook-tvOS.a";
+-			remoteRef = 2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFDF2056DD460020B375 /* libjsinspector.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = libjsinspector.a;
+-			remoteRef = 2DF0FFDE2056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFE12056DD460020B375 /* libjsinspector-tvOS.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libjsinspector-tvOS.a";
+-			remoteRef = 2DF0FFE02056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFE32056DD460020B375 /* libthird-party.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libthird-party.a";
+-			remoteRef = 2DF0FFE22056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFE52056DD460020B375 /* libthird-party.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libthird-party.a";
+-			remoteRef = 2DF0FFE42056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFE72056DD460020B375 /* libdouble-conversion.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libdouble-conversion.a";
+-			remoteRef = 2DF0FFE62056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFE92056DD460020B375 /* libdouble-conversion.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libdouble-conversion.a";
+-			remoteRef = 2DF0FFE82056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFEB2056DD460020B375 /* libprivatedata.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = libprivatedata.a;
+-			remoteRef = 2DF0FFEA2056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		2DF0FFED2056DD460020B375 /* libprivatedata-tvOS.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libprivatedata-tvOS.a";
+-			remoteRef = 2DF0FFEC2056DD460020B375 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+ 		3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+@@ -949,10 +774,10 @@
+ 			remoteRef = 3DAD3E981DF850E9000B6D8A /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+-		3DAD3EA31DF850E9000B6D8A /* libReact.a */ = {
++		3DAD3EA31DF850E9000B6D8A /* libReact-tvOS.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+-			path = libReact.a;
++			path = "libReact-tvOS.a";
+ 			remoteRef = 3DAD3EA21DF850E9000B6D8A /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+@@ -1005,10 +830,10 @@
+ 			remoteRef = 5E9157321DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+-		5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */ = {
++		5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+-			path = libRCTAnimation.a;
++			path = "libRCTAnimation-tvOS.a";
+ 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+@@ -1172,13 +997,12 @@
+ 					"$(inherited)",
+ 				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp.app/RnDiffApp";
+ 			};
+@@ -1190,13 +1014,12 @@
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp.app/RnDiffApp";
+ 			};
+@@ -1215,7 +1038,6 @@
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = RnDiffApp;
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+@@ -1233,7 +1055,6 @@
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = RnDiffApp;
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+@@ -1304,10 +1125,6 @@
+ 				GCC_NO_COMMON_BLOCKS = YES;
+ 				INFOPLIST_FILE = "RnDiffApp-tvOSTests/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+-				OTHER_LDFLAGS = (
+-					"-ObjC",
+-					"-lc++",
+-				);
+ 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.RnDiffApp-tvOSTests";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = appletvos;
+@@ -1329,10 +1146,6 @@
+ 				GCC_NO_COMMON_BLOCKS = YES;
+ 				INFOPLIST_FILE = "RnDiffApp-tvOSTests/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+-				OTHER_LDFLAGS = (
+-					"-ObjC",
+-					"-lc++",
+-				);
+ 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.RnDiffApp-tvOSTests";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = appletvos;
+@@ -1349,32 +1162,20 @@
+ 				CLANG_CXX_LIBRARY = "libc++";
+ 				CLANG_ENABLE_MODULES = YES;
+ 				CLANG_ENABLE_OBJC_ARC = YES;
+-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+ 				CLANG_WARN_BOOL_CONVERSION = YES;
+-				CLANG_WARN_COMMA = YES;
+ 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+ 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+ 				CLANG_WARN_EMPTY_BODY = YES;
+ 				CLANG_WARN_ENUM_CONVERSION = YES;
+-				CLANG_WARN_INFINITE_RECURSION = YES;
+ 				CLANG_WARN_INT_CONVERSION = YES;
+-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+ 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+-				CLANG_WARN_STRICT_PROTOTYPES = YES;
+-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+ 				COPY_PHASE_STRIP = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+-				ENABLE_TESTABILITY = YES;
+ 				GCC_C_LANGUAGE_STANDARD = gnu99;
+ 				GCC_DYNAMIC_NO_PIC = NO;
+-				GCC_NO_COMMON_BLOCKS = YES;
+ 				GCC_OPTIMIZATION_LEVEL = 0;
+ 				GCC_PREPROCESSOR_DEFINITIONS = (
+ 					"DEBUG=1",
+@@ -1387,7 +1188,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				MTL_ENABLE_DEBUG_INFO = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+ 				SDKROOT = iphoneos;
+@@ -1402,23 +1203,13 @@
+ 				CLANG_CXX_LIBRARY = "libc++";
+ 				CLANG_ENABLE_MODULES = YES;
+ 				CLANG_ENABLE_OBJC_ARC = YES;
+-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+ 				CLANG_WARN_BOOL_CONVERSION = YES;
+-				CLANG_WARN_COMMA = YES;
+ 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+ 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+ 				CLANG_WARN_EMPTY_BODY = YES;
+ 				CLANG_WARN_ENUM_CONVERSION = YES;
+-				CLANG_WARN_INFINITE_RECURSION = YES;
+ 				CLANG_WARN_INT_CONVERSION = YES;
+-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+ 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+-				CLANG_WARN_STRICT_PROTOTYPES = YES;
+-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+@@ -1426,14 +1217,13 @@
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				GCC_C_LANGUAGE_STANDARD = gnu99;
+-				GCC_NO_COMMON_BLOCKS = YES;
+ 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+ 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+ 				GCC_WARN_UNDECLARED_SELECTOR = YES;
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
+index c02632f..9023fff 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <Scheme
+-   LastUpgradeVersion = "0940"
++   LastUpgradeVersion = "0820"
+    version = "1.3">
+    <BuildAction
+       parallelizeBuildables = "NO"
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
+index 1b922ea..886c056 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <Scheme
+-   LastUpgradeVersion = "0940"
++   LastUpgradeVersion = "0620"
+    version = "1.3">
+    <BuildAction
+       parallelizeBuildables = "NO"
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+index d4f2580..a9654d5 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+@@ -1,8 +1,10 @@
+ /**
+  * Copyright (c) 2015-present, Facebook, Inc.
++ * All rights reserved.
+  *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
++ * This source code is licensed under the BSD-style license found in the
++ * LICENSE file in the root directory of this source tree. An additional grant
++ * of patent rights can be found in the PATENTS file in the same directory.
+  */
+ 
+ #import <UIKit/UIKit.h>
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 81bd9f5..82f99f2 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -1,8 +1,10 @@
+ /**
+  * Copyright (c) 2015-present, Facebook, Inc.
++ * All rights reserved.
+  *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
++ * This source code is licensed under the BSD-style license found in the
++ * LICENSE file in the root directory of this source tree. An additional grant
++ * of patent rights can be found in the PATENTS file in the same directory.
+  */
+ 
+ #import "AppDelegate.h"
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index e11e5b4..10258dd 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -9,7 +9,7 @@
+ 	<key>CFBundleExecutable</key>
+ 	<string>$(EXECUTABLE_NAME)</string>
+ 	<key>CFBundleIdentifier</key>
+-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
++	<string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
+ 	<key>CFBundleInfoDictionaryVersion</key>
+ 	<string>6.0</string>
+ 	<key>CFBundleName</key>
+@@ -24,8 +24,6 @@
+ 	<string>1</string>
+ 	<key>LSRequiresIPhoneOS</key>
+ 	<true/>
+-	<key>NSLocationWhenInUseUsageDescription</key>
+-	<string></string>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>LaunchScreen</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+@@ -45,8 +43,6 @@
+ 	<key>NSAppTransportSecurity</key>
+ 	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
+ 	<dict>
+-    <key>NSAllowsArbitraryLoads</key>
+-    <true/>
+ 		<key>NSExceptionDomains</key>
+ 		<dict>
+ 			<key>localhost</key>
+diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
+index c73e006..3d767fc 100644
+--- a/RnDiffApp/ios/RnDiffApp/main.m
++++ b/RnDiffApp/ios/RnDiffApp/main.m
+@@ -1,8 +1,10 @@
+ /**
+  * Copyright (c) 2015-present, Facebook, Inc.
++ * All rights reserved.
+  *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
++ * This source code is licensed under the BSD-style license found in the
++ * LICENSE file in the root directory of this source tree. An additional grant
++ * of patent rights can be found in the PATENTS file in the same directory.
+  */
+ 
+ #import <UIKit/UIKit.h>
+diff --git a/RnDiffApp/ios/RnDiffAppTests/Info.plist b/RnDiffApp/ios/RnDiffAppTests/Info.plist
+index ba72822..886825c 100644
+--- a/RnDiffApp/ios/RnDiffAppTests/Info.plist
++++ b/RnDiffApp/ios/RnDiffAppTests/Info.plist
+@@ -7,7 +7,7 @@
+ 	<key>CFBundleExecutable</key>
+ 	<string>$(EXECUTABLE_NAME)</string>
+ 	<key>CFBundleIdentifier</key>
+-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
++	<string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
+ 	<key>CFBundleInfoDictionaryVersion</key>
+ 	<string>6.0</string>
+ 	<key>CFBundleName</key>
+diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+index f1d140e..7163331 100644
+--- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
++++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+@@ -1,8 +1,10 @@
+ /**
+  * Copyright (c) 2015-present, Facebook, Inc.
++ * All rights reserved.
+  *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
++ * This source code is licensed under the BSD-style license found in the
++ * LICENSE file in the root directory of this source tree. An additional grant
++ * of patent rights can be found in the PATENTS file in the same directory.
+  */
+ 
+ #import <UIKit/UIKit.h>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 38d77fe..d75bec0 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,22 +1,22 @@
+ {
+-  "name": "RnDiffApp",
+-  "version": "0.0.1",
+-  "private": true,
+-  "scripts": {
+-    "start": "node node_modules/react-native/local-cli/cli.js start",
+-    "test": "jest"
+-  },
+-  "dependencies": {
+-    "react": "16.4.1",
+-    "react-native": "0.57.0-rc.3"
+-  },
+-  "devDependencies": {
+-    "babel-jest": "24.1.0",
+-    "jest": "24.1.0",
+-    "metro-react-native-babel-preset": "^0.43.5",
+-    "react-test-renderer": "16.4.1"
+-  },
+-  "jest": {
+-    "preset": "react-native"
+-  }
++	"name": "RnDiffApp",
++	"version": "0.0.1",
++	"private": true,
++	"scripts": {
++		"start": "node node_modules/react-native/local-cli/cli.js start",
++		"test": "jest"
++	},
++	"dependencies": {
++		"react": "16.0.0",
++		"react-native": "0.50.3"
++	},
++	"devDependencies": {
++		"babel-jest": "24.1.0",
++		"babel-preset-react-native": "4.0.1",
++		"jest": "24.1.0",
++		"react-test-renderer": "16.0.0"
++	},
++	"jest": {
++		"preset": "react-native"
++	}
+ }
+\ No newline at end of file

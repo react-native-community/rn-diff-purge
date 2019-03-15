@@ -1,0 +1,31 @@
+diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
+index 48361a9..9852871 100644
+--- a/RnDiffApp/android/app/proguard-rules.pro
++++ b/RnDiffApp/android/app/proguard-rules.pro
+@@ -26,14 +26,11 @@
+ # See http://sourceforge.net/p/proguard/bugs/466/
+ -keep,allowobfuscation @interface com.facebook.proguard.annotations.DoNotStrip
+ -keep,allowobfuscation @interface com.facebook.proguard.annotations.KeepGettersAndSetters
+--keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
+ 
+ # Do not strip any method/class that is annotated with @DoNotStrip
+ -keep @com.facebook.proguard.annotations.DoNotStrip class *
+--keep @com.facebook.common.internal.DoNotStrip class *
+ -keepclassmembers class * {
+     @com.facebook.proguard.annotations.DoNotStrip *;
+-    @com.facebook.common.internal.DoNotStrip *;
+ }
+ 
+ -keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index bbd0cb9..86cc624 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,6 +7,6 @@
+   },
+   "dependencies": {
+     "react": "15.6.2",
+-    "react-native": "0.28.0"
++    "react-native": "0.28.0-rc.0"
+   }
+ }

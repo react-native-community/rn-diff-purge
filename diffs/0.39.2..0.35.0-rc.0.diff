@@ -1,0 +1,373 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 5912f47..f565799 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -1,18 +1,28 @@
+ [ignore]
+-; We fork some components by platform
++
++# We fork some components by platform.
+ .*/*[.]android.js
+ 
+-; Ignore "BUCK" generated dirs
++# Ignore templates with `@flow` in header
++.*/local-cli/generator.*
++
++# Ignore malformed json
++.*/node_modules/y18n/test/.*\.json
++
++# Ignore the website subdir
++<PROJECT_ROOT>/website/.*
++
++# Ignore BUCK generated dirs
+ <PROJECT_ROOT>/\.buckd/
+ 
+-; Ignore unexpected extra "@providesModule"
+-.*/node_modules/.*/node_modules/fbjs/.*
++# Ignore unexpected extra @providesModule
++.*/node_modules/commoner/test/source/widget/share.js
+ 
+-; Ignore duplicate module providers
+-; For RN Apps installed via npm, "Libraries" folder is inside
+-; "node_modules/react-native" but in the source repo it is in the root
++# Ignore duplicate module providers
++# For RN Apps installed via npm, "Libraries" folder is inside node_modules/react-native but in the source repo it is in the root
+ .*/Libraries/react-native/React.js
+ .*/Libraries/react-native/ReactNative.js
++.*/node_modules/jest-runtime/build/__tests__/.*
+ 
+ [include]
+ 
+@@ -24,6 +34,9 @@ flow/
+ [options]
+ module.system=haste
+ 
++esproposal.class_static_fields=enable
++esproposal.class_instance_fields=enable
++
+ experimental.strict_type_args=true
+ 
+ munge_underscores=true
+@@ -35,11 +48,11 @@ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+ suppress_type=$FixMe
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(3[0-5]\\|[1-2][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(3[0-5]\\|1[0-9]\\|[1-2][0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(3[0-2]\\|[1-2][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(3[0-2]\\|1[0-9]\\|[1-2][0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ 
+ unsafe.enable_getters_and_setters=true
+ 
+ [version]
+-^0.35.0
++^0.32.0
+diff --git a/RnDiffApp/.gitattributes b/RnDiffApp/.gitattributes
+deleted file mode 100644
+index d42ff18..0000000
+--- a/RnDiffApp/.gitattributes
++++ /dev/null
+@@ -1 +0,0 @@
+-*.pbxproj -text
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 93fd764..eb1535e 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -22,13 +22,12 @@ DerivedData
+ *.xcuserstate
+ project.xcworkspace
+ 
+-# Android/IntelliJ
++# Android/IJ
+ #
+-build/
++*.iml
+ .idea
+ .gradle
+ local.properties
+-*.iml
+ 
+ # node.js
+ #
+@@ -39,4 +38,4 @@ npm-debug.log
+ buck-out/
+ \.buckd/
+ android/app/libs
+-*.keystore
++android/keystores/debug.keystore
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 97ad994..874f51e 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -134,6 +134,6 @@ dependencies {
+ // Run this once to be able to run the application with BUCK
+ // puts all compile dependencies into folder libs for BUCK to use
+ task copyDownloadableDepsToLibs(type: Copy) {
+-    from configurations.compile
+-    into 'libs'
++  from configurations.compile
++  into 'libs'
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index 55e3b57..f9a1daf 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+@@ -8,7 +8,6 @@ import com.facebook.react.ReactInstanceManager;
+ import com.facebook.react.ReactNativeHost;
+ import com.facebook.react.ReactPackage;
+ import com.facebook.react.shell.MainReactPackage;
+-import com.facebook.soloader.SoLoader;
+ 
+ import java.util.Arrays;
+ import java.util.List;
+@@ -31,12 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
+ 
+   @Override
+   public ReactNativeHost getReactNativeHost() {
+-    return mReactNativeHost;
+-  }
+-
+-  @Override
+-  public void onCreate() {
+-    super.onCreate();
+-    SoLoader.init(this, /* native exopackage */ false);
++      return mReactNativeHost;
+   }
+ }
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 93f7fc7..60ce037 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -22,7 +22,6 @@
+ 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+ 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+ 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+-		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+ 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+ /* End PBXBuildFile section */
+ 
+@@ -90,20 +89,6 @@
+ 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
+ 			remoteInfo = React;
+ 		};
+-		5E9157321DD0AC6500FF2AA8 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+-			remoteInfo = RCTAnimation;
+-		};
+-		5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
+-			proxyType = 2;
+-			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
+-			remoteInfo = "RCTAnimation-tvOS";
+-		};
+ 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
+ 			isa = PBXContainerItemProxy;
+ 			containerPortal = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
+@@ -121,17 +106,17 @@
+ /* End PBXContainerItemProxy section */
+ 
+ /* Begin PBXFileReference section */
+-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+-		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
+-		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
+-		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
+-		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
+-		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
++		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = main.jsbundle; path = main.jsbundle; sourceTree = "<group>"; };
++		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = ../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj; sourceTree = "<group>"; };
++		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = ../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj; sourceTree = "<group>"; };
++		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = ../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj; sourceTree = "<group>"; };
++		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = ../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj; sourceTree = "<group>"; };
++		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = ../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj; sourceTree = "<group>"; };
+ 		00E356EE1AD99517003FC87E /* RnDiffAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RnDiffAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+ 		00E356F21AD99517003FC87E /* RnDiffAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RnDiffAppTests.m; sourceTree = "<group>"; };
+-		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
+-		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
++		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = ../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj; sourceTree = "<group>"; };
++		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = ../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj; sourceTree = "<group>"; };
+ 		13B07F961A680F5B00A75B9A /* RnDiffApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RnDiffApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RnDiffApp/AppDelegate.h; sourceTree = "<group>"; };
+ 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RnDiffApp/AppDelegate.m; sourceTree = "<group>"; };
+@@ -139,10 +124,9 @@
+ 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RnDiffApp/Images.xcassets; sourceTree = "<group>"; };
+ 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RnDiffApp/Info.plist; sourceTree = "<group>"; };
+ 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RnDiffApp/main.m; sourceTree = "<group>"; };
+-		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+-		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+-		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+-		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
++		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = ../node_modules/react-native/React/React.xcodeproj; sourceTree = "<group>"; };
++		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = ../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj; sourceTree = "<group>"; };
++		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = ../node_modules/react-native/Libraries/Text/RCTText.xcodeproj; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -158,7 +142,6 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+ 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
+ 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+ 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
+@@ -270,15 +253,6 @@
+ 			name = Products;
+ 			sourceTree = "<group>";
+ 		};
+-		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
+-			isa = PBXGroup;
+-			children = (
+-				5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */,
+-				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */,
+-			);
+-			name = Products;
+-			sourceTree = "<group>";
+-		};
+ 		78C398B11ACF4ADC00677621 /* Products */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -290,7 +264,6 @@
+ 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+ 			isa = PBXGroup;
+ 			children = (
+-				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
+ 				146833FF1AC3E56700842450 /* React.xcodeproj */,
+ 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
+ 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
+@@ -404,10 +377,6 @@
+ 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
+ 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
+ 				},
+-				{
+-					ProductGroup = 5E91572E1DD0AC6500FF2AA8 /* Products */;
+-					ProjectRef = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
+-				},
+ 				{
+ 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
+ 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
+@@ -510,20 +479,6 @@
+ 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+-		5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = libRCTAnimation.a;
+-			remoteRef = 5E9157321DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+-		5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */ = {
+-			isa = PBXReferenceProxy;
+-			fileType = archive.ar;
+-			path = "libRCTAnimation-tvOS.a";
+-			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+-			sourceTree = BUILT_PRODUCTS_DIR;
+-		};
+ 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+@@ -573,6 +528,7 @@
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
++			showEnvVarsInLog = 1;
+ 		};
+ /* End PBXShellScriptBuildPhase section */
+ 
+@@ -652,7 +608,12 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				DEAD_CODE_STRIPPING = NO;
+-				INFOPLIST_FILE = RnDiffApp/Info.plist;
++				HEADER_SEARCH_PATHS = (
++					"$(inherited)",
++					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
++					"$(SRCROOT)/../node_modules/react-native/React/**",
++				);
++				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -669,7 +630,12 @@
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CURRENT_PROJECT_VERSION = 1;
+-				INFOPLIST_FILE = RnDiffApp/Info.plist;
++				HEADER_SEARCH_PATHS = (
++					"$(inherited)",
++					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
++					"$(SRCROOT)/../node_modules/react-native/React/**",
++				);
++				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -717,8 +683,8 @@
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				HEADER_SEARCH_PATHS = (
+ 					"$(inherited)",
++					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+ 					"$(SRCROOT)/../node_modules/react-native/React/**",
+-					"$(SRCROOT)/../node_modules/react-native/ReactCommon/**",
+ 				);
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				MTL_ENABLE_DEBUG_INFO = YES;
+@@ -757,8 +723,8 @@
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				HEADER_SEARCH_PATHS = (
+ 					"$(inherited)",
++					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+ 					"$(SRCROOT)/../node_modules/react-native/React/**",
+-					"$(SRCROOT)/../node_modules/react-native/ReactCommon/**",
+ 				);
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index 2fb6a11..e98ebb0 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -45,7 +45,7 @@
+ 		<dict>
+ 			<key>localhost</key>
+ 			<dict>
+-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
++				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+ 				<true/>
+ 			</dict>
+ 		</dict>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 90249f2..ba92055 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,16 +7,17 @@
+ 		"test": "jest"
+ 	},
+ 	"dependencies": {
+-		"react": "15.4.2",
+-		"react-native": "0.39.2"
++		"react": "15.3.2",
++		"react-native": "0.35.0-rc.0"
++	},
++	"jest": {
++		"preset": "jest-react-native"
+ 	},
+ 	"devDependencies": {
+ 		"babel-jest": "24.1.0",
+ 		"babel-preset-react-native": "4.0.1",
+ 		"jest": "24.1.0",
+-		"react-test-renderer": "15.4.2"
+-	},
+-	"jest": {
+-		"preset": "react-native"
++		"jest-react-native": "18.0.0",
++		"react-test-renderer": "15.3.2"
+ 	}
+-}
+\ No newline at end of file
++}

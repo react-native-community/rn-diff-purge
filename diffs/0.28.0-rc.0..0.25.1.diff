@@ -1,0 +1,241 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 466bb11..f56848d 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -15,6 +15,8 @@
+ # Ignore react and fbjs where there are overlaps, but don't ignore
+ # anything that react-native relies on
+ .*/node_modules/fbjs/lib/Map.js
++.*/node_modules/fbjs/lib/fetch.js
++.*/node_modules/fbjs/lib/ExecutionEnvironment.js
+ .*/node_modules/fbjs/lib/ErrorUtils.js
+ 
+ # Flow has a built-in definition for the 'react' module which we prefer to use
+@@ -46,9 +48,6 @@
+ # Ignore BUCK generated folders
+ .*\.buckd/
+ 
+-# Ignore RNPM
+-.*/local-cli/rnpm/.*
+-
+ .*/node_modules/is-my-json-valid/test/.*\.json
+ .*/node_modules/iconv-lite/encodings/tables/.*\.json
+ .*/node_modules/y18n/test/.*\.json
+@@ -80,20 +79,18 @@ module.system=haste
+ esproposal.class_static_fields=enable
+ esproposal.class_instance_fields=enable
+ 
+-experimental.strict_type_args=true
+-
+ munge_underscores=true
+ 
+ module.name_mapper='^image![a-zA-Z0-9$_-]+$' -> 'GlobalImageStub'
+-module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
++module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\)$' -> 'RelativeImageStub'
+ 
+ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+ suppress_type=$FixMe
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-6]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-6]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-3]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-3]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ 
+ [version]
+-^0.26.0
++0.23.0
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index eb1535e..42c9490 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -24,7 +24,6 @@ project.xcworkspace
+ 
+ # Android/IJ
+ #
+-*.iml
+ .idea
+ .gradle
+ local.properties
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 874f51e..f8288cd 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -55,13 +55,7 @@ import com.android.build.OutputFile
+  *   // date; if you have any other folders that you want to ignore for performance reasons (gradle
+  *   // indexes the entire tree), add them here. Alternatively, if you have JS files in android/
+  *   // for example, you might want to remove it from here.
+- *   inputExcludes: ["android/**", "ios/**"],
+- *
+- *   // override which node gets called and with what additional arguments
+- *   nodeExecutableAndArgs: ["node"]
+- *
+- *   // supply additional arguments to the packager
+- *   extraPackagerArgs: []
++ *   inputExcludes: ["android/**", "ios/**"]
+  * ]
+  */
+ 
+diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
+index 9852871..347a13c 100644
+--- a/RnDiffApp/android/app/proguard-rules.pro
++++ b/RnDiffApp/android/app/proguard-rules.pro
+@@ -51,9 +51,9 @@
+ 
+ -keepattributes Signature
+ -keepattributes *Annotation*
+--keep class okhttp3.** { *; }
+--keep interface okhttp3.** { *; }
+--dontwarn okhttp3.**
++-keep class com.squareup.okhttp.** { *; }
++-keep interface com.squareup.okhttp.** { *; }
++-dontwarn com.squareup.okhttp.**
+ 
+ # okio
+ 
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index fcba4c5..403a007 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -18,7 +18,7 @@ allprojects {
+         jcenter()
+         maven {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+-            url "$rootDir/../node_modules/react-native/android"
++            url "$projectDir/../../node_modules/react-native/android"
+         }
+     }
+ }
+diff --git a/RnDiffApp/index.android.js b/RnDiffApp/index.android.js
+index 07a8f7b..c1fd99c 100644
+--- a/RnDiffApp/index.android.js
++++ b/RnDiffApp/index.android.js
+@@ -1,7 +1,6 @@
+ /**
+  * Sample React Native App
+  * https://github.com/facebook/react-native
+- * @flow
+  */
+ 
+ import React, { Component } from 'react';
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 4c88077..56bdd07 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -20,7 +20,6 @@
+ 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+ 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+-		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+ 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+ 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+ /* End PBXBuildFile section */
+@@ -134,7 +133,6 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -577,6 +575,10 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
++				FRAMEWORK_SEARCH_PATHS = (
++					"$(SDKROOT)/Developer/Library/Frameworks",
++					"$(inherited)",
++				);
+ 				GCC_PREPROCESSOR_DEFINITIONS = (
+ 					"DEBUG=1",
+ 					"$(inherited)",
+@@ -594,6 +596,10 @@
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
++				FRAMEWORK_SEARCH_PATHS = (
++					"$(SDKROOT)/Developer/Library/Frameworks",
++					"$(inherited)",
++				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+@@ -614,10 +620,7 @@
+ 				);
+ 				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+-        OTHER_LDFLAGS = (
+-          "-ObjC",
+-          "-lc++",
+-        );
++				OTHER_LDFLAGS = "-ObjC";
+ 				PRODUCT_NAME = RnDiffApp;
+ 			};
+ 			name = Debug;
+@@ -633,10 +636,7 @@
+ 				);
+ 				INFOPLIST_FILE = "RnDiffApp/Info.plist";
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+-        OTHER_LDFLAGS = (
+-          "-ObjC",
+-          "-lc++",
+-        );
++				OTHER_LDFLAGS = "-ObjC";
+ 				PRODUCT_NAME = RnDiffApp;
+ 			};
+ 			name = Release;
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 65ef839..6c5e4ac 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -47,7 +47,6 @@
+                                                       moduleName:@"RnDiffApp"
+                                                initialProperties:nil
+                                                    launchOptions:launchOptions];
+-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+ 
+   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+   UIViewController *rootViewController = [UIViewController new];
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index e98ebb0..91963b2 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -38,17 +38,11 @@
+ 	<false/>
+ 	<key>NSLocationWhenInUseUsageDescription</key>
+ 	<string></string>
+-	<key>NSAppTransportSecurity</key>
+-	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
+-	<dict>
+-		<key>NSExceptionDomains</key>
+-		<dict>
+-			<key>localhost</key>
+-			<dict>
+-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+-				<true/>
+-			</dict>
+-		</dict>
+-	</dict>
++  <key>NSAppTransportSecurity</key>
++  <dict>
++    <!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
++    <key>NSAllowsArbitraryLoads</key>
++    <true/>
++  </dict>
+ </dict>
+ </plist>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 86cc624..61608ae 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -6,7 +6,7 @@
+     "start": "node node_modules/react-native/local-cli/cli.js start"
+   },
+   "dependencies": {
+-    "react": "15.6.2",
+-    "react-native": "0.28.0-rc.0"
++    "react": "^0.14.9",
++    "react-native": "0.25.1"
+   }
+ }

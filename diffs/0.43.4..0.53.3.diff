@@ -1,0 +1,676 @@
+diff --git a/RnDiffApp/.babelrc b/RnDiffApp/.babelrc
+index 8df53fe..a9ce136 100644
+--- a/RnDiffApp/.babelrc
++++ b/RnDiffApp/.babelrc
+@@ -1,3 +1,3 @@
+ {
+-"presets": ["react-native"]
+-}
+\ No newline at end of file
++  "presets": ["react-native"]
++}
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index dcd5fd6..0b611f0 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -12,36 +12,43 @@
+ ; For RN Apps installed via npm, "Libraries" folder is inside
+ ; "node_modules/react-native" but in the source repo it is in the root
+ .*/Libraries/react-native/React.js
+-.*/Libraries/react-native/ReactNative.js
++
++; Ignore polyfills
++.*/Libraries/polyfills/.*
++
++; Ignore metro
++.*/node_modules/metro/.*
+ 
+ [include]
+ 
+ [libs]
+ node_modules/react-native/Libraries/react-native/react-native-interface.js
+-node_modules/react-native/flow
+-flow/
++node_modules/react-native/flow/
++node_modules/react-native/flow-github/
+ 
+ [options]
+ emoji=true
+ 
+ module.system=haste
+ 
+-experimental.strict_type_args=true
+-
+ munge_underscores=true
+ 
+ module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
+ 
++module.file_ext=.js
++module.file_ext=.jsx
++module.file_ext=.json
++module.file_ext=.native.js
++
+ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+-suppress_type=$FixMe
++suppress_type=$FlowFixMeProps
++suppress_type=$FlowFixMeState
+ 
+-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(4[0-0]\\|[1-3][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(4[0-0]\\|[1-3][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
+-unsafe.enable_getters_and_setters=true
+-
+ [version]
+-^0.40.0
++^0.63.0
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 10be197..0826423 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -46,8 +46,8 @@ buck-out/
+ # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+ # screenshots whenever they are needed.
+ # For more information about the recommended setup visit:
+-# https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Gitignore.md
++# https://docs.fastlane.tools/best-practices/source-control/
+ 
+-fastlane/report.xml
+-fastlane/Preview.html
+-fastlane/screenshots
++*/fastlane/report.xml
++*/fastlane/Preview.html
++*/fastlane/screenshots
+diff --git a/RnDiffApp/index.android.js b/RnDiffApp/App.js
+similarity index 69%
+rename from RnDiffApp/index.android.js
+rename to RnDiffApp/App.js
+index 48bcb43..dd1d45a 100644
+--- a/RnDiffApp/index.android.js
++++ b/RnDiffApp/App.js
+@@ -6,13 +6,21 @@
+ 
+ import React, { Component } from 'react';
+ import {
+-  AppRegistry,
++  Platform,
+   StyleSheet,
+   Text,
+   View
+ } from 'react-native';
+ 
+-export default class RnDiffApp extends Component {
++const instructions = Platform.select({
++  ios: 'Press Cmd+R to reload,\n' +
++    'Cmd+D or shake for dev menu',
++  android: 'Double tap R on your keyboard to reload,\n' +
++    'Shake or press menu button for dev menu',
++});
++
++type Props = {};
++export default class App extends Component<Props> {
+   render() {
+     return (
+       <View style={styles.container}>
+@@ -20,11 +28,10 @@ export default class RnDiffApp extends Component {
+           Welcome to React Native!
+         </Text>
+         <Text style={styles.instructions}>
+-          To get started, edit index.android.js
++          To get started, edit App.js
+         </Text>
+         <Text style={styles.instructions}>
+-          Double tap R on your keyboard to reload,{'\n'}
+-          Shake or press menu button for dev menu
++          {instructions}
+         </Text>
+       </View>
+     );
+@@ -49,5 +56,3 @@ const styles = StyleSheet.create({
+     marginBottom: 5,
+   },
+ });
+-
+-AppRegistry.registerComponent('RnDiffApp', () => RnDiffApp);
+diff --git a/RnDiffApp/__tests__/index.ios.js b/RnDiffApp/__tests__/App.js
+similarity index 81%
+rename from RnDiffApp/__tests__/index.ios.js
+rename to RnDiffApp/__tests__/App.js
+index ba7c5b5..d0b9ee3 100644
+--- a/RnDiffApp/__tests__/index.ios.js
++++ b/RnDiffApp/__tests__/App.js
+@@ -1,12 +1,12 @@
+ import 'react-native';
+ import React from 'react';
+-import Index from '../index.ios.js';
++import App from '../App';
+ 
+ // Note: test renderer must be required after react-native.
+ import renderer from 'react-test-renderer';
+ 
+ it('renders correctly', () => {
+   const tree = renderer.create(
+-    <Index />
++    <App />
+   );
+ });
+diff --git a/RnDiffApp/__tests__/index.android.js b/RnDiffApp/__tests__/index.android.js
+deleted file mode 100644
+index b49b908..0000000
+--- a/RnDiffApp/__tests__/index.android.js
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import 'react-native';
+-import React from 'react';
+-import Index from '../index.android.js';
+-
+-// Note: test renderer must be required after react-native.
+-import renderer from 'react-test-renderer';
+-
+-it('renders correctly', () => {
+-  const tree = renderer.create(
+-    <Index />
+-  );
+-});
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 97ad994..c8ea1af 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -33,6 +33,13 @@ import com.android.build.OutputFile
+  *   // bundleInPaidRelease: true,
+  *   // bundleInBeta: true,
+  *
++ *   // whether to disable dev mode in custom build variants (by default only disabled in release)
++ *   // for example: to disable dev mode in the staging build type (if configured)
++ *   devDisabledInStaging: true,
++ *   // The configuration property can be in the following formats
++ *   //         'devDisabledIn${productFlavor}${buildType}'
++ *   //         'devDisabledIn${buildType}'
++ *
+  *   // the root of your project, i.e. where "package.json" lives
+  *   root: "../../",
+  *
+@@ -58,13 +65,17 @@ import com.android.build.OutputFile
+  *   inputExcludes: ["android/**", "ios/**"],
+  *
+  *   // override which node gets called and with what additional arguments
+- *   nodeExecutableAndArgs: ["node"]
++ *   nodeExecutableAndArgs: ["node"],
+  *
+  *   // supply additional arguments to the packager
+  *   extraPackagerArgs: []
+  * ]
+  */
+ 
++project.ext.react = [
++    entryFile: "index.js"
++]
++
+ apply from: "../../node_modules/react-native/react.gradle"
+ 
+ /**
+diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
+index 48361a9..6e8516c 100644
+--- a/RnDiffApp/android/app/proguard-rules.pro
++++ b/RnDiffApp/android/app/proguard-rules.pro
+@@ -50,6 +50,10 @@
+ 
+ -dontwarn com.facebook.react.**
+ 
++# TextLayoutBuilder uses a non-public Android constructor within StaticLayout.
++# See libs/proxy/src/main/java/com/facebook/fbui/textlayoutbuilder/proxy for details.
++-dontwarn android.text.StaticLayout
++
+ # okhttp
+ 
+ -keepattributes Signature
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index be5c458..efd809f 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+@@ -25,6 +25,11 @@ public class MainApplication extends Application implements ReactApplication {
+           new MainReactPackage()
+       );
+     }
++
++    @Override
++    protected String getJSMainModuleName() {
++      return "index";
++    }
+   };
+ 
+   @Override
+diff --git a/RnDiffApp/index.ios.js b/RnDiffApp/index.ios.js
+deleted file mode 100644
+index f6af596..0000000
+--- a/RnDiffApp/index.ios.js
++++ /dev/null
+@@ -1,53 +0,0 @@
+-/**
+- * Sample React Native App
+- * https://github.com/facebook/react-native
+- * @flow
+- */
+-
+-import React, { Component } from 'react';
+-import {
+-  AppRegistry,
+-  StyleSheet,
+-  Text,
+-  View
+-} from 'react-native';
+-
+-export default class RnDiffApp extends Component {
+-  render() {
+-    return (
+-      <View style={styles.container}>
+-        <Text style={styles.welcome}>
+-          Welcome to React Native!
+-        </Text>
+-        <Text style={styles.instructions}>
+-          To get started, edit index.ios.js
+-        </Text>
+-        <Text style={styles.instructions}>
+-          Press Cmd+R to reload,{'\n'}
+-          Cmd+D or shake for dev menu
+-        </Text>
+-      </View>
+-    );
+-  }
+-}
+-
+-const styles = StyleSheet.create({
+-  container: {
+-    flex: 1,
+-    justifyContent: 'center',
+-    alignItems: 'center',
+-    backgroundColor: '#F5FCFF',
+-  },
+-  welcome: {
+-    fontSize: 20,
+-    textAlign: 'center',
+-    margin: 10,
+-  },
+-  instructions: {
+-    textAlign: 'center',
+-    color: '#333333',
+-    marginBottom: 5,
+-  },
+-});
+-
+-AppRegistry.registerComponent('RnDiffApp', () => RnDiffApp);
+diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
+new file mode 100644
+index 0000000..39283d1
+--- /dev/null
++++ b/RnDiffApp/index.js
+@@ -0,0 +1,4 @@
++import { AppRegistry } from 'react-native';
++import App from './App';
++
++AppRegistry.registerComponent('RnDiffApp', () => App);
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 2e79064..868e0b0 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -25,17 +25,18 @@
+ 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+ 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+-		2D02E4C21E0B4AEC006451C7 /* libRCTAnimation-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */; };
++		2D02E4C21E0B4AEC006451C7 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+ 		2D02E4C31E0B4AEC006451C7 /* libRCTImage-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */; };
+ 		2D02E4C41E0B4AEC006451C7 /* libRCTLinking-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E881DF850E9000B6D8A /* libRCTLinking-tvOS.a */; };
+ 		2D02E4C51E0B4AEC006451C7 /* libRCTNetwork-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E8C1DF850E9000B6D8A /* libRCTNetwork-tvOS.a */; };
+ 		2D02E4C61E0B4AEC006451C7 /* libRCTSettings-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E901DF850E9000B6D8A /* libRCTSettings-tvOS.a */; };
+ 		2D02E4C71E0B4AEC006451C7 /* libRCTText-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E941DF850E9000B6D8A /* libRCTText-tvOS.a */; };
+ 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
+-		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
++		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
+ 		2DCD954D1E0B4F2C00145EB5 /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
+ 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+ 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
++		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXContainerItemProxy section */
+@@ -109,6 +110,27 @@
+ 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
+ 			remoteInfo = "RnDiffApp-tvOS";
+ 		};
++		2D16E6711FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
++			proxyType = 2;
++			remoteGlobalIDString = ADD01A681E09402E00F6D226;
++			remoteInfo = "RCTBlob-tvOS";
++		};
++		2D16E6831FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
++			proxyType = 2;
++			remoteGlobalIDString = 3DBE0D001F3B181A0099AA32;
++			remoteInfo = fishhook;
++		};
++		2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
++			proxyType = 2;
++			remoteGlobalIDString = 3DBE0D0D1F3B181C0099AA32;
++			remoteInfo = "fishhook-tvOS";
++		};
+ 		3DAD3E831DF850E9000B6D8A /* PBXContainerItemProxy */ = {
+ 			isa = PBXContainerItemProxy;
+ 			containerPortal = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
+@@ -228,6 +250,13 @@
+ 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
+ 			remoteInfo = RCTText;
+ 		};
++		ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
++			proxyType = 2;
++			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
++			remoteInfo = RCTBlob;
++		};
+ /* End PBXContainerItemProxy section */
+ 
+ /* Begin PBXFileReference section */
+@@ -252,9 +281,11 @@
+ 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+ 		2D02E47B1E0B4A5D006451C7 /* RnDiffApp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RnDiffApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		2D02E4901E0B4A5D006451C7 /* RnDiffApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RnDiffApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
++		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+ 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+ 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
++		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -270,6 +301,8 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
++				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
++				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+ 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
+ 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+ 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+@@ -288,8 +321,8 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */,
+-				2D02E4C21E0B4AEC006451C7 /* libRCTAnimation-tvOS.a in Frameworks */,
++				2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */,
++				2D02E4C21E0B4AEC006451C7 /* libRCTAnimation.a in Frameworks */,
+ 				2D02E4C31E0B4AEC006451C7 /* libRCTImage-tvOS.a in Frameworks */,
+ 				2D02E4C41E0B4AEC006451C7 /* libRCTLinking-tvOS.a in Frameworks */,
+ 				2D02E4C51E0B4AEC006451C7 /* libRCTNetwork-tvOS.a in Frameworks */,
+@@ -382,6 +415,8 @@
+ 			children = (
+ 				139FDEF41B06529B00C62182 /* libRCTWebSocket.a */,
+ 				3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */,
++				2D16E6841FA4F8DC00B85C8A /* libfishhook.a */,
++				2D16E6861FA4F8DC00B85C8A /* libfishhook-tvOS.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+@@ -404,22 +439,30 @@
+ 			isa = PBXGroup;
+ 			children = (
+ 				146834041AC3E56700842450 /* libReact.a */,
+-				3DAD3EA31DF850E9000B6D8A /* libReact.a */,
+ 				3DAD3EA51DF850E9000B6D8A /* libyoga.a */,
+ 				3DAD3EA71DF850E9000B6D8A /* libyoga.a */,
+ 				3DAD3EA91DF850E9000B6D8A /* libcxxreact.a */,
+ 				3DAD3EAB1DF850E9000B6D8A /* libcxxreact.a */,
+ 				3DAD3EAD1DF850E9000B6D8A /* libjschelpers.a */,
+ 				3DAD3EAF1DF850E9000B6D8A /* libjschelpers.a */,
++				3DAD3EA31DF850E9000B6D8A /* libReact-tvOS.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+ 		};
++		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
++			isa = PBXGroup;
++			children = (
++				2D16E6891FA4F8E400B85C8A /* libReact.a */,
++			);
++			name = Frameworks;
++			sourceTree = "<group>";
++		};
+ 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
+ 			isa = PBXGroup;
+ 			children = (
+ 				5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */,
+-				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */,
++				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+@@ -439,6 +482,7 @@
+ 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
+ 				146833FF1AC3E56700842450 /* React.xcodeproj */,
+ 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
++				ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */,
+ 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
+ 				00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */,
+ 				78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */,
+@@ -467,10 +511,12 @@
+ 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+ 				00E356EF1AD99517003FC87E /* RnDiffAppTests */,
+ 				83CBBA001A601CBA00E9B192 /* Products */,
++				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+ 			);
+ 			indentWidth = 2;
+ 			sourceTree = "<group>";
+ 			tabWidth = 2;
++			usesTabs = 0;
+ 		};
+ 		83CBBA001A601CBA00E9B192 /* Products */ = {
+ 			isa = PBXGroup;
+@@ -483,6 +529,15 @@
+ 			name = Products;
+ 			sourceTree = "<group>";
+ 		};
++		ADBDB9201DFEBF0600ED6528 /* Products */ = {
++			isa = PBXGroup;
++			children = (
++				ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */,
++				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
++			);
++			name = Products;
++			sourceTree = "<group>";
++		};
+ /* End PBXGroup section */
+ 
+ /* Begin PBXNativeTarget section */
+@@ -602,6 +657,10 @@
+ 					ProductGroup = 5E91572E1DD0AC6500FF2AA8 /* Products */;
+ 					ProjectRef = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
+ 				},
++				{
++					ProductGroup = ADBDB9201DFEBF0600ED6528 /* Products */;
++					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
++				},
+ 				{
+ 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
+ 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
+@@ -706,6 +765,27 @@
+ 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
++		2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */ = {
++			isa = PBXReferenceProxy;
++			fileType = archive.ar;
++			path = "libRCTBlob-tvOS.a";
++			remoteRef = 2D16E6711FA4F8DC00B85C8A /* PBXContainerItemProxy */;
++			sourceTree = BUILT_PRODUCTS_DIR;
++		};
++		2D16E6841FA4F8DC00B85C8A /* libfishhook.a */ = {
++			isa = PBXReferenceProxy;
++			fileType = archive.ar;
++			path = libfishhook.a;
++			remoteRef = 2D16E6831FA4F8DC00B85C8A /* PBXContainerItemProxy */;
++			sourceTree = BUILT_PRODUCTS_DIR;
++		};
++		2D16E6861FA4F8DC00B85C8A /* libfishhook-tvOS.a */ = {
++			isa = PBXReferenceProxy;
++			fileType = archive.ar;
++			path = "libfishhook-tvOS.a";
++			remoteRef = 2D16E6851FA4F8DC00B85C8A /* PBXContainerItemProxy */;
++			sourceTree = BUILT_PRODUCTS_DIR;
++		};
+ 		3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+@@ -748,10 +828,10 @@
+ 			remoteRef = 3DAD3E981DF850E9000B6D8A /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+-		3DAD3EA31DF850E9000B6D8A /* libReact.a */ = {
++		3DAD3EA31DF850E9000B6D8A /* libReact-tvOS.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+-			path = libReact.a;
++			path = "libReact-tvOS.a";
+ 			remoteRef = 3DAD3EA21DF850E9000B6D8A /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+@@ -804,10 +884,10 @@
+ 			remoteRef = 5E9157321DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+-		5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */ = {
++		5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */ = {
+ 			isa = PBXReferenceProxy;
+ 			fileType = archive.ar;
+-			path = "libRCTAnimation-tvOS.a";
++			path = libRCTAnimation.a;
+ 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
+@@ -825,6 +905,13 @@
+ 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
+ 			sourceTree = BUILT_PRODUCTS_DIR;
+ 		};
++		ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */ = {
++			isa = PBXReferenceProxy;
++			fileType = archive.ar;
++			path = libRCTBlob.a;
++			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
++			sourceTree = BUILT_PRODUCTS_DIR;
++		};
+ /* End PBXReferenceProxy section */
+ 
+ /* Begin PBXResourcesBuildPhase section */
+@@ -874,7 +961,7 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
++			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+ 		};
+ 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
+ 			isa = PBXShellScriptBuildPhase;
+@@ -888,7 +975,7 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
++			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+ 		};
+ /* End PBXShellScriptBuildPhase section */
+ 
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 9b8ee1a..82f99f2 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -18,7 +18,7 @@
+ {
+   NSURL *jsCodeLocation;
+ 
+-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
++  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+ 
+   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+                                                       moduleName:@"RnDiffApp"
+diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/Contents.json
+new file mode 100644
+index 0000000..2d92bd5
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp/Images.xcassets/Contents.json
+@@ -0,0 +1,6 @@
++{
++  "info" : {
++    "version" : 1,
++    "author" : "xcode"
++  }
++}
+diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+index b13326a..7163331 100644
+--- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
++++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+@@ -37,7 +37,7 @@
+ 
+ - (void)testRendersWelcomeScreen
+ {
+-  UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
++  UIViewController *vc = [[[RCTSharedApplication() delegate] window] rootViewController];
+   NSDate *date = [NSDate dateWithTimeIntervalSinceNow:TIMEOUT_SECONDS];
+   BOOL foundElement = NO;
+ 
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 5cfc0d4..a86ec9f 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,22 +1,22 @@
+ {
+-	"name": "RnDiffApp",
+-	"version": "0.0.1",
+-	"private": true,
+-	"scripts": {
+-		"start": "node node_modules/react-native/local-cli/cli.js start",
+-		"test": "jest"
+-	},
+-	"dependencies": {
+-		"react": "16.0.0-alpha.6",
+-		"react-native": "0.43.4"
+-	},
+-	"devDependencies": {
+-		"babel-jest": "24.1.0",
+-		"babel-preset-react-native": "4.0.1",
+-		"jest": "24.1.0",
+-		"react-test-renderer": "16.0.0-alpha.6"
+-	},
+-	"jest": {
+-		"preset": "react-native"
+-	}
++  "name": "RnDiffApp",
++  "version": "0.0.1",
++  "private": true,
++  "scripts": {
++    "start": "node node_modules/react-native/local-cli/cli.js start",
++    "test": "jest"
++  },
++  "dependencies": {
++    "react": "16.2.0",
++    "react-native": "0.53.3"
++  },
++  "devDependencies": {
++    "babel-jest": "24.1.0",
++    "babel-preset-react-native": "4.0.1",
++    "jest": "24.1.0",
++    "react-test-renderer": "16.2.0"
++  },
++  "jest": {
++    "preset": "react-native"
++  }
+ }
+\ No newline at end of file
