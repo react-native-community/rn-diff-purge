@@ -1,0 +1,70 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index f99d302..3c0adb5 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -64,4 +64,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
+ [version]
+-^0.74.0
++^0.75.0
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 4f8f03e..115f1e3 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -94,13 +94,13 @@ def enableSeparateBuildPerCPUArchitecture = false
+ def enableProguardInReleaseBuilds = false
+ 
+ android {
+-    compileSdkVersion 26
+-    buildToolsVersion "26.0.2"
++    compileSdkVersion rootProject.ext.compileSdkVersion
++    buildToolsVersion rootProject.ext.buildToolsVersion
+ 
+     defaultConfig {
+         applicationId "com.rndiffapp"
+-        minSdkVersion 16
+-        targetSdkVersion 22
++        minSdkVersion rootProject.ext.minSdkVersion
++        targetSdkVersion rootProject.ext.targetSdkVersion
+         versionCode 1
+         versionName "1.0"
+         ndk {
+@@ -138,7 +138,7 @@ android {
+ 
+ dependencies {
+     compile fileTree(dir: "libs", include: ["*.jar"])
+-    compile "com.android.support:appcompat-v7:26.1.0"
++    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+     compile "com.facebook.react:react-native:+"  // From node_modules
+ }
+ 
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 225b5f6..49569e4 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -30,3 +30,11 @@ allprojects {
+         }
+     }
+ }
++
++ext {
++    buildToolsVersion = "26.0.3"
++    minSdkVersion = 16
++    compileSdkVersion = 26
++    targetSdkVersion = 26
++    supportLibVersion = "26.1.0"
++}
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index f4ba6ec..04f5c15 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -8,7 +8,7 @@
+   },
+   "dependencies": {
+     "react": "16.4.1",
+-    "react-native": "0.56.0-rc.3"
++    "react-native": "0.56.1"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",

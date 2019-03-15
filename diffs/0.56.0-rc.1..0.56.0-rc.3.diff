@@ -1,0 +1,85 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 2f3267d..f99d302 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -30,6 +30,19 @@ node_modules/react-native/flow-github/
+ emoji=true
+ 
+ module.system=haste
++module.system.haste.use_name_reducers=true
++# get basename
++module.system.haste.name_reducers='^.*/\([a-zA-Z0-9$_.-]+\.js\(\.flow\)?\)$' -> '\1'
++# strip .js or .js.flow suffix
++module.system.haste.name_reducers='^\(.*\)\.js\(\.flow\)?$' -> '\1'
++# strip .ios suffix
++module.system.haste.name_reducers='^\(.*\)\.ios$' -> '\1'
++module.system.haste.name_reducers='^\(.*\)\.android$' -> '\1'
++module.system.haste.name_reducers='^\(.*\)\.native$' -> '\1'
++module.system.haste.paths.blacklist=.*/__tests__/.*
++module.system.haste.paths.blacklist=.*/__mocks__/.*
++module.system.haste.paths.blacklist=<PROJECT_ROOT>/node_modules/react-native/Libraries/Animated/src/polyfills/.*
++module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+ 
+ munge_underscores=true
+ 
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index eed9972..225b5f6 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -3,9 +3,13 @@
+ buildscript {
+     repositories {
+         jcenter()
++        maven {
++            url 'https://maven.google.com/'
++            name 'Google'
++        }
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:2.2.3'
++        classpath 'com.android.tools.build:gradle:2.3.3'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -20,5 +24,9 @@ allprojects {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+             url "$rootDir/../node_modules/react-native/android"
+         }
++        maven {
++            url 'https://maven.google.com/'
++            name 'Google'
++        }
+     }
+ }
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index dbdc05d..81a86e2 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -2,4 +2,4 @@ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-2.14.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-3.5.1-all.zip
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 0bbb9a6..f4ba6ec 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,14 +7,14 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "16.3.2",
+-    "react-native": "0.56.0-rc.1"
++    "react": "16.4.1",
++    "react-native": "0.56.0-rc.3"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",
+     "babel-preset-react-native": "^5",
+     "jest": "24.1.0",
+-    "react-test-renderer": "16.3.2"
++    "react-test-renderer": "16.4.1"
+   },
+   "jest": {
+     "preset": "react-native"

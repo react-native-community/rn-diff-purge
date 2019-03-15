@@ -1,0 +1,91 @@
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 4552d81..115f1e3 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -137,9 +137,9 @@ android {
+ }
+ 
+ dependencies {
+-    implementation fileTree(dir: "libs", include: ["*.jar"])
+-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+-    implementation "com.facebook.react:react-native:+"  // From node_modules
++    compile fileTree(dir: "libs", include: ["*.jar"])
++    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
++    compile "com.facebook.react:react-native:+"  // From node_modules
+ }
+ 
+ // Run this once to be able to run the application with BUCK
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 85d8f2f..3ad24c1 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -1,19 +1,15 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ 
+ buildscript {
+-    ext {
+-        buildToolsVersion = "27.0.3"
+-        minSdkVersion = 16
+-        compileSdkVersion = 27
+-        targetSdkVersion = 26
+-        supportLibVersion = "27.1.1"
+-    }
+     repositories {
+         jcenter()
+-        google()
++        maven {
++            url 'https://maven.google.com/'
++            name 'Google'
++        }
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.1.4'
++        classpath 'com.android.tools.build:gradle:2.3.3'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -28,10 +24,20 @@ allprojects {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+             url "$rootDir/../node_modules/react-native/android"
+         }
+-        google()
++        maven {
++            url 'https://maven.google.com/'
++            name 'Google'
++        }
+     }
+ }
+ 
++ext {
++    buildToolsVersion = "26.0.3"
++    minSdkVersion = 16
++    compileSdkVersion = 26
++    targetSdkVersion = 26
++    supportLibVersion = "26.1.0"
++}
+ 
+ task wrapper(type: Wrapper) {
+     gradleVersion = '4.4'
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 0171178..57cc9d7 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,14 +7,14 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "16.5.0",
+-    "react-native": "0.57.0"
++    "react": "16.4.1",
++    "react-native": "0.57.0-rc.2"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",
+     "jest": "24.1.0",
+-    "metro-react-native-babel-preset": "0.53.0",
+-    "react-test-renderer": "16.5.0"
++    "metro-react-native-babel-preset": "^0.43.5",
++    "react-test-renderer": "16.4.1"
+   },
+   "jest": {
+     "preset": "react-native"

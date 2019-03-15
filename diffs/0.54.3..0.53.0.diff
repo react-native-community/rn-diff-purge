@@ -1,0 +1,59 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 10cb8d5..0b611f0 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -51,4 +51,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
+ [version]
+-^0.65.0
++^0.63.0
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 9c67097..31a894a 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -1,14 +1,20 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.rndiffapp">
++    package="com.rndiffapp"
++    android:versionCode="1"
++    android:versionName="1.0">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
++    <uses-sdk
++        android:minSdkVersion="16"
++        android:targetSdkVersion="22" />
++
+     <application
+       android:name=".MainApplication"
++      android:allowBackup="true"
+       android:label="@string/app_name"
+       android:icon="@mipmap/ic_launcher"
+-      android:allowBackup="false"
+       android:theme="@style/AppTheme">
+       <activity
+         android:name=".MainActivity"
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index c309cdb..f20345e 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,14 +7,14 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "^16.3.0-alpha.1",
+-    "react-native": "0.54.3"
++    "react": "16.2.0",
++    "react-native": "0.53.0"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",
+     "babel-preset-react-native": "4.0.1",
+     "jest": "24.1.0",
+-    "react-test-renderer": "^16.3.0-alpha.1"
++    "react-test-renderer": "16.2.0"
+   },
+   "jest": {
+     "preset": "react-native"

@@ -1,0 +1,39 @@
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 81bd9f5..a698075 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -16,7 +16,11 @@
+ {
+   NSURL *jsCodeLocation;
+ 
+-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
++  #ifdef DEBUG
++    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
++  #else
++    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
++  #endif
+ 
+   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+                                                       moduleName:@"RnDiffApp"
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 935503f..c212552 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,14 +7,14 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "16.6.1",
+-    "react-native": "0.57.6"
++    "react": "16.6.3",
++    "react-native": "0.57.8"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",
+     "jest": "24.1.0",
+     "metro-react-native-babel-preset": "0.53.0",
+-    "react-test-renderer": "16.6.1"
++    "react-test-renderer": "16.6.3"
+   },
+   "jest": {
+     "preset": "react-native"
