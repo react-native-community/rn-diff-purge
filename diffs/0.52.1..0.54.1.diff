@@ -1,0 +1,76 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 7d60895..10cb8d5 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -50,7 +50,5 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
+-unsafe.enable_getters_and_setters=true
+-
+ [version]
+-^0.61.0
++^0.65.0
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
+index d4ae45c..dd1d45a 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.js
+@@ -19,7 +19,8 @@ const instructions = Platform.select({
+     'Shake or press menu button for dev menu',
+ });
+ 
+-export default class App extends Component<{}> {
++type Props = {};
++export default class App extends Component<Props> {
+   render() {
+     return (
+       <View style={styles.container}>
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 31a894a..9c67097 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -1,20 +1,14 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.rndiffapp"
+-    android:versionCode="1"
+-    android:versionName="1.0">
++    package="com.rndiffapp">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
+-    <uses-sdk
+-        android:minSdkVersion="16"
+-        android:targetSdkVersion="22" />
+-
+     <application
+       android:name=".MainApplication"
+-      android:allowBackup="true"
+       android:label="@string/app_name"
+       android:icon="@mipmap/ic_launcher"
++      android:allowBackup="false"
+       android:theme="@style/AppTheme">
+       <activity
+         android:name=".MainActivity"
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 95404a5..f32359c 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -7,14 +7,14 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "16.2.0",
+-    "react-native": "0.52.1"
++    "react": "^16.3.0-alpha.1",
++    "react-native": "0.54.1"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",
+     "babel-preset-react-native": "4.0.1",
+     "jest": "24.1.0",
+-    "react-test-renderer": "16.2.0"
++    "react-test-renderer": "^16.3.0-alpha.1"
+   },
+   "jest": {
+     "preset": "react-native"

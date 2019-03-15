@@ -1,0 +1,40 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 7d60895..0b611f0 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -50,7 +50,5 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*
+ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
+-unsafe.enable_getters_and_setters=true
+-
+ [version]
+-^0.61.0
++^0.63.0
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
+index d4ae45c..dd1d45a 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.js
+@@ -19,7 +19,8 @@ const instructions = Platform.select({
+     'Shake or press menu button for dev menu',
+ });
+ 
+-export default class App extends Component<{}> {
++type Props = {};
++export default class App extends Component<Props> {
+   render() {
+     return (
+       <View style={styles.container}>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 8f6ad6f..7fd16f8 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -8,7 +8,7 @@
+   },
+   "dependencies": {
+     "react": "16.2.0",
+-    "react-native": "0.52.2"
++    "react-native": "0.53.2"
+   },
+   "devDependencies": {
+     "babel-jest": "24.1.0",
