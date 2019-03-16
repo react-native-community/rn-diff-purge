@@ -30,6 +30,7 @@ function guardExisting () {
 }
 
 function prepare () {
+    git pull
     yarn install
 }
 
@@ -62,6 +63,14 @@ function addVersionToList () {
     #   take each line ->dedup->    sort them              -> reverse them -> save them
     cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
     mv tmpfile "$VersionsFile"
+}
+
+function generateDiffs () {
+    IFS=$'\n' GLOBIGNORE='*' command eval 'versions=($(cat "$VersionsFile"))'
+    for fromVersion in "${versions[@]}"
+    do
+        git diff origin/version/"$fromVerions"..origin/version/"$newVersion" > diffs/"$fromVersion".."$newVersion".diff
+    done
 }
 
 function pushMaster () {
@@ -108,11 +117,12 @@ function cleanUp () {
 guardMissingArg $*
 newVersion=$1
 
-guardExisting
+# guardExisting
 
 prepare
 generateNewVersionBranch
 addVersionToList
+generateDiffs
 
 generateTable
 generateReadme
@@ -121,4 +131,4 @@ generateBigTable
 generateGHPages
 
 cleanUp
-pushMaster
+# pushMaster
