@@ -52,7 +52,7 @@ function generateNewVersionBranch () {
     # commit and push branch
     git add "$AppName"
     git commit -m "Version $newVersion"
-    # git push --set-upstream origin "$branchName"
+    git push --set-upstream origin "$branchName"
 
     # go back to master
     git checkout master
@@ -69,7 +69,7 @@ function generateDiffs () {
     IFS=$'\n' GLOBIGNORE='*' command eval 'versions=($(cat "$VersionsFile"))'
     for fromVersion in "${versions[@]}"
     do
-        git diff origin/version/"$fromVerions"..origin/version/"$newVersion" > diffs/"$fromVersion".."$newVersion".diff
+        git diff origin/version/"$fromVersion"..origin/version/"$newVersion" > diffs/"$fromVersion".."$newVersion".diff
     done
 }
 
@@ -117,7 +117,7 @@ function cleanUp () {
 guardMissingArg $*
 newVersion=$1
 
-# guardExisting
+guardExisting
 
 prepare
 generateNewVersionBranch
@@ -131,4 +131,4 @@ generateBigTable
 generateGHPages
 
 cleanUp
-# pushMaster
+pushMaster
