@@ -56,7 +56,7 @@ Probably having some nice alternating row color, having the leftest column stay 
 
 ### History of this repo
 
-Once upon a time there was react-native. Lots of people used it and loved it. And there were ofter updates. As many as one per 2 weeks. People loved the new versions with all the new cool APIs and components and bugfixes. But how did they upgrade?
+Once upon a time there was react-native. Lots of people used it and loved it. And there were often updates. As many as one per 2 weeks. People loved the new versions with all the new cool APIs and components and bugfixes. But how did they upgrade?
 
 Many people tried to upgrade and automate the process, and many failed. One succeded.
 
