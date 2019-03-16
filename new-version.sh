@@ -52,7 +52,7 @@ function generateNewVersionBranch () {
     # commit and push branch
     git add "$AppName"
     git commit -m "Version $newVersion"
-    git push --set-upstream origin "$branchName"
+    # git push --set-upstream origin "$branchName"
 
     # go back to master
     git checkout master
