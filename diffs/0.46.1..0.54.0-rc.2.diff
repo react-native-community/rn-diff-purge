@@ -1,5 +1,5 @@
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
-index 1dd3eff..10cb8d5 100644
+index 1dd3eff6..10cb8d50 100644
 --- a/RnDiffApp/.flowconfig
 +++ b/RnDiffApp/.flowconfig
 @@ -12,14 +12,19 @@
@@ -53,7 +53,7 @@ index 1dd3eff..10cb8d5 100644
 -^0.47.0
 +^0.65.0
 diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
-index 10be197..0826423 100644
+index 10be1975..0826423b 100644
 --- a/RnDiffApp/.gitignore
 +++ b/RnDiffApp/.gitignore
 @@ -46,8 +46,8 @@ buck-out/
@@ -73,7 +73,7 @@ diff --git a/RnDiffApp/index.android.js b/RnDiffApp/App.js
 similarity index 69%
 rename from RnDiffApp/index.android.js
 rename to RnDiffApp/App.js
-index 48bcb43..dd1d45a 100644
+index 48bcb43b..dd1d45ab 100644
 --- a/RnDiffApp/index.android.js
 +++ b/RnDiffApp/App.js
 @@ -6,13 +6,21 @@
@@ -124,7 +124,7 @@ diff --git a/RnDiffApp/__tests__/index.ios.js b/RnDiffApp/__tests__/App.js
 similarity index 81%
 rename from RnDiffApp/__tests__/index.ios.js
 rename to RnDiffApp/__tests__/App.js
-index ba7c5b5..d0b9ee3 100644
+index ba7c5b5e..d0b9ee31 100644
 --- a/RnDiffApp/__tests__/index.ios.js
 +++ b/RnDiffApp/__tests__/App.js
 @@ -1,12 +1,12 @@
@@ -144,7 +144,7 @@ index ba7c5b5..d0b9ee3 100644
  });
 diff --git a/RnDiffApp/__tests__/index.android.js b/RnDiffApp/__tests__/index.android.js
 deleted file mode 100644
-index b49b908..0000000
+index b49b9087..00000000
 --- a/RnDiffApp/__tests__/index.android.js
 +++ /dev/null
 @@ -1,12 +0,0 @@
@@ -161,7 +161,7 @@ index b49b908..0000000
 -  );
 -});
 diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
-index c76fe5c..c8ea1af 100644
+index c76fe5c1..c8ea1af3 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
 @@ -72,6 +72,10 @@ import com.android.build.OutputFile
@@ -176,7 +176,7 @@ index c76fe5c..c8ea1af 100644
  
  /**
 diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
-index 31a894a..9c67097 100644
+index 31a894a9..9c67097d 100644
 --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
 +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
 @@ -1,20 +1,14 @@
@@ -203,7 +203,7 @@ index 31a894a..9c67097 100644
        <activity
          android:name=".MainActivity"
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
-index be5c458..efd809f 100644
+index be5c458a..efd809f1 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 @@ -25,6 +25,11 @@ public class MainApplication extends Application implements ReactApplication {
@@ -220,7 +220,7 @@ index be5c458..efd809f 100644
    @Override
 diff --git a/RnDiffApp/index.ios.js b/RnDiffApp/index.ios.js
 deleted file mode 100644
-index f6af596..0000000
+index f6af596e..00000000
 --- a/RnDiffApp/index.ios.js
 +++ /dev/null
 @@ -1,53 +0,0 @@
@@ -279,7 +279,7 @@ index f6af596..0000000
 -AppRegistry.registerComponent('RnDiffApp', () => RnDiffApp);
 diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
 new file mode 100644
-index 0000000..39283d1
+index 00000000..39283d1e
 --- /dev/null
 +++ b/RnDiffApp/index.js
 @@ -0,0 +1,4 @@
@@ -288,7 +288,7 @@ index 0000000..39283d1
 +
 +AppRegistry.registerComponent('RnDiffApp', () => App);
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
-index 9f6f941..868e0b0 100644
+index 9f6f9419..868e0b05 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 @@ -25,17 +25,18 @@
@@ -545,7 +545,7 @@ index 9f6f941..868e0b0 100644
  
  /* Begin PBXResourcesBuildPhase section */
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-index 9b8ee1a..82f99f2 100644
+index 9b8ee1a6..82f99f28 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 @@ -18,7 +18,7 @@
@@ -559,7 +559,7 @@ index 9b8ee1a..82f99f2 100644
                                                        moduleName:@"RnDiffApp"
 diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/Contents.json
 new file mode 100644
-index 0000000..2d92bd5
+index 00000000..2d92bd53
 --- /dev/null
 +++ b/RnDiffApp/ios/RnDiffApp/Images.xcassets/Contents.json
 @@ -0,0 +1,6 @@
@@ -570,7 +570,7 @@ index 0000000..2d92bd5
 +  }
 +}
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index 157376f..748d0a4 100644
+index 157376f4..748d0a44 100644
 --- a/RnDiffApp/package.json
 +++ b/RnDiffApp/package.json
 @@ -1,22 +1,22 @@

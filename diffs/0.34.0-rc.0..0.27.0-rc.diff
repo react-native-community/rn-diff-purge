@@ -1,5 +1,5 @@
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
-index f565799..45fd3cc 100644
+index f565799e..45fd3ccb 100644
 --- a/RnDiffApp/.flowconfig
 +++ b/RnDiffApp/.flowconfig
 @@ -1,28 +1,71 @@
@@ -115,7 +115,7 @@ index f565799..45fd3cc 100644
 -^0.32.0
 +^0.25.0
 diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
-index eb1535e..42c9490 100644
+index eb1535e4..42c9490e 100644
 --- a/RnDiffApp/.gitignore
 +++ b/RnDiffApp/.gitignore
 @@ -24,7 +24,6 @@ project.xcworkspace
@@ -127,7 +127,7 @@ index eb1535e..42c9490 100644
  .gradle
  local.properties
 diff --git a/RnDiffApp/android/app/BUCK b/RnDiffApp/android/app/BUCK
-index 6fa2283..6f649a3 100644
+index 6fa2283a..6f649a36 100644
 --- a/RnDiffApp/android/app/BUCK
 +++ b/RnDiffApp/android/app/BUCK
 @@ -5,7 +5,7 @@ import re
@@ -140,7 +140,7 @@ index 6fa2283..6f649a3 100644
  # - `buck install -r android/app` - compile, install and run application
  #
 diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
-index 874f51e..f8288cd 100644
+index 874f51e8..f8288cd3 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
 @@ -55,13 +55,7 @@ import com.android.build.OutputFile
@@ -159,7 +159,7 @@ index 874f51e..f8288cd 100644
   */
  
 diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
-index 48361a9..9852871 100644
+index 48361a90..9852871b 100644
 --- a/RnDiffApp/android/app/proguard-rules.pro
 +++ b/RnDiffApp/android/app/proguard-rules.pro
 @@ -26,14 +26,11 @@
@@ -178,7 +178,7 @@ index 48361a9..9852871 100644
  
  -keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
 diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
-index 2e72ab0..a900d02 100644
+index 2e72ab01..a900d02a 100644
 --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
 +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
 @@ -11,7 +11,6 @@
@@ -190,7 +190,7 @@ index 2e72ab0..a900d02 100644
        android:label="@string/app_name"
        android:icon="@mipmap/ic_launcher"
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
-index e4f5424..89abe8a 100644
+index e4f5424a..89abe8a4 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
 @@ -1,6 +1,11 @@
@@ -232,7 +232,7 @@ index e4f5424..89abe8a 100644
  }
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 deleted file mode 100644
-index f9a1daf..0000000
+index f9a1daff..00000000
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 +++ /dev/null
 @@ -1,35 +0,0 @@
@@ -272,7 +272,7 @@ index f9a1daf..0000000
 -  }
 -}
 diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
-index fcba4c5..403a007 100644
+index fcba4c58..403a0075 100644
 --- a/RnDiffApp/android/build.gradle
 +++ b/RnDiffApp/android/build.gradle
 @@ -18,7 +18,7 @@ allprojects {
@@ -285,7 +285,7 @@ index fcba4c5..403a007 100644
      }
  }
 diff --git a/RnDiffApp/index.android.js b/RnDiffApp/index.android.js
-index 1a5c062..07a8f7b 100644
+index 1a5c062c..07a8f7bc 100644
 --- a/RnDiffApp/index.android.js
 +++ b/RnDiffApp/index.android.js
 @@ -23,7 +23,6 @@ class RnDiffApp extends Component {
@@ -297,7 +297,7 @@ index 1a5c062..07a8f7b 100644
          </Text>
        </View>
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
-index 60ce037..637c1f3 100644
+index 60ce0373..637c1f3f 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 @@ -20,7 +20,6 @@
@@ -405,7 +405,7 @@ index 60ce037..637c1f3 100644
  				SDKROOT = iphoneos;
  				VALIDATE_PRODUCT = YES;
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-index 4a58440..65ef839 100644
+index 4a58440c..65ef839b 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 @@ -9,7 +9,6 @@
@@ -450,7 +450,7 @@ index 4a58440..65ef839 100644
    RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                        moduleName:@"RnDiffApp"
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
-index e98ebb0..91963b2 100644
+index e98ebb00..91963b26 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
 @@ -38,17 +38,11 @@
@@ -478,7 +478,7 @@ index e98ebb0..91963b2 100644
  </dict>
  </plist>
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index 4ab1ec6..52f0c00 100644
+index 4ab1ec6c..52f0c008 100644
 --- a/RnDiffApp/package.json
 +++ b/RnDiffApp/package.json
 @@ -6,7 +6,7 @@
