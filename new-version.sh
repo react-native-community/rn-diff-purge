@@ -60,8 +60,15 @@ function generateNewVersionBranch () {
 
 function addVersionToList () {
     echo "$newVersion" >> "$VersionsFile"
-    #   take each line ->dedup->    sort them              -> reverse them -> save them
-    cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
+
+    if command -v tac; then
+        #   take each line ->dedup->    sort them              -> reverse them -> save them
+        cat "$VersionsFile" | uniq | xargs yarn --silent semver | tac           > tmpfile
+    else
+        #   take each line ->dedup->    sort them              -> reverse them -> save them
+        cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
+    fi
+
     mv tmpfile "$VersionsFile"
 }
 
