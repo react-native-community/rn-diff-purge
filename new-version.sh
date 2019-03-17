@@ -69,7 +69,7 @@ function generateDiffs () {
     IFS=$'\n' GLOBIGNORE='*' command eval 'versions=($(cat "$VersionsFile"))'
     for fromVersion in "${versions[@]}"
     do
-        git diff origin/version/"$fromVersion"..origin/version/"$newVersion" > diffs/"$fromVersion".."$newVersion".diff
+        git diff --binary origin/version/"$fromVersion"..origin/version/"$newVersion" > diffs/"$fromVersion".."$newVersion".diff
     done
 }
 

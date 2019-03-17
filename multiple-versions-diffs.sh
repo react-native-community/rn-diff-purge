@@ -8,6 +8,6 @@ do
   echo "from $vfrom"
   for vto in "${versions[@]}"
   do
-    git diff origin/version/"$vfrom"..origin/version/"$vto" > diffs/"$vfrom".."$vto".diff
+    git diff --binary origin/version/"$vfrom"..origin/version/"$vto" > diffs/"$vfrom".."$vto".diff
   done
 done
