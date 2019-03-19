@@ -35,7 +35,6 @@ function prepare () {
 }
 
 function generateNewVersionBranch () {
-
     # go to the base app branch
     git checkout "$AppBaseBranch"
 
