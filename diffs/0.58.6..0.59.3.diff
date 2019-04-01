@@ -1,0 +1,297 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 9bded78be..47d80d954 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -24,7 +24,6 @@
+ [libs]
+ node_modules/react-native/Libraries/react-native/react-native-interface.js
+ node_modules/react-native/flow/
+-node_modules/react-native/flow-github/
+ 
+ [options]
+ emoji=true
+@@ -67,4 +66,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+ suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+ 
+ [version]
+-^0.86.0
++^0.92.0
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
+index bb4823295..171d0f0f4 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.js
+@@ -4,7 +4,6 @@
+  *
+  * @format
+  * @flow
+- * @lint-ignore-every XPLATJSCOPYRIGHT1
+  */
+ 
+ import React, {Component} from 'react';
+diff --git a/RnDiffApp/__tests__/App.js b/RnDiffApp/__tests__/App-test.js
+similarity index 86%
+rename from RnDiffApp/__tests__/App.js
+rename to RnDiffApp/__tests__/App-test.js
+index a79ec3d58..178476699 100644
+--- a/RnDiffApp/__tests__/App.js
++++ b/RnDiffApp/__tests__/App-test.js
+@@ -1,6 +1,5 @@
+ /**
+  * @format
+- * @lint-ignore-every XPLATJSCOPYRIGHT1
+  */
+ 
+ import 'react-native';
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 5dad4f71b..174855f89 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -95,7 +95,11 @@ def enableProguardInReleaseBuilds = false
+ 
+ android {
+     compileSdkVersion rootProject.ext.compileSdkVersion
+-    buildToolsVersion rootProject.ext.buildToolsVersion
++
++    compileOptions {
++        sourceCompatibility JavaVersion.VERSION_1_8
++        targetCompatibility JavaVersion.VERSION_1_8
++    }
+ 
+     defaultConfig {
+         applicationId "com.rndiffapp"
+@@ -109,7 +113,7 @@ android {
+             reset()
+             enable enableSeparateBuildPerCPUArchitecture
+             universalApk false  // If true, also generate a universal APK
+-            include "armeabi-v7a", "x86", "arm64-v8a"
++            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+         }
+     }
+     buildTypes {
+@@ -123,7 +127,7 @@ android {
+         variant.outputs.each { output ->
+             // For each separate APK per architecture, set a unique version code as described here:
+             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+-            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3]
++            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
+             def abi = output.getFilter(OutputFile.ABI)
+             if (abi != null) {  // null for the universal-debug, universal-release variants
+                 output.versionCodeOverride =
+diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+new file mode 100644
+index 000000000..fa26aa56e
+--- /dev/null
++++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools">
++
++    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
++
++    <application android:usesCleartextTraffic="true" tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" />
++</manifest>
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 20cee3160..f3e0d1555 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -2,7 +2,6 @@
+   package="com.rndiffapp">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
+     <application
+       android:name=".MainApplication"
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 3231b29ea..c6e7c7c0a 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -2,10 +2,10 @@
+ 
+ buildscript {
+     ext {
+-        buildToolsVersion = "28.0.2"
++        buildToolsVersion = "28.0.3"
+         minSdkVersion = 16
+         compileSdkVersion = 28
+-        targetSdkVersion = 27
++        targetSdkVersion = 28
+         supportLibVersion = "28.0.0"
+     }
+     repositories {
+@@ -13,7 +13,7 @@ buildscript {
+         jcenter()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.2.1'
++        classpath 'com.android.tools.build:gradle:3.3.1'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -31,9 +31,3 @@ allprojects {
+         }
+     }
+ }
+-
+-
+-task wrapper(type: Wrapper) {
+-    gradleVersion = '4.7'
+-    distributionUrl = distributionUrl.replace("bin", "all")
+-}
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 73bb13d55..019065d1d 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -2,4 +2,4 @@ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-4.7-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-4.10.2-all.zip
+diff --git a/RnDiffApp/babel.config.js b/RnDiffApp/babel.config.js
+index b66a04a36..f842b77fc 100644
+--- a/RnDiffApp/babel.config.js
++++ b/RnDiffApp/babel.config.js
+@@ -1,3 +1,3 @@
+ module.exports = {
+-  presets: ["module:metro-react-native-babel-preset"]
+-}
++  presets: ['module:metro-react-native-babel-preset'],
++};
+diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
+index 3ac66525d..a850d031d 100644
+--- a/RnDiffApp/index.js
++++ b/RnDiffApp/index.js
+@@ -1,6 +1,5 @@
+ /**
+  * @format
+- * @lint-ignore-every XPLATJSCOPYRIGHT1
+  */
+ 
+ import {AppRegistry} from 'react-native';
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+index 4b5644f21..2726d5e13 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+@@ -5,9 +5,10 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
++#import <React/RCTBridgeDelegate.h>
+ #import <UIKit/UIKit.h>
+ 
+-@interface AppDelegate : UIResponder <UIApplicationDelegate>
++@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+ 
+ @property (nonatomic, strong) UIWindow *window;
+ 
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 3a9c978fc..4c12ae4bb 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -7,6 +7,7 @@
+ 
+ #import "AppDelegate.h"
+ 
++#import <React/RCTBridge.h>
+ #import <React/RCTBundleURLProvider.h>
+ #import <React/RCTRootView.h>
+ 
+@@ -14,15 +15,12 @@
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+-  NSURL *jsCodeLocation;
++  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
++  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
++                                                   moduleName:@"RnDiffApp"
++                                            initialProperties:nil];
+ 
+-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+-
+-  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+-                                                      moduleName:@"RnDiffApp"
+-                                               initialProperties:nil
+-                                                   launchOptions:launchOptions];
+-  rootView.backgroundColor = [UIColor blackColor];
++  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+ 
+   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+   UIViewController *rootViewController = [UIViewController new];
+@@ -32,4 +30,13 @@
+   return YES;
+ }
+ 
++- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
++{
++#if DEBUG
++  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
++#else
++  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
++#endif
++}
++
+ @end
+diff --git a/RnDiffApp/metro.config.js b/RnDiffApp/metro.config.js
+new file mode 100644
+index 000000000..13a964217
+--- /dev/null
++++ b/RnDiffApp/metro.config.js
+@@ -0,0 +1,17 @@
++/**
++ * Metro configuration for React Native
++ * https://github.com/facebook/react-native
++ *
++ * @format
++ */
++
++module.exports = {
++  transformer: {
++    getTransformOptions: async () => ({
++      transform: {
++        experimentalImportSupport: false,
++        inlineRequires: false,
++      },
++    }),
++  },
++};
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index d1816f1a8..bfd9659f5 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -4,20 +4,24 @@
+   "private": true,
+   "scripts": {
+     "start": "node node_modules/react-native/local-cli/cli.js start",
+-    "test": "jest"
++    "test": "jest",
++    "lint": "eslint ."
+   },
+   "dependencies": {
+-    "react": "16.6.3",
+-    "react-native": "0.58.6"
++    "react": "16.8.3",
++    "react-native": "0.59.3"
+   },
+   "devDependencies": {
+-    "babel-core": "^7.0.0-bridge.0",
+-    "babel-jest": "24.1.0",
+-    "jest": "24.1.0",
+-    "metro-react-native-babel-preset": "0.52.0",
+-    "react-test-renderer": "16.6.3"
++    "@babel/core": "^7.4.0",
++    "@babel/runtime": "^7.4.2",
++    "@react-native-community/eslint-config": "^0.0.3",
++    "babel-jest": "^24.5.0",
++    "eslint": "^5.16.0",
++    "jest": "^24.5.0",
++    "metro-react-native-babel-preset": "^0.53.1",
++    "react-test-renderer": "16.8.3"
+   },
+   "jest": {
+     "preset": "react-native"
+   }
+-}
+\ No newline at end of file
++}
