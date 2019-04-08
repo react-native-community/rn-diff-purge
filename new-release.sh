@@ -75,11 +75,21 @@ function addReleaseToList () {
 }
 
 function generateDiffs () {
+    if [ ! -d "$DIRECTORY" ]; then
+        git worktree add wt-diffs diffs
+    fi
+
+    cd wt-diffs
+    git pull
+
     IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
     for fromRelease in "${releases[@]}"
     do
-        git diff --binary origin/release/"$fromRelease"..origin/release/"$newRelease" > diffs/"$fromRelease".."$newRelease".diff
+        git diff --binary origin/release/"$fromRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$fromRelease".."$newRelease".diff
     done
+
+    git push
+    cd ..
 }
 
 function pushMaster () {
