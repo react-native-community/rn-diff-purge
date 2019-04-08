@@ -36,7 +36,8 @@ function prepare () {
 
 function generateNewReleaseBranch () {
     # go to the base app branch
-    git checkout "$AppBaseBranch"
+    git worktree add wt-app "$AppBaseBranch"
+    cd wt-app
 
     # clear any existing stuff
     rm -rf "$AppName"
@@ -54,7 +55,9 @@ function generateNewReleaseBranch () {
     git push --set-upstream origin "$branchName"
 
     # go back to master
-    git checkout master
+    cd ..
+    rm -rf wt-app
+    git worktree prune
 }
 
 function addReleaseToList () {
