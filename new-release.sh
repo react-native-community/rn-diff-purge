@@ -81,6 +81,7 @@ function generateDiffs () {
 
     cd wt-diffs
     git pull
+    cd ..
 
     IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
     for fromRelease in "${releases[@]}"
@@ -88,6 +89,7 @@ function generateDiffs () {
         git diff --binary origin/release/"$fromRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$fromRelease".."$newRelease".diff
     done
 
+    cd wt-diffs
     git push
     cd ..
 }
@@ -139,7 +141,7 @@ newRelease=$1
 guardExisting
 
 prepare
-generateNewReleaseBranch
+# generateNewReleaseBranch
 addReleaseToList
 generateDiffs
 
