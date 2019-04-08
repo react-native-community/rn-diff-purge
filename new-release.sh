@@ -34,7 +34,7 @@ function prepare () {
     yarn install
 }
 
-function generatenewReleaseBranch () {
+function generateNewReleaseBranch () {
     # go to the base app branch
     git checkout "$AppBaseBranch"
 
@@ -126,7 +126,7 @@ newRelease=$1
 guardExisting
 
 prepare
-generatenewReleaseBranch
+generateNewReleaseBranch
 addReleaseToList
 generateDiffs
 
