@@ -75,7 +75,7 @@ function addReleaseToList () {
 }
 
 function generateDiffs () {
-    if [ ! -d "$DIRECTORY" ]; then
+    if [ ! -d wt-diffs ]; then
         git worktree add wt-diffs diffs
     fi
 
