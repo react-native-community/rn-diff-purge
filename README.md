@@ -35,10 +35,11 @@ Probably having some nice alternating row color, having the leftest column stay 
 
 ## Diff table (full table [HERE](https://pvinis.github.io/rn-diff-purge))
 
-| From->To | D                                                                                          | I   | F   | F   | S   |     | =   | =   |     | F   | U   | N   |
-| -------- | ------------------------------------------------------------------------------------------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0.26.1   | X                                                                                          | -   |     |     |     |     |     |     |     |     |     |     |
-| 0.23.1   | [->0.26.1](https://github.com/pvinis/rn-diff-purge/compare/release/0.23.1..release/0.26.1) | X   |     |     |     |     |     |     |     |     |     |     |
+| From->To | I                                                                                          |                                                                                            | L   | O   | V   | E   |     | D   | I   | F   | F   | S   |
+| -------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.59.3   | X                                                                                          | -                                                                                          | -   |     |     |     |     |     |     |     |     |     |
+| 0.26.1   | [->0.59.3](https://github.com/pvinis/rn-diff-purge/compare/release/0.26.1..release/0.59.3) | X                                                                                          | -   |     |     |     |     |     |     |     |     |     |
+| 0.23.1   | [->0.59.3](https://github.com/pvinis/rn-diff-purge/compare/release/0.23.1..release/0.59.3) | [->0.26.1](https://github.com/pvinis/rn-diff-purge/compare/release/0.23.1..release/0.26.1) | X   |     |     |     |     |     |     |     |     |     |
 
 ## To see the full table containing all releases click [HERE](https://pvinis.github.io/rn-diff-purge)
 
