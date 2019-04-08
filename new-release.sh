@@ -90,6 +90,8 @@ function generateDiffs () {
     done
 
     cd wt-diffs
+    git add .
+    git commit -m "Add release $newRelease diffs"
     git push
     cd ..
 }
@@ -141,7 +143,7 @@ newRelease=$1
 guardExisting
 
 prepare
-# generateNewReleaseBranch
+generateNewReleaseBranch
 addReleaseToList
 generateDiffs
 
