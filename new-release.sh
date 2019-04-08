@@ -2,30 +2,30 @@
 set -euxo pipefail
 
 
-ErrorVersionExists=2
-ErrorVersionArgMissing=3
+ErrorReleaseExists=2
+ErrorReleaseArgMissing=3
 
 AppName=RnDiffApp
 AppBaseBranch=app-base
-VersionsFile=VERSIONS
+ReleasesFile=RELEASES
 ReadmeFile=README.md
 ReadmeTable=README_TABLE.md
 ReadmeTableBig=README_TABLE_BIG.md
 
-NumberOfVersions=12 # the number of versions on the table
+NumberOfReleases=12 # the number of releases on the table
 
 
 function guardMissingArg () {
     if [ "$#" -ne 1 ]; then
-        echo "Version argument missing."
-        exit "$ErrorVersionArgMissing"
+        echo "Release argument missing."
+        exit "$ErrorReleaseArgMissing"
     fi
 }
 
 function guardExisting () {
-    if grep -qFx "$newVersion" "$VersionsFile"; then
-        echo "Version $newVersion already exists!"
-        exit "$ErrorVersionExists"
+    if grep -qFx "$newRelease" "$ReleasesFile"; then
+        echo "Release $newRelease already exists!"
+        exit "$ErrorReleaseExists"
     fi
 }
 
@@ -34,7 +34,7 @@ function prepare () {
     yarn install
 }
 
-function generateNewVersionBranch () {
+function generatenewReleaseBranch () {
     # go to the base app branch
     git checkout "$AppBaseBranch"
 
@@ -42,56 +42,56 @@ function generateNewVersionBranch () {
     rm -rf "$AppName"
 
     # make a new branch
-    branchName=version/"$newVersion"
+    branchName=release/"$newRelease"
     git checkout -b "$branchName"
 
     # generate app
-    react-native init "$AppName" --version "$newVersion"
+    react-native init "$AppName" --version "$newRelease"
 
     # commit and push branch
     git add "$AppName"
-    git commit -m "Version $newVersion"
+    git commit -m "Release $newRelease"
     git push --set-upstream origin "$branchName"
 
     # go back to master
     git checkout master
 }
 
-function addVersionToList () {
-    echo "$newVersion" >> "$VersionsFile"
+function addReleaseToList () {
+    echo "$newRelease" >> "$ReleasesFile"
 
     if command -v tac; then
         #   take each line ->dedup->    sort them              -> reverse them -> save them
-        cat "$VersionsFile" | uniq | xargs yarn --silent semver | tac           > tmpfile
+        cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tac           > tmpfile
     else
         #   take each line ->dedup->    sort them              -> reverse them -> save them
-        cat "$VersionsFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
+        cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
     fi
 
-    mv tmpfile "$VersionsFile"
+    mv tmpfile "$ReleasesFile"
 }
 
 function generateDiffs () {
-    IFS=$'\n' GLOBIGNORE='*' command eval 'versions=($(cat "$VersionsFile"))'
-    for fromVersion in "${versions[@]}"
+    IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
+    for fromRelease in "${releases[@]}"
     do
-        git diff --binary origin/version/"$fromVersion"..origin/version/"$newVersion" > diffs/"$fromVersion".."$newVersion".diff
+        git diff --binary origin/release/"$fromRelease"..origin/release/"$newRelease" > diffs/"$fromRelease".."$newRelease".diff
     done
 }
 
 function pushMaster () {
     # commit and push
     git add .
-    git commit -m "add version $newVersion"
+    git commit -m "add release $newRelease"
     git push
 }
 
 function generateTable () {
-    head -n "$NumberOfVersions" "$VersionsFile" | ./generate-table.js > "$ReadmeTable"
+    head -n "$NumberOfReleases" "$ReleasesFile" | ./generate-table.js > "$ReadmeTable"
 }
 
 function generateBigTable () {
-    cat "$VersionsFile" | ./generate-table.js --big > "$ReadmeTableBig"
+    cat "$ReleasesFile" | ./generate-table.js --big > "$ReadmeTableBig"
 }
 
 ReadmeHeader=README_HEADER.md
@@ -121,13 +121,13 @@ function cleanUp () {
 
 
 guardMissingArg $*
-newVersion=$1
+newRelease=$1
 
 guardExisting
 
 prepare
-generateNewVersionBranch
-addVersionToList
+generatenewReleaseBranch
+addReleaseToList
 generateDiffs
 
 generateTable

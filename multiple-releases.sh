@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 
-versions=(
+releases=(
   0.52.1
   0.52.2
   0.52.3
@@ -62,8 +62,8 @@ versions=(
   0.59.0-rc.3
 )
 
-for v in "${versions[@]}"
+for v in "${releases[@]}"
 do
     echo $v
-    ./new-version.sh $v
+    ./new-release.sh $v
 done

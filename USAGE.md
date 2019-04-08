@@ -6,7 +6,7 @@ straightforward and more trusted than using the upgrade command.
 ## Recommended method
 
 #### 1 Check the diff
-Check the diff of your current version and the version you want to upgrade to.
+Check the diff of your current version and the release you want to upgrade to.
 
 #### 2 Manually do the changes
 Do the changes from the diff in your project.  
@@ -21,7 +21,7 @@ If it's more than that, you could try the alternative method below.
 Download the patch for your version, for example:
 
 ```shell
-curl https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
+curl https://github.com/pvinis/rn-diff-purge/compare/release/0.29.0...release/0.30.0.diff > upgrade-rn.patch
 ```
 
 #### 2 Prepare the patch
@@ -67,7 +67,7 @@ git apply upgrade-rn.patch --exclude=package.json -p 2 --3way
 
 ```shell
 # Download the patch
-curl https://github.com/pvinis/rn-diff-purge/compare/version/0.29.0...version/0.30.0.diff > upgrade-rn.patch
+curl https://github.com/pvinis/rn-diff-purge/compare/release/0.29.0...release/0.30.0.diff > upgrade-rn.patch
 
 # Replace RnDiffApp occurences
 appNameCamelCase=MyApp

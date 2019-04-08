@@ -12,7 +12,7 @@ const RepoUrl='https://github.com/pvinis/rn-diff-purge'
 const generateTable = async () => {
     const isBig = R.contains('--big', process.argv)
     const input = await getStdin()
-    const versions = R.dropLast(1, R.split('\n')(input))
+    const releases = R.dropLast(1, R.split('\n')(input))
 
     // words or phrases of length 12
     const comments = [
@@ -26,26 +26,26 @@ const generateTable = async () => {
 
     const diffTable = [
         ['From->To', ...comments[Math.floor(Math.random() * comments.length)] .toUpperCase() .split('')],
-        ...R.map(fromVersion => {
-            const length = versions.length
+        ...R.map(fromRelease => {
+            const length = releases.length
             return [
-                fromVersion,
+                fromRelease,
                 ...R.pipe(
                     R.map(idx => {
-                        const toVersion = versions[idx]
-                        if (semver.eq(fromVersion, toVersion)) {
+                        const toRelease = releases[idx]
+                        if (semver.eq(fromRelease, toRelease)) {
                             return 'X'
                         }
-                        if (semver.gt(fromVersion, toVersion)) {
+                        if (semver.gt(fromRelease, toRelease)) {
                             return '-'
                         }
                         return isBig
-                        ? `[->${toVersion}](${RepoUrl}/compare/version/${fromVersion}..version/${toVersion}) [core](https://github.com/facebook/react-native/compare/v${fromVersion}...v${toVersion})` 
-                        : `[->${toVersion}](${RepoUrl}/compare/version/${fromVersion}..version/${toVersion})`
+                        ? `[->${toRelease}](${RepoUrl}/compare/release/${fromRelease}..release/${toRelease}) [core](https://github.com/facebook/react-native/compare/v${fromRelease}...v${toRelease})` 
+                        : `[->${toRelease}](${RepoUrl}/compare/release/${fromRelease}..release/${toRelease})`
                     }),
                 )(R.range(0, length)),
             ]
-        }, versions),
+        }, releases),
     ]
 
     console.log(table(diffTable))

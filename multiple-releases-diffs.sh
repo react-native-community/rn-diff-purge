@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-IFS=$'\n' GLOBIGNORE='*' command eval 'versions=($(cat VERSIONS))'
+IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat RELEASES))'
 
-for vfrom in "${versions[@]}"
+for vfrom in "${releases[@]}"
 do
   echo "from $vfrom"
-  for vto in "${versions[@]}"
+  for vto in "${releases[@]}"
   do
-    git diff --binary origin/version/"$vfrom"..origin/version/"$vto" > diffs/"$vfrom".."$vto".diff
+    git diff --binary origin/release/"$vfrom"..origin/release/"$vto" > diffs/"$vfrom".."$vto".diff
   done
 done
