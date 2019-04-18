@@ -1,0 +1,40 @@
+diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+index fa26aa56e..4ea9bc049 100644
+--- a/RnDiffApp/android/app/src/debug/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+@@ -4,5 +4,5 @@
+ 
+     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
+-    <application android:usesCleartextTraffic="true" tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" />
+-</manifest>
++    <application tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" android:networkSecurityConfig="@xml/react_native_config" />
++</manifest>
+\ No newline at end of file
+diff --git a/RnDiffApp/android/app/src/debug/res/xml/react_native_config.xml b/RnDiffApp/android/app/src/debug/res/xml/react_native_config.xml
+new file mode 100644
+index 000000000..ba4b23070
+--- /dev/null
++++ b/RnDiffApp/android/app/src/debug/res/xml/react_native_config.xml
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="utf-8"?>
++<network-security-config>
++  <domain-config cleartextTrafficPermitted="true">
++    <domain includeSubdomains="false">localhost</domain>
++    <domain includeSubdomains="false">10.0.2.2</domain>
++    <domain includeSubdomains="false">10.0.3.2</domain>
++  </domain-config>
++</network-security-config>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 7d0578091..62cfbe7cc 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -8,7 +8,7 @@
+   },
+   "dependencies": {
+     "react": "16.8.3",
+-    "react-native": "0.59.5"
++    "react-native": "0.59.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.4.3",
