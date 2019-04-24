@@ -5,7 +5,7 @@ newVersion=$1
 projectName=RnDiffApp
 
 # go to project branch
-git checkout project
+git checkout old/project
 git pull
 
 # get previous version
@@ -40,15 +40,15 @@ then
   echo -e "Pushing project branch.."
 
   # push the project branch
-  git push origin project --tags
+  git push origin old/project --tags
 fi
 
 # come back to master branch
-git checkout master
+git checkout old/master
 
 # update readme
-diffUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion})"
-patchUrl="[${prevVersion}...${newVersion}](https://github.com/pvinis/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion}.diff)"
+diffUrl="[${prevVersion}...${newVersion}](https://github.com/react-native-community/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion})"
+patchUrl="[${prevVersion}...${newVersion}](https://github.com/react-native-community/rn-diff-purge/compare/version/${prevVersion}...version/${newVersion}.diff)"
 rnDiffUrl="[${prevVersion}...${newVersion}](https://github.com/facebook/react-native/compare/v${prevVersion}...v${newVersion})"
 
 # insert a row in the version table
@@ -74,5 +74,5 @@ then
   echo -e "Pushing master branch.."
 
   # push the master branch
-  git push origin master
+  git push origin old/master
 fi
