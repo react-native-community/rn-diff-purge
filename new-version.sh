@@ -13,13 +13,13 @@ prevTag=$(git tag --points-at HEAD)
 prevVersion=$(basename "$prevTag")
 
 # delete the old project
-rm -rf RnDiffApp
+rm -rf "$projectName"
 
 # create a new project using the new version
 react-native init "$projectName" --version "$newVersion"
 
 # add new files and commit
-git add RnDiffApp
+git add "$projectName"
 git commit -m "version ${newVersion}"
 
 # tag the commit with the new version
