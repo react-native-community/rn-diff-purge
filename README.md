@@ -6,11 +6,13 @@ This repository exposes an untouched React Native app generated with the CLI
 A dedicated branch per release makes changes very easy
 to watch. For example:
 
-* https://github.com/react-native-community/rn-diff-purge/compare/release/0.28.0...release/0.29.0
+* https://github.com/react-native-community/rn-diff-purge/compare/release/0.28.0..release/0.29.0
 (Change in Android template)
-* https://github.com/react-native-community/rn-diff-purge/compare/release/0.29.0...release/0.29.2
+* https://github.com/react-native-community/rn-diff-purge/compare/release/0.29.0..release/0.29.2
 (no change)
-* https://github.com/react-native-community/rn-diff-purge/compare/release/0.30.0...release/0.31.0
+* https://github.com/react-native-community/rn-diff-purge/compare/release/0.30.0..release/0.31.0
+(minor change in `.flowconfig` )
+* https://github.com/react-native-community/rn-diff-purge/compare/release/0.30.0..release/0.31.0
 (minor change in `.flowconfig` )
 
 See table below for the complete list.
