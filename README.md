@@ -22,7 +22,7 @@ For some more info about the benefits of this repo's way versus the default way 
 Please :star: this repository if I helped you, and if you upgraded successfully because of `purge`, [buy me a pizza](https://www.buymeacoffee.com/DGWwHVZ4s) :pizza:
 
 ## Find the diff you need
-https://pvinis.github.io/purge-web/
+https://react-native-community.github.io/upgrade-helper/
 
 ## Help us
 Help us make [this](https://react-native-community.github.io/rn-diff-purge) full table pretty and more useful.
@@ -65,7 +65,7 @@ Lastly, the [rn-diff-purge](https://github.com/react-native-community/rn-diff-pu
 Many thanks to you for using this repo, many thanks to Nicolas for starting this, and many thanks to the React Native Core team and React Native Contributors team for helping make this repo and RN project upgrading awesome.
 
 ### Hooks
-React Native [0.59.0-rc.0](https://github.com/react-native-community/rn-diff-purge#version-changes) gets hooks! 🎉🥳  
+React Native [0.59.0-rc.0](https://github.com/react-native-community/rn-diff-purge#version-changes) gets hooks! 🎉🥳
 Here are some docs:
 - [Hooks API Reference](https://reactjs.org/docs/hooks-reference.html)
 - [Introducing Hooks](https://reactjs.org/docs/hooks-intro.html)
@@ -98,7 +98,7 @@ One thing that could get some love is the `docs/index.html` file, which produces
 
 ### Down here!
 
-If you have: 
+If you have:
 - questions
 - suggestions
 - ideas to make this even better
