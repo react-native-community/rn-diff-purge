@@ -130,7 +130,8 @@ function generateReadme () {
 }
 
 function generateGHPages () {
-    yarn --silent markdown "$ReadmeTableBig" > docs/index.html
+    cp docs/_index.html docs/index.html
+    yarn --silent markdown "$ReadmeTableBig" >> docs/index.html
 }
 
 function cleanUp () {
