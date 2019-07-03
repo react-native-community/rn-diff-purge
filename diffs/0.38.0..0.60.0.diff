@@ -162,6 +162,52 @@ index 000000000..d42ff1835
 +++ b/RnDiffApp/.gitattributes
 @@ -0,0 +1 @@
 +*.pbxproj -text
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 73359e1a8..828cc8846 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -22,20 +22,38 @@ DerivedData
+ *.xcuserstate
+ project.xcworkspace
+ 
+-# Android/IJ
++# Android/IntelliJ
+ #
+-*.iml
++build/
+ .idea
+ .gradle
+ local.properties
++*.iml
+ 
+ # node.js
+ #
+ node_modules/
+ npm-debug.log
++yarn-error.log
+ 
+ # BUCK
+ buck-out/
+ \.buckd/
+-android/app/libs
+ *.keystore
++
++# fastlane
++#
++# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
++# screenshots whenever they are needed.
++# For more information about the recommended setup visit:
++# https://docs.fastlane.tools/best-practices/source-control/
++
++*/fastlane/report.xml
++*/fastlane/Preview.html
++*/fastlane/screenshots
++
++# Bundle artifact
++*.jsbundle
++
++# CocoaPods
++/ios/Pods/
 diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
 new file mode 100644
 index 000000000..fee529a8f
