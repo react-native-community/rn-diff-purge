@@ -1,4 +1,4 @@
-# New release generation instructions
+# Instructions for diff generation on new release
 ###### (assuming you have push permissions)
 
 When a new release of `react-native` is out on [npm](https://www.npmjs.com/package/react-native), do the following:
