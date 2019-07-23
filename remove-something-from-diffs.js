@@ -18,12 +18,12 @@ const removeSomething = async () => {
             const fullpath = `${diffsDir}/${file}`
             console.log(fullpath)
 
-            const toBeReplaced = 'diff --git a/RnDiffApp/android/app/src/main/res/values/strings.xml b/RnDiffApp/android/app/src/main/res/values/strings.xml\nindex 890b3b408..0c79c4bad 100644\n--- a/RnDiffApp/android/app/src/main/res/values/strings.xml\n+++ b/RnDiffApp/android/app/src/main/res/values/strings.xml\n@@ -1,3 +1,3 @@\n <resources>\n-    <string name="app_name">RnDiffApp</string>\n+    <string name="app_name">Hello App Display Name</string>\n </resources>\n'
+            const toBeReplaced = '@@ -5,11 +5,11 @@\n 	<key>CFBundleDevelopmentRegion</key>\n 	<string>en</string>\n 	<key>CFBundleDisplayName</key>\n-	<string>RnDiffApp</string>\n+	<string>Hello App Display Name</string>\n'
 
             replace.sync({
                 files: fullpath,
                 from: new RegExp(escreg(toBeReplaced)),
-                to: '',
+                to: '@@ -9,11 +9,11 @@\n',
             })
         })
     }
