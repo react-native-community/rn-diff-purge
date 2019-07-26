@@ -42,6 +42,7 @@ function generateNewReleaseBranch () {
     # clear any existing stuff
     rm -rf "$AppName"
 
+    git pull
     # make a new branch
     branchName=release/"$newRelease"
     git checkout -b "$branchName"
