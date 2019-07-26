@@ -45,6 +45,7 @@ function generateNewReleaseBranch () {
     git pull
     # make a new branch
     branchName=release/"$newRelease"
+    git branch -D "$branchName" || true
     git checkout -b "$branchName"
 
     # generate app
@@ -53,6 +54,7 @@ function generateNewReleaseBranch () {
     # commit and push branch
     git add "$AppName"
     git commit -m "Release $newRelease"
+    git push origin --delete "$branchName"
     git push --set-upstream origin "$branchName"
 
     # go back to master
