@@ -54,7 +54,7 @@ function generateNewReleaseBranch () {
     # commit and push branch
     git add "$AppName"
     git commit -m "Release $newRelease"
-    git push origin --delete "$branchName"
+    git push origin --delete "$branchName" || git push origin "$branchName"
     git push --set-upstream origin "$branchName"
 
     # go back to master
