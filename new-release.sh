@@ -139,6 +139,8 @@ function generateGHPages () {
 
 function cleanUp () {
     rm -rf "$ReadmeHeader" "$ReadmeFooter" "$ReadmeTable" "$ReadmeTableBig"
+    rm -rm wt-app
+    git worktree prune
 }
 
 
