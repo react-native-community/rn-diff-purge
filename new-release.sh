@@ -49,7 +49,7 @@ function generateNewReleaseBranch () {
     git checkout -b "$branchName"
 
     # generate app
-    npx react-native init "$AppName" --version "$newRelease"
+   react-native init "$AppName" --version "$newRelease"
 
     # commit and push branch
     git add "$AppName"
