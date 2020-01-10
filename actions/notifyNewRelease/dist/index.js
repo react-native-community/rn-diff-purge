@@ -2948,7 +2948,7 @@ const releasesFileName = 'multiple-releases-diff.sh'; // 'RELEASES';
     const client = new github.GitHub(
         core.getInput('github-token', { required: true })
     );
-    console.log(JSON.stringify(github.context.payload));
+
     await Promise.all(
         github.context.payload.commits.map(async ({ id: commitRef }) => {
             const {
