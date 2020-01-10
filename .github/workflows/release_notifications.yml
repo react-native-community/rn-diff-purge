@@ -1,0 +1,17 @@
+name: Send notifications when a new release is published
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release_notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Notify upgrade-support of a new release
+        uses: ./actions/notifyNewRelease
+        with:
+          github-token: ${{ secrets.SPECIAL_GITHUB_TOKEN }}
