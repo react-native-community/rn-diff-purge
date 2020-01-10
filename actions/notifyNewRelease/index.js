@@ -1,46 +1,46 @@
-const core = require("@actions/core");
-const github = require("@actions/github");
+const core = require('@actions/core');
+const github = require('@actions/github');
 
 const repositoryData = {
-  owner: "react-native-community",
-  repo: "rn-diff-purge"
+    owner: 'react-native-community',
+    repo: 'rn-diff-purge',
 };
 
-const releasesFileName = "multiple-releases-diff.sh"; // 'RELEASES';
+const releasesFileName = 'multiple-releases-diff.sh'; // 'RELEASES';
 
 (async () => {
-  const client = new github.GitHub(
-    core.getInput("github-token", { required: true })
-  );
+    const client = new github.GitHub(
+        core.getInput('github-token', { required: true })
+    );
 
-  await Promise.all(
-    github.context.payload.commits.map(async ({ id: commitRef }) => {
-      const {
-        data: { files }
-      } = await client.repos.getCommit({
-        ...repositoryData,
-        ref: commitRef
-      });
+    await Promise.all(
+        github.context.payload.commits.map(async ({ id: commitRef }) => {
+            const {
+                data: { files },
+            } = await client.repos.getCommit({
+                ...repositoryData,
+                ref: commitRef,
+            });
 
-      const [releaseFile] = files.filter(
-        ({ filename }) => filename === releasesFileName
-      );
+            const [releaseFile] = files.filter(
+                ({ filename }) => filename === releasesFileName
+            );
 
-      if (!releaseFile) {
-        core.debug(`No release file changed on commit ${commitRef}, moving on`);
+            if (!releaseFile) {
+                core.debug(`No release file changed on commit ${commitRef}, moving on`);
 
-        return;
-      }
+                return;
+            }
 
-      core.debug(
-        `Release file changed on commit ${commitRef}, sending notification`
-      );
+            core.debug(
+                `Release file changed on commit ${commitRef}, sending notification`
+            );
 
-      await client.repos.createDispatchEvent({
-        ...repositoryData,
-        repo: "upgrade-support",
-        event_type: "NEW_RELEASE"
-      });
-    })
-  );
+            await client.repos.createDispatchEvent({
+                ...repositoryData,
+                repo: 'upgrade-support',
+                event_type: 'NEW_RELEASE',
+            });
+        })
+    );
 })();
