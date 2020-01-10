@@ -2942,7 +2942,7 @@ const repositoryData = {
     repo: 'rn-diff-purge',
 };
 
-const releasesFileName = 'multiple-releases-diffs.sh'; // 'RELEASES';
+const releasesFileName = 'RELEASES';
 
 (async () => {
     const client = new github.GitHub(
