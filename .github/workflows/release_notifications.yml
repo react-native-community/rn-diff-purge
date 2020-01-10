@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        run: git clone --single-branch --branch ${{ github.head_ref }} --depth 1 git@github.com:${{ github.repository }}.git .
       - name: Notify upgrade-support of a new release
         uses: ./actions/notifyNewRelease
         with:
