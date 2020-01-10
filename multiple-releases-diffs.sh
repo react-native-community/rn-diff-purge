@@ -11,5 +11,3 @@ do
     git diff --binary origin/release/"$vfrom"..origin/release/"$vto" > wt-diffs/diffs/"$vfrom".."$vto".diff
   done
 done
-
-# random unneeded change to test actions
