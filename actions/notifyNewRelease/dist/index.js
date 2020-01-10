@@ -2937,29 +2937,18 @@ module.exports = require("child_process");
 const core = __webpack_require__(470);
 const github = __webpack_require__(469);
 
-/**
- * TODO:
- * This will run on push
- * Check if the `RELEASES` file is included on the push
- * Loop through all commits on a push
- * Check `master_branch` is master
- * Change `repositoryData`
- *
- */
-
 const repositoryData = {
-    //  owner: 'react-native-community',
-    //  repo: 'rn-diff-purge',
-
-    owner: 'lucasbento',
-    repo: 'sync-release-parent',
+    owner: 'react-native-community',
+    repo: 'rn-diff-purge',
 };
+
+const releasesFileName = 'multiple-releases-diff.sh'; // 'RELEASES';
 
 (async () => {
     const client = new github.GitHub(
         core.getInput('github-token', { required: true })
     );
-
+    console.log(JSON.stringify(github.context.payload));
     await Promise.all(
         github.context.payload.commits.map(async ({ id: commitRef }) => {
             const {
@@ -2967,29 +2956,29 @@ const repositoryData = {
             } = await client.repos.getCommit({
                 ...repositoryData,
                 ref: commitRef,
-            })
+            });
 
-            const [releaseFile] = files.filter(({ filename }) => filename === 'RELEASES');
+            const [releaseFile] = files.filter(
+                ({ filename }) => filename === releasesFileName
+            );
 
             if (!releaseFile) {
-                core.debug('No release file changed, moving on');
+                core.debug(`No release file changed on commit ${commitRef}, moving on`);
 
                 return;
             }
 
+            core.debug(
+                `Release file changed on commit ${commitRef}, sending notification`
+            );
+
             await client.repos.createDispatchEvent({
                 ...repositoryData,
-                repo: 'sync-release-child',
+                repo: 'upgrade-support',
                 event_type: 'NEW_RELEASE',
-            })
+            });
         })
-    )
-
-
-
-    // } catch (error) {
-    //     core.setFailed(error.message);
-    // }
+    );
 })();
 
 
