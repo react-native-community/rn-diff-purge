@@ -21,7 +21,7 @@ const releasesFileName = 'multiple-releases-diffs.sh'; // 'RELEASES';
                 ...repositoryData,
                 ref: commitRef,
             });
-            console.log(files);
+
             const [releaseFile] = files.filter(
                 ({ filename }) => filename === releasesFileName
             );
