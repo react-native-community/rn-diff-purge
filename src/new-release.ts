@@ -1,4 +1,4 @@
-import fs from 'fs'
+import lineReader from 'line-reader'
 import { some, none, getRefinement } from 'fp-ts/lib/Option'
 
 import { PurgeError } from './errors'
@@ -19,6 +19,8 @@ export const newReleaseScript = (newRelease: string | undefined) => {
 		console.log(`Release ${newRelease} already exists.`)
 		process.exit(PurgeError.ReleaseExists)
 	}
+
+	console.log('diff generation')
 }
 
 
@@ -29,7 +31,14 @@ const missingArg = getRefinement<string | undefined, undefined>(newRelease => {
 })
 
 const releaseExists = (newRelease: string) => {
-	const releasesBuffer = fs.readFileSync(ReleasesFile)
-	return releasesBuffer.includes(newRelease)
+	let exists = false
+	lineReader.eachLine(ReleasesFile, (line, last) => {
+		console.log(`-${line}-`)
+		if (line === newRelease) {
+			exists = true
+			return false // stop reading
+		}
+	})
+	return exists
 }
 
