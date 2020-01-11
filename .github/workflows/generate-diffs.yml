@@ -1,0 +1,17 @@
+name: Generate diffs after new release
+
+on:
+  push:
+    branches:
+      - move-diffs-to-prs
+
+jobs:
+  release_notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        run: git clone --single-branch --branch master --depth 1 https://${{secrets.GITHUB_TOKEN}}@github.com/${{ github.repository }}.git .
+      - name: Generate diffs
+        uses: ./actions/generate-diffs
+        with:
+          github-token: ${{ secrets.SPECIAL_GITHUB_TOKEN }}
