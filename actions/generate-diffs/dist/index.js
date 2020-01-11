@@ -456,7 +456,6 @@ const missingArg = Option_1.getRefinement(newRelease => {
 const releaseExists = (newRelease) => {
     let exists = false;
     line_reader_1.default.eachLine(ReleasesFile, (line, last) => {
-        console.log(`-${line}-`);
         if (line === newRelease) {
             exists = true;
             return false; // stop reading
@@ -1545,7 +1544,7 @@ module.exports = require("fs");
 Object.defineProperty(exports, "__esModule", { value: true });
 const new_release_1 = __webpack_require__(242);
 console.log('aha');
-new_release_1.newReleaseScript('0.59.0');
+new_release_1.newReleaseScript('0.60.0');
 
 
 /***/ })

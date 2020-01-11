@@ -33,7 +33,6 @@ const missingArg = getRefinement<string | undefined, undefined>(newRelease => {
 const releaseExists = (newRelease: string) => {
 	let exists = false
 	lineReader.eachLine(ReleasesFile, (line, last) => {
-		console.log(`-${line}-`)
 		if (line === newRelease) {
 			exists = true
 			return false // stop reading
