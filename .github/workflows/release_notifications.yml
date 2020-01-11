@@ -12,6 +12,6 @@ jobs:
       - name: Checkout
         run: git clone --single-branch --branch master --depth 1 https://${{secrets.GITHUB_TOKEN}}@github.com/${{ github.repository }}.git .
       - name: Notify upgrade-support of a new release
-        uses: ./actions/notifyNewRelease
+        uses: ./actions/notify-new-release
         with:
           github-token: ${{ secrets.SPECIAL_GITHUB_TOKEN }}
