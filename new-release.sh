@@ -54,8 +54,8 @@ function generateNewReleaseBranch () {
     # commit and push branch
     git add "$AppName"
     git commit -m "Release $newRelease"
-    git push origin --delete "$branchName" || git push origin "$branchName"
-    git push --set-upstream origin "$branchName"
+    # git push origin --delete "$branchName" || git push origin "$branchName"
+    # git push --set-upstream origin "$branchName"
 
     # go back to master
     cd ..
@@ -147,18 +147,18 @@ function cleanUp () {
 guardMissingArg $*
 newRelease=$1
 
-guardExisting
+# guardExisting
 
-prepare
-generateNewReleaseBranch
-addReleaseToList
-generateDiffs
+# prepare
+# generateNewReleaseBranch
+# addReleaseToList
+# generateDiffs
 
-generateTable
-generateReadme
+# generateTable
+# generateReadme
 
-generateBigTable
-generateGHPages
+# generateBigTable
+# generateGHPages
 
-cleanUp
-pushMaster
+# cleanUp
+# pushMaster
