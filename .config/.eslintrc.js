@@ -6,6 +6,7 @@ module.exports = {
     },
     parserOptions: {
         ecmaVersion: 2018,
+        sourceType: 'module',
     },
     extends: 'eslint:recommended',
     rules: {
@@ -15,5 +16,6 @@ module.exports = {
         'quotes': ['error', 'single'],
         'semi': 'off',
         'array-bracket-spacing': ['error', 'never'],
+        'key-spacing': 'error',
     },
 };
