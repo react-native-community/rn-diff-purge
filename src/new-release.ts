@@ -10,27 +10,26 @@ const ReleasesFile= 'RELEASES'
 
 
 export const newReleaseScript = (newRelease: string | undefined) => {
-	guardMissingArg(newRelease)
-	guardExisting(newRelease)
+	if (missingArg(newRelease)) {
+		console.log('Release argument missing.')
+		process.exit(PurgeError.ReleaseArgMissing)
+	}
+
+	if (releaseExists(newRelease)) {
+		console.log(`Release ${newRelease} already exists.`)
+		process.exit(PurgeError.ReleaseExists)
+	}
 }
 
 
 
-const guardMissingArg = getRefinement<string | undefined, string>(newRelease => {
-	if (newRelease === undefined) {
-		console.log('Release argument missing.')
-		// process.exit(PurgeError.ReleaseArgMissing)
-		return none
-	}
-	some(newRelease)
+
+const missingArg = getRefinement<string | undefined, undefined>(newRelease => {
+	return newRelease === undefined ?  some(newRelease) : none
 })
 
-const guardExisting = (newRelease: string) => {
+const releaseExists = (newRelease: string) => {
 	const releasesBuffer = fs.readFileSync(ReleasesFile)
-	const exists = releasesBuffer.includes(newRelease)
-	if (exists) {
-		console.log(`Release ${newRelease} already exists.`)
-		process.exit(PurgeError.ReleaseExists)
-	}
+	return releasesBuffer.includes(newRelease)
 }
 
