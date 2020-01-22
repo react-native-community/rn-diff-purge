@@ -29,6 +29,8 @@ Help us make [this](https://react-native-community.github.io/rn-diff-purge) full
 
 Probably having some nice alternating row color, having the leftest column stay on top and always visible, and having a nice width for the content of each cell to fit in one line would be some ideas, but you are welcome to try other things!
 
+git clone remove flags from checkout
+
 ## Diff table (full table [HERE](https://react-native-community.github.io/rn-diff-purge/))
 
 | From->To    | R                                                                                                                         | N                                                                                                               |                                                                                                                 | C                                                                                                               | O                                                                                                               | R                                                                                                               | E                                                                                                               |                                                                                                                           | T                                                                                                                         | E                                                                                                                    | A                                                                                                          | M   |
