@@ -4,6 +4,7 @@ set -euxo pipefail
 
 ErrorReleaseExists=2
 ErrorReleaseArgMissing=3
+ErrorReleaseTagExists=4
 
 AppName=RnDiffApp
 AppBaseBranch=app-base
@@ -26,6 +27,10 @@ function guardExisting () {
     if grep -qFx "$newRelease" "$ReleasesFile"; then
         echo "Release $newRelease already exists!"
         exit "$ErrorReleaseExists"
+    fi
+    if [ $(git tag -l "version/$newRelease") ]; then
+        echo "Release tag version/$newRelease already exists!"
+        exit "$ErrorReleaseTagExists"
     fi
 }
 
@@ -104,7 +109,9 @@ function pushMaster () {
     # commit and push
     git add .
     git commit -m "Add release $newRelease"
-    git push
+    # tag the new release so @react-native-community/cli can prompt users to upgrade their projects
+    git tag "version/$newRelease"
+    git push origin master "version/$newRelease"
 }
 
 function generateTable () {
