@@ -1,9 +1,10 @@
 name: Run new-release script
 
 on: repository_dispatch
+  types: [publish]
 
 jobs:
-  generate_diffs:
+  update_diffs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node
