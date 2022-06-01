@@ -4,6 +4,7 @@ set -euxo pipefail
 
 ErrorReleaseExists=2
 ErrorReleaseArgMissing=3
+ErrorReleaseTagExists=4
 
 AppName=RnDiffApp
 AppBaseBranch=app-base
@@ -26,6 +27,10 @@ function guardExisting () {
     if grep -qFx "$newRelease" "$ReleasesFile"; then
         echo "Release $newRelease already exists!"
         exit "$ErrorReleaseExists"
+    fi
+    if [ $(git tag -l "version/$newRelease") ]; then
+        echo "Release tag version/$newRelease already exists!"
+        exit "$ErrorReleaseTagExists"
     fi
 }
 
@@ -57,7 +62,8 @@ function generateNewReleaseBranch () {
     git add "$AppName"
     git commit -m "Release $newRelease"
     git push origin --delete "$branchName" || git push origin "$branchName"
-    git push --set-upstream origin "$branchName"
+    git tag "version/$newRelease" # @react-native-community/cli needs this
+    git push --set-upstream origin "$branchName" --tags
 
     # go back to master
     cd ..
