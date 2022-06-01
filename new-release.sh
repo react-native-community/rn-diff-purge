@@ -110,6 +110,7 @@ function pushMaster () {
     # commit and push
     git add .
     git commit -m "Add release $newRelease"
+    git push origin master "version/$newRelease"
 }
 
 function generateTable () {
