@@ -60,7 +60,8 @@ function generateNewReleaseBranch () {
     git add "$AppName"
     git commit -m "Release $newRelease"
     git push origin --delete "$branchName" || git push origin "$branchName"
-    git push --set-upstream origin "$branchName"
+    git tag "version/$newRelease" # @react-native-community/cli needs this
+    git push --set-upstream origin "$branchName" --tags
 
     # go back to master
     cd ..
@@ -109,9 +110,6 @@ function pushMaster () {
     # commit and push
     git add .
     git commit -m "Add release $newRelease"
-    # tag the new release so @react-native-community/cli can prompt users to upgrade their projects
-    git tag "version/$newRelease"
-    git push origin master "version/$newRelease"
 }
 
 function generateTable () {
