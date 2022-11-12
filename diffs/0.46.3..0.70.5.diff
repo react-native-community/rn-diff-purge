@@ -6287,7 +6287,7 @@ deleted file mode 100644
 index 2fb6a11c2..000000000
 --- a/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
 +++ /dev/null
-@@ -1,53 +0,0 @@
+@@ -1,54 +0,0 @@
 -<?xml version="1.0" encoding="UTF-8"?>
 -<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 -<plist version="1.0">
@@ -6312,19 +6312,6 @@ index 2fb6a11c2..000000000
 -	<string>1</string>
 -	<key>LSRequiresIPhoneOS</key>
 -	<true/>
--	<key>NSAppTransportSecurity</key>
--	<dict>
--		<key>NSExceptionDomains</key>
--		<dict>
--			<key>localhost</key>
--			<dict>
--				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
--	</dict>
--	<key>NSLocationWhenInUseUsageDescription</key>
--	<string></string>
 -	<key>UILaunchStoryboardName</key>
 -	<string>LaunchScreen</string>
 -	<key>UIRequiredDeviceCapabilities</key>
@@ -6339,6 +6326,20 @@ index 2fb6a11c2..000000000
 -	</array>
 -	<key>UIViewControllerBasedStatusBarAppearance</key>
 -	<false/>
+-	<key>NSLocationWhenInUseUsageDescription</key>
+-	<string></string>
+-	<key>NSAppTransportSecurity</key>
+-	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
+-	<dict>
+-		<key>NSExceptionDomains</key>
+-		<dict>
+-			<key>localhost</key>
+-			<dict>
+-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+-				<true/>
+-			</dict>
+-		</dict>
+-	</dict>
 -</dict>
 -</plist>
 diff --git a/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist b/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist
@@ -8393,6 +8394,46 @@ index 10258dd6b..903b7921c 100644
  	<key>CFBundleInfoDictionaryVersion</key>
  	<string>6.0</string>
  	<key>CFBundleName</key>
+@@ -24,6 +24,19 @@
+ 	<string>1</string>
+ 	<key>LSRequiresIPhoneOS</key>
+ 	<true/>
++	<key>NSAppTransportSecurity</key>
++	<dict>
++		<key>NSExceptionDomains</key>
++		<dict>
++			<key>localhost</key>
++			<dict>
++				<key>NSExceptionAllowsInsecureHTTPLoads</key>
++				<true/>
++			</dict>
++		</dict>
++	</dict>
++	<key>NSLocationWhenInUseUsageDescription</key>
++	<string></string>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>LaunchScreen</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+@@ -38,19 +51,5 @@
+ 	</array>
+ 	<key>UIViewControllerBasedStatusBarAppearance</key>
+ 	<false/>
+-	<key>NSLocationWhenInUseUsageDescription</key>
+-	<string></string>
+-	<key>NSAppTransportSecurity</key>
+-	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
+-	<dict>
+-		<key>NSExceptionDomains</key>
+-		<dict>
+-			<key>localhost</key>
+-			<dict>
+-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+-				<true/>
+-			</dict>
+-		</dict>
+-	</dict>
+ </dict>
+ </plist>
 diff --git a/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard b/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
 new file mode 100644
 index 000000000..8f74d3c92
