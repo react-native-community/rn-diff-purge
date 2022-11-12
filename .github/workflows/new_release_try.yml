@@ -1,0 +1,27 @@
+name: Run new-release script TRY
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release"
+        required: true
+        default: "0.62.0"
+  repository_dispatch:
+    types: [publish]
+
+jobs:
+  update_diffs:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: asdf install
+        uses: asdf-vm/actions/install@v1
+
+      - name: yarn install
+        run: yarn install
+
+      - name: Run new-release script
+        run: ./new-release.sh ${{ github.event.client_payload.version }}
