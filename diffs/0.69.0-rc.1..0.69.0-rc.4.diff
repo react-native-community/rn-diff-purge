@@ -1,0 +1,60 @@
+diff --git a/RnDiffApp/ios/_xcode.env b/RnDiffApp/ios/.xcode.env
+similarity index 100%
+rename from RnDiffApp/ios/_xcode.env
+rename to RnDiffApp/ios/.xcode.env
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index c8d8644e3..7c765ad67 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -596,6 +596,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
++				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 			};
+ 			name = Debug;
+@@ -659,6 +660,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
++				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+ 			};
+diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+new file mode 100644
+index 000000000..0afd6876a
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Workspace
++   version = "1.0">
++   <FileRef
++      location = "group:RnDiffApp.xcodeproj">
++   </FileRef>
++   <FileRef
++      location = "group:Pods/Pods.xcodeproj">
++   </FileRef>
++</Workspace>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index f8580a8ff..a49283a5a 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "rndiffapp",
++  "name": "RnDiffApp",
+   "version": "0.0.1",
+   "private": true,
+   "scripts": {
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.0.0",
+-    "react-native": "0.69.0-rc.1"
++    "react-native": "0.69.0-rc.4"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.12.9",

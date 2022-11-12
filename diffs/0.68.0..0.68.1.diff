@@ -1,0 +1,95 @@
+diff --git a/RnDiffApp/Gemfile.lock b/RnDiffApp/Gemfile.lock
+index 089d06d0f..562835193 100644
+--- a/RnDiffApp/Gemfile.lock
++++ b/RnDiffApp/Gemfile.lock
+@@ -45,7 +45,7 @@ GEM
+       public_suffix (~> 4.0)
+       typhoeus (~> 1.0)
+     cocoapods-deintegrate (1.0.5)
+-    cocoapods-downloader (1.6.2)
++    cocoapods-downloader (1.6.3)
+     cocoapods-plugins (1.0.0)
+       nap
+     cocoapods-search (1.0.1)
+@@ -71,7 +71,7 @@ GEM
+     nanaimo (0.3.0)
+     nap (1.1.0)
+     netrc (0.11.0)
+-    public_suffix (4.0.6)
++    public_suffix (4.0.7)
+     rexml (3.2.5)
+     ruby-macho (2.5.1)
+     typhoeus (1.4.0)
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index ed1f54271..8d23018b9 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -1,6 +1,7 @@
+ apply plugin: "com.android.application"
+ 
+ import com.android.build.OutputFile
++import org.apache.tools.ant.taskdefs.condition.Os
+ 
+ /**
+  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
+@@ -157,6 +158,17 @@ android {
+                     // Make sure this target name is the same you specify inside the
+                     // src/main/jni/Android.mk file for the `LOCAL_MODULE` variable.
+                     targets "rndiffapp_appmodules"
++
++                    // Fix for windows limit on number of character in file paths and in command lines
++                    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
++                        arguments "NDK_OUT=${rootProject.projectDir.getParent()}\\.cxx",
++                            "NDK_APP_SHORT_COMMANDS=true"
++                    }
++                }
++            }
++            if (!enableSeparateBuildPerCPUArchitecture) {
++                ndk {
++                    abiFilters (*reactNativeArchitectures())
+                 }
+             }
+         }
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 8a1d68f9c..e7156fcc9 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -1,3 +1,5 @@
++import org.apache.tools.ant.taskdefs.condition.Os
++
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ 
+ buildscript {
+@@ -6,7 +8,18 @@ buildscript {
+         minSdkVersion = 21
+         compileSdkVersion = 31
+         targetSdkVersion = 31
+-        ndkVersion = "21.4.7075529"
++
++        if (System.properties['os.arch'] == "aarch64") {
++            // For M1 Users we need to use the NDK 24 which added support for aarch64
++            ndkVersion = "24.0.8215888"
++        } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
++            // For Android Users, we need to use NDK 23, otherwise the build will
++            // fail due to paths longer than the OS limit
++            ndkVersion = "23.1.7779620"
++        } else {
++            // Otherwise we default to the side-by-side NDK version from AGP.
++            ndkVersion = "21.4.7075529"
++        }
+     }
+     repositories {
+         google()
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index e6e948d14..8655f1049 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "17.0.2",
+-    "react-native": "0.68.0"
++    "react-native": "0.68.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.12.9",

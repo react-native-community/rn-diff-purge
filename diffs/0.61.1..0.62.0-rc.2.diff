@@ -1,0 +1,1282 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 4afc766a2..786366c4f 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -21,7 +21,7 @@ node_modules/warning/.*
+ [include]
+ 
+ [libs]
+-node_modules/react-native/Libraries/react-native/react-native-interface.js
++node_modules/react-native/interface.js
+ node_modules/react-native/flow/
+ 
+ [options]
+@@ -36,9 +36,8 @@ module.file_ext=.ios.js
+ 
+ munge_underscores=true
+ 
+-module.name_mapper='^react-native$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/react-native/react-native-implementation'
+ module.name_mapper='^react-native/\(.*\)$' -> '<PROJECT_ROOT>/node_modules/react-native/\1'
+-module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/Image/RelativeImageStub'
++module.name_mapper='^@?[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/Image/RelativeImageStub'
+ 
+ suppress_type=$FlowIssue
+ suppress_type=$FlowFixMe
+@@ -72,4 +71,4 @@ untyped-import
+ untyped-type-import
+ 
+ [version]
+-^0.105.0
++^0.113.0
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index d60e3322a..697e766db 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -20,7 +20,7 @@ DerivedData
+ *.hmap
+ *.ipa
+ *.xcuserstate
+-project.xcworkspace
++xcshareddata
+ 
+ # Android/IntelliJ
+ #
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
+index bb7758095..23cd158d8 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.js
+@@ -3,7 +3,7 @@
+  * https://github.com/facebook/react-native
+  *
+  * @format
+- * @flow
++ * @flow strict-local
+  */
+ 
+ import React from 'react';
+diff --git a/RnDiffApp/android/app/BUCK b/RnDiffApp/android/app/_BUCK
+similarity index 100%
+rename from RnDiffApp/android/app/BUCK
+rename to RnDiffApp/android/app/_BUCK
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 978da91bd..ae67f6005 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -15,7 +15,9 @@ import com.android.build.OutputFile
+  *   // the name of the generated asset file containing your JS bundle
+  *   bundleAssetName: "index.android.bundle",
+  *
+- *   // the entry file for bundle generation
++ *   // the entry file for bundle generation. If none specified and
++ *   // "index.android.js" exists, it will be used. Otherwise "index.js" is
++ *   // default. Can be overridden with ENTRY_FILE environment variable.
+  *   entryFile: "index.android.js",
+  *
+  *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
+@@ -76,7 +78,6 @@ import com.android.build.OutputFile
+  */
+ 
+ project.ext.react = [
+-    entryFile: "index.js",
+     enableHermes: false,  // clean and rebuild if changing
+ ]
+ 
+@@ -162,6 +163,14 @@ android {
+             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+         }
+     }
++
++    packagingOptions {
++        pickFirst "lib/armeabi-v7a/libc++_shared.so"
++        pickFirst "lib/arm64-v8a/libc++_shared.so"
++        pickFirst "lib/x86/libc++_shared.so"
++        pickFirst "lib/x86_64/libc++_shared.so"
++    }
++
+     // applicationVariants are e.g. debug, release
+     applicationVariants.all { variant ->
+         variant.outputs.each { output ->
+@@ -180,8 +189,23 @@ android {
+ 
+ dependencies {
+     implementation fileTree(dir: "libs", include: ["*.jar"])
++    //noinspection GradleDynamicVersion
+     implementation "com.facebook.react:react-native:+"  // From node_modules
+ 
++    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
++
++    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
++      exclude group:'com.facebook.fbjni'
++    }
++
++    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
++        exclude group:'com.facebook.flipper'
++    }
++
++    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
++        exclude group:'com.facebook.flipper'
++    }
++
+     if (enableHermes) {
+         def hermesPath = "../../node_modules/hermes-engine/android/";
+         debugImplementation files(hermesPath + "hermes-debug.aar")
+diff --git a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
+new file mode 100644
+index 000000000..5c106db4b
+--- /dev/null
++++ b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
+@@ -0,0 +1,72 @@
++/**
++ * Copyright (c) Facebook, Inc. and its affiliates.
++ *
++ * <p>This source code is licensed under the MIT license found in the LICENSE file in the root
++ * directory of this source tree.
++ */
++package com.rndiffapp;
++
++import android.content.Context;
++import com.facebook.flipper.android.AndroidFlipperClient;
++import com.facebook.flipper.android.utils.FlipperUtils;
++import com.facebook.flipper.core.FlipperClient;
++import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin;
++import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
++import com.facebook.flipper.plugins.fresco.FrescoFlipperPlugin;
++import com.facebook.flipper.plugins.inspector.DescriptorMapping;
++import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
++import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
++import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
++import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
++import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
++import com.facebook.react.ReactInstanceManager;
++import com.facebook.react.bridge.ReactContext;
++import com.facebook.react.modules.network.NetworkingModule;
++import okhttp3.OkHttpClient;
++
++public class ReactNativeFlipper {
++  public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
++    if (FlipperUtils.shouldEnableFlipper(context)) {
++      final FlipperClient client = AndroidFlipperClient.getInstance(context);
++
++      client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
++      client.addPlugin(new ReactFlipperPlugin());
++      client.addPlugin(new DatabasesFlipperPlugin(context));
++      client.addPlugin(new SharedPreferencesFlipperPlugin(context));
++      client.addPlugin(CrashReporterPlugin.getInstance());
++
++      NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
++      NetworkingModule.setCustomClientBuilder(
++          new NetworkingModule.CustomClientBuilder() {
++            @Override
++            public void apply(OkHttpClient.Builder builder) {
++              builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
++            }
++          });
++      client.addPlugin(networkFlipperPlugin);
++      client.start();
++
++      // Fresco Plugin needs to ensure that ImagePipelineFactory is initialized
++      // Hence we run if after all native modules have been initialized
++      ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
++      if (reactContext == null) {
++        reactInstanceManager.addReactInstanceEventListener(
++            new ReactInstanceManager.ReactInstanceEventListener() {
++              @Override
++              public void onReactContextInitialized(ReactContext reactContext) {
++                reactInstanceManager.removeReactInstanceEventListener(this);
++                reactContext.runOnNativeModulesQueueThread(
++                    new Runnable() {
++                      @Override
++                      public void run() {
++                        client.addPlugin(new FrescoFlipperPlugin());
++                      }
++                    });
++              }
++            });
++      } else {
++        client.addPlugin(new FrescoFlipperPlugin());
++      }
++    }
++  }
++}
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index f3e0d1555..3e43f2621 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -13,7 +13,8 @@
+       <activity
+         android:name=".MainActivity"
+         android:label="@string/app_name"
+-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
++        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
++        android:launchMode="singleTask"
+         android:windowSoftInputMode="adjustResize">
+         <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index aa691b8bc..04df56cf6 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+@@ -4,6 +4,7 @@ import android.app.Application;
+ import android.content.Context;
+ import com.facebook.react.PackageList;
+ import com.facebook.react.ReactApplication;
++import com.facebook.react.ReactInstanceManager;
+ import com.facebook.react.ReactNativeHost;
+ import com.facebook.react.ReactPackage;
+ import com.facebook.soloader.SoLoader;
+@@ -43,23 +44,28 @@ public class MainApplication extends Application implements ReactApplication {
+   public void onCreate() {
+     super.onCreate();
+     SoLoader.init(this, /* native exopackage */ false);
+-    initializeFlipper(this); // Remove this line if you don't want Flipper enabled
++    initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   }
+ 
+   /**
+-   * Loads Flipper in React Native templates.
++   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
++   * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    *
+    * @param context
++   * @param reactInstanceManager
+    */
+-  private static void initializeFlipper(Context context) {
++  private static void initializeFlipper(
++      Context context, ReactInstanceManager reactInstanceManager) {
+     if (BuildConfig.DEBUG) {
+       try {
+         /*
+          We use reflection here to pick up the class that initializes Flipper,
+         since Flipper library is not available in release mode
+         */
+-        Class<?> aClass = Class.forName("com.facebook.flipper.ReactNativeFlipper");
+-        aClass.getMethod("initializeFlipper", Context.class).invoke(null, context);
++        Class<?> aClass = Class.forName("com.rndiffapp.ReactNativeFlipper");
++        aClass
++            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
++            .invoke(null, context, reactInstanceManager);
+       } catch (ClassNotFoundException e) {
+         e.printStackTrace();
+       } catch (NoSuchMethodException e) {
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 28f7ec645..5d5d188b3 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -12,7 +12,7 @@ buildscript {
+         jcenter()
+     }
+     dependencies {
+-        classpath("com.android.tools.build:gradle:3.4.2")
++        classpath("com.android.tools.build:gradle:3.5.2")
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -33,6 +33,6 @@ allprojects {
+ 
+         google()
+         jcenter()
+-        maven { url 'https://jitpack.io' }
++        maven { url 'https://www.jitpack.io' }
+     }
+ }
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index 027ef9db8..06a2e7b32 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -17,5 +17,12 @@
+ # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
+ # org.gradle.parallel=true
+ 
++# AndroidX package structure to make it clearer which packages are bundled with the
++# Android operating system, and which are packaged with your app's APK
++# https://developer.android.com/topic/libraries/support-library/androidx-rn
+ android.useAndroidX=true
++# Automatically convert third-party libraries to use AndroidX
+ android.enableJetifier=true
++
++# Version of flipper SDK to use with React Native
++FLIPPER_VERSION=0.30.2
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index e0c4de36d..1ba7206f8 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-5.5-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-6.0.1-all.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
+index b0d6d0ab5..83f2acfdc 100755
+--- a/RnDiffApp/android/gradlew
++++ b/RnDiffApp/android/gradlew
+@@ -7,7 +7,7 @@
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+ #
+-#      http://www.apache.org/licenses/LICENSE-2.0
++#      https://www.apache.org/licenses/LICENSE-2.0
+ #
+ # Unless required by applicable law or agreed to in writing, software
+ # distributed under the License is distributed on an "AS IS" BASIS,
+@@ -125,8 +125,8 @@ if $darwin; then
+     GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
+ fi
+ 
+-# For Cygwin, switch paths to Windows format before running java
+-if $cygwin ; then
++# For Cygwin or MSYS, switch paths to Windows format before running java
++if [ "$cygwin" = "true" -o "$msys" = "true" ] ; then
+     APP_HOME=`cygpath --path --mixed "$APP_HOME"`
+     CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+     JAVACMD=`cygpath --unix "$JAVACMD"`
+diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
+index 15e1ee37a..24467a141 100644
+--- a/RnDiffApp/android/gradlew.bat
++++ b/RnDiffApp/android/gradlew.bat
+@@ -5,7 +5,7 @@
+ @rem you may not use this file except in compliance with the License.
+ @rem You may obtain a copy of the License at
+ @rem
+-@rem      http://www.apache.org/licenses/LICENSE-2.0
++@rem      https://www.apache.org/licenses/LICENSE-2.0
+ @rem
+ @rem Unless required by applicable law or agreed to in writing, software
+ @rem distributed under the License is distributed on an "AS IS" BASIS,
+diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
+index 50e38d6cf..e5f9f984a 100644
+--- a/RnDiffApp/ios/Podfile
++++ b/RnDiffApp/ios/Podfile
+@@ -1,6 +1,26 @@
+ platform :ios, '9.0'
+ require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ 
++def add_flipper_pods!
++  version = '~> 0.30.2'
++  pod 'FlipperKit', version, :configuration => 'Debug'
++  pod 'FlipperKit/FlipperKitLayoutPlugin', version, :configuration => 'Debug'
++  pod 'FlipperKit/SKIOSNetworkPlugin', version, :configuration => 'Debug'
++  pod 'FlipperKit/FlipperKitUserDefaultsPlugin', version, :configuration => 'Debug'
++  pod 'FlipperKit/FlipperKitReactPlugin', version, :configuration => 'Debug'
++end
++
++# Post Install processing for Flipper
++def flipper_post_install(installer)
++  installer.pods_project.targets.each do |target|
++    if target.name == 'YogaKit'
++      target.build_configurations.each do |config|
++        config.build_settings['SWIFT_VERSION'] = '4.1'
++      end
++    end
++  end
++end
++
+ target 'RnDiffApp' do
+   # Pods for RnDiffApp
+   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
+@@ -26,20 +46,29 @@ target 'RnDiffApp' do
+   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
+   pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
+   pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
+-  pod 'ReactCommon/jscallinvoker', :path => "../node_modules/react-native/ReactCommon"
++  pod 'ReactCommon/callinvoker', :path => "../node_modules/react-native/ReactCommon"
+   pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
+-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
++  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
+ 
+   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+ 
+   target 'RnDiffAppTests' do
+-    inherit! :search_paths
++    inherit! :complete
+     # Pods for testing
+   end
+ 
+   use_native_modules!
++
++  # Enables Flipper.
++  #
++  # Note that if you have use_frameworks! enabled, Flipper will not work and
++  # you should disable these next few lines.
++  add_flipper_pods!
++  post_install do |installer|
++    flipper_post_install(installer)
++  end
+ end
+ 
+ target 'RnDiffApp-tvOS' do
+@@ -49,5 +78,4 @@ target 'RnDiffApp-tvOS' do
+     inherit! :search_paths
+     # Pods for testing
+   end
+-
+ end
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index f573ba182..a70e9fa33 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -8,18 +8,18 @@
+ 
+ /* Begin PBXBuildFile section */
+ 		00E356F31AD99517003FC87E /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
++		05F5BBD635347A74430D6D54 /* libPods-RnDiffApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A6C4AB2D12D1C3218E62DA9 /* libPods-RnDiffApp-tvOSTests.a */; };
+ 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+ 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+ 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+-		1420AA6977713DBAD4657A59 /* libPods-RnDiffApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CB8CCFB59C0423A1CDDAC17 /* libPods-RnDiffApp.a */; };
+-		298BC83A08C8588454B68F38 /* libPods-RnDiffAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CCB1A39FA975D5578B1AA56 /* libPods-RnDiffAppTests.a */; };
+ 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+ 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+ 		2DCD954D1E0B4F2C00145EB5 /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
+-		5A9BBBB1FF95A6C74BB29E24 /* libPods-RnDiffApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27055F9F74C64758647F2F35 /* libPods-RnDiffApp-tvOSTests.a */; };
+-		8463E941096914ADFBDB3AC4 /* libPods-RnDiffApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7B7317CFC6C199B600CFF07 /* libPods-RnDiffApp-tvOS.a */; };
++		53D2B117197396774ACB5E06 /* libPods-RnDiffApp-RnDiffAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDF246F4F031A3AB05A4F59 /* libPods-RnDiffApp-RnDiffAppTests.a */; };
++		D91964E7CE5909487F94B644 /* libPods-RnDiffApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B415CCA25BD85DC8B898F0C /* libPods-RnDiffApp.a */; };
++		E91B7B476C784DE3B1734962 /* libPods-RnDiffApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 694674CFDC7F6A3F8A40F57B /* libPods-RnDiffApp-tvOS.a */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXContainerItemProxy section */
+@@ -44,7 +44,6 @@
+ 		00E356EE1AD99517003FC87E /* RnDiffAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RnDiffAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+ 		00E356F21AD99517003FC87E /* RnDiffAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RnDiffAppTests.m; sourceTree = "<group>"; };
+-		0C240072BFD9E98A1E794B59 /* Pods-RnDiffAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffAppTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffAppTests/Pods-RnDiffAppTests.release.xcconfig"; sourceTree = "<group>"; };
+ 		13B07F961A680F5B00A75B9A /* RnDiffApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RnDiffApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RnDiffApp/AppDelegate.h; sourceTree = "<group>"; };
+ 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RnDiffApp/AppDelegate.m; sourceTree = "<group>"; };
+@@ -52,21 +51,22 @@
+ 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RnDiffApp/Images.xcassets; sourceTree = "<group>"; };
+ 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RnDiffApp/Info.plist; sourceTree = "<group>"; };
+ 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RnDiffApp/main.m; sourceTree = "<group>"; };
+-		196E527FC922BCAA8D8CAC9E /* Pods-RnDiffApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOS/Pods-RnDiffApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+-		27055F9F74C64758647F2F35 /* libPods-RnDiffApp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+-		2CCB1A39FA975D5578B1AA56 /* libPods-RnDiffAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		2D02E47B1E0B4A5D006451C7 /* RnDiffApp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RnDiffApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		2D02E4901E0B4A5D006451C7 /* RnDiffApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RnDiffApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+-		379B51F9A8A365D165700FAB /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOSTests/Pods-RnDiffApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+-		66642040260A3CF16256CC0C /* Pods-RnDiffApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.debug.xcconfig"; sourceTree = "<group>"; };
+-		9AE59199F336FCE85982AEB8 /* Pods-RnDiffAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffAppTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffAppTests/Pods-RnDiffAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+-		9CB8CCFB59C0423A1CDDAC17 /* libPods-RnDiffApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+-		B7B7317CFC6C199B600CFF07 /* libPods-RnDiffApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+-		C0F18319F1A6077D0F2221B6 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOSTests/Pods-RnDiffApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+-		C6299C6C802DEC24412F3C9F /* Pods-RnDiffApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.release.xcconfig"; sourceTree = "<group>"; };
+-		ED110D7E0D90B341E0C157D2 /* Pods-RnDiffApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOS/Pods-RnDiffApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
++		37B66E16FF3BCDCD0F801751 /* Pods-RnDiffApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOS/Pods-RnDiffApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
++		4B415CCA25BD85DC8B898F0C /* libPods-RnDiffApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
++		4FCE85E29DC35CA043491F48 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOSTests/Pods-RnDiffApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
++		53199DECD9E5DE200C408B41 /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-RnDiffAppTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests.release.xcconfig"; sourceTree = "<group>"; };
++		5A6C4AB2D12D1C3218E62DA9 /* libPods-RnDiffApp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
++		694674CFDC7F6A3F8A40F57B /* libPods-RnDiffApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
++		6A6A8F06D3353427FEEC76BE /* Pods-RnDiffApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOS/Pods-RnDiffApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
++		B987C15AAAB63852FF085CAE /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOSTests/Pods-RnDiffApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
++		CDDF246F4F031A3AB05A4F59 /* libPods-RnDiffApp-RnDiffAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-RnDiffAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
++		D6C5DE7DA0B956DE3FEB13D4 /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig"; sourceTree = "<group>"; };
++		E30513D44F62C60536377FC4 /* Pods-RnDiffApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.release.xcconfig"; sourceTree = "<group>"; };
+ 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+ 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
++		F8FBBB17D99BB200EF094F83 /* Pods-RnDiffApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.debug.xcconfig"; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -74,7 +74,7 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				298BC83A08C8588454B68F38 /* libPods-RnDiffAppTests.a in Frameworks */,
++				53D2B117197396774ACB5E06 /* libPods-RnDiffApp-RnDiffAppTests.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -82,7 +82,7 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				1420AA6977713DBAD4657A59 /* libPods-RnDiffApp.a in Frameworks */,
++				D91964E7CE5909487F94B644 /* libPods-RnDiffApp.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -90,7 +90,7 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				8463E941096914ADFBDB3AC4 /* libPods-RnDiffApp-tvOS.a in Frameworks */,
++				E91B7B476C784DE3B1734962 /* libPods-RnDiffApp-tvOS.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -98,7 +98,7 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				5A9BBBB1FF95A6C74BB29E24 /* libPods-RnDiffApp-tvOSTests.a in Frameworks */,
++				05F5BBD635347A74430D6D54 /* libPods-RnDiffApp-tvOSTests.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -122,6 +122,22 @@
+ 			name = "Supporting Files";
+ 			sourceTree = "<group>";
+ 		};
++		02D5153D1CC8FD5C42BA66AE /* Pods */ = {
++			isa = PBXGroup;
++			children = (
++				F8FBBB17D99BB200EF094F83 /* Pods-RnDiffApp.debug.xcconfig */,
++				E30513D44F62C60536377FC4 /* Pods-RnDiffApp.release.xcconfig */,
++				D6C5DE7DA0B956DE3FEB13D4 /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */,
++				53199DECD9E5DE200C408B41 /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */,
++				6A6A8F06D3353427FEEC76BE /* Pods-RnDiffApp-tvOS.debug.xcconfig */,
++				37B66E16FF3BCDCD0F801751 /* Pods-RnDiffApp-tvOS.release.xcconfig */,
++				B987C15AAAB63852FF085CAE /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */,
++				4FCE85E29DC35CA043491F48 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */,
++			);
++			name = Pods;
++			path = Pods;
++			sourceTree = "<group>";
++		};
+ 		13B07FAE1A68108700A75B9A /* RnDiffApp */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -141,10 +157,10 @@
+ 			children = (
+ 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+ 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
+-				9CB8CCFB59C0423A1CDDAC17 /* libPods-RnDiffApp.a */,
+-				B7B7317CFC6C199B600CFF07 /* libPods-RnDiffApp-tvOS.a */,
+-				27055F9F74C64758647F2F35 /* libPods-RnDiffApp-tvOSTests.a */,
+-				2CCB1A39FA975D5578B1AA56 /* libPods-RnDiffAppTests.a */,
++				4B415CCA25BD85DC8B898F0C /* libPods-RnDiffApp.a */,
++				CDDF246F4F031A3AB05A4F59 /* libPods-RnDiffApp-RnDiffAppTests.a */,
++				694674CFDC7F6A3F8A40F57B /* libPods-RnDiffApp-tvOS.a */,
++				5A6C4AB2D12D1C3218E62DA9 /* libPods-RnDiffApp-tvOSTests.a */,
+ 			);
+ 			name = Frameworks;
+ 			sourceTree = "<group>";
+@@ -164,7 +180,7 @@
+ 				00E356EF1AD99517003FC87E /* RnDiffAppTests */,
+ 				83CBBA001A601CBA00E9B192 /* Products */,
+ 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+-				F09FD89C61110132D76896A8 /* Pods */,
++				02D5153D1CC8FD5C42BA66AE /* Pods */,
+ 			);
+ 			indentWidth = 2;
+ 			sourceTree = "<group>";
+@@ -182,22 +198,6 @@
+ 			name = Products;
+ 			sourceTree = "<group>";
+ 		};
+-		F09FD89C61110132D76896A8 /* Pods */ = {
+-			isa = PBXGroup;
+-			children = (
+-				66642040260A3CF16256CC0C /* Pods-RnDiffApp.debug.xcconfig */,
+-				C6299C6C802DEC24412F3C9F /* Pods-RnDiffApp.release.xcconfig */,
+-				196E527FC922BCAA8D8CAC9E /* Pods-RnDiffApp-tvOS.debug.xcconfig */,
+-				ED110D7E0D90B341E0C157D2 /* Pods-RnDiffApp-tvOS.release.xcconfig */,
+-				379B51F9A8A365D165700FAB /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */,
+-				C0F18319F1A6077D0F2221B6 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */,
+-				9AE59199F336FCE85982AEB8 /* Pods-RnDiffAppTests.debug.xcconfig */,
+-				0C240072BFD9E98A1E794B59 /* Pods-RnDiffAppTests.release.xcconfig */,
+-			);
+-			name = Pods;
+-			path = Pods;
+-			sourceTree = "<group>";
+-		};
+ /* End PBXGroup section */
+ 
+ /* Begin PBXNativeTarget section */
+@@ -205,7 +205,7 @@
+ 			isa = PBXNativeTarget;
+ 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "RnDiffAppTests" */;
+ 			buildPhases = (
+-				78EC072665229A0E0C13E3CE /* [CP] Check Pods Manifest.lock */,
++				BF20DA7101A6A3583FBD9BC1 /* [CP] Check Pods Manifest.lock */,
+ 				00E356EA1AD99517003FC87E /* Sources */,
+ 				00E356EB1AD99517003FC87E /* Frameworks */,
+ 				00E356EC1AD99517003FC87E /* Resources */,
+@@ -224,7 +224,7 @@
+ 			isa = PBXNativeTarget;
+ 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RnDiffApp" */;
+ 			buildPhases = (
+-				B7CD587E209EA9E094970881 /* [CP] Check Pods Manifest.lock */,
++				E44ED009B523F5AF74E4BB55 /* [CP] Check Pods Manifest.lock */,
+ 				FD10A7F022414F080027D42C /* Start Packager */,
+ 				13B07F871A680F5B00A75B9A /* Sources */,
+ 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+@@ -244,7 +244,7 @@
+ 			isa = PBXNativeTarget;
+ 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "RnDiffApp-tvOS" */;
+ 			buildPhases = (
+-				B185F03C9B666D34CB21D45A /* [CP] Check Pods Manifest.lock */,
++				646A8732EB1156CAD4896CDC /* [CP] Check Pods Manifest.lock */,
+ 				FD10A7F122414F3F0027D42C /* Start Packager */,
+ 				2D02E4771E0B4A5D006451C7 /* Sources */,
+ 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
+@@ -264,7 +264,7 @@
+ 			isa = PBXNativeTarget;
+ 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "RnDiffApp-tvOSTests" */;
+ 			buildPhases = (
+-				FB7E03D04AA4025D0F953305 /* [CP] Check Pods Manifest.lock */,
++				6AFE3AA9D6AF935C097CCF20 /* [CP] Check Pods Manifest.lock */,
+ 				2D02E48C1E0B4A5D006451C7 /* Sources */,
+ 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
+ 				2D02E48E1E0B4A5D006451C7 /* Resources */,
+@@ -286,12 +286,14 @@
+ 			isa = PBXProject;
+ 			attributes = {
+ 				LastUpgradeCheck = 0940;
+-				ORGANIZATIONNAME = Facebook;
+ 				TargetAttributes = {
+ 					00E356ED1AD99517003FC87E = {
+ 						CreatedOnToolsVersion = 6.2;
+ 						TestTargetID = 13B07F861A680F5B00A75B9A;
+ 					};
++					13B07F861A680F5B00A75B9A = {
++						LastSwiftMigration = 1120;
++					};
+ 					2D02E47A1E0B4A5D006451C7 = {
+ 						CreatedOnToolsVersion = 8.2.1;
+ 						ProvisioningStyle = Automatic;
+@@ -308,6 +310,7 @@
+ 			developmentRegion = English;
+ 			hasScannedForEncodings = 0;
+ 			knownRegions = (
++				English,
+ 				en,
+ 				Base,
+ 			);
+@@ -387,7 +390,7 @@
+ 			shellPath = /bin/sh;
+ 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+ 		};
+-		78EC072665229A0E0C13E3CE /* [CP] Check Pods Manifest.lock */ = {
++		646A8732EB1156CAD4896CDC /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -402,14 +405,14 @@
+ 			outputFileListPaths = (
+ 			);
+ 			outputPaths = (
+-				"$(DERIVED_FILE_DIR)/Pods-RnDiffAppTests-checkManifestLockResult.txt",
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-tvOS-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		B185F03C9B666D34CB21D45A /* [CP] Check Pods Manifest.lock */ = {
++		6AFE3AA9D6AF935C097CCF20 /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -424,14 +427,14 @@
+ 			outputFileListPaths = (
+ 			);
+ 			outputPaths = (
+-				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-tvOS-checkManifestLockResult.txt",
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-tvOSTests-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		B7CD587E209EA9E094970881 /* [CP] Check Pods Manifest.lock */ = {
++		BF20DA7101A6A3583FBD9BC1 /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -446,14 +449,14 @@
+ 			outputFileListPaths = (
+ 			);
+ 			outputPaths = (
+-				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-checkManifestLockResult.txt",
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-RnDiffAppTests-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		FB7E03D04AA4025D0F953305 /* [CP] Check Pods Manifest.lock */ = {
++		E44ED009B523F5AF74E4BB55 /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -468,7 +471,7 @@
+ 			outputFileListPaths = (
+ 			);
+ 			outputPaths = (
+-				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-tvOSTests-checkManifestLockResult.txt",
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+@@ -580,7 +583,7 @@
+ /* Begin XCBuildConfiguration section */
+ 		00E356F61AD99517003FC87E /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 9AE59199F336FCE85982AEB8 /* Pods-RnDiffAppTests.debug.xcconfig */;
++			baseConfigurationReference = D6C5DE7DA0B956DE3FEB13D4 /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				GCC_PREPROCESSOR_DEFINITIONS = (
+@@ -603,7 +606,7 @@
+ 		};
+ 		00E356F71AD99517003FC87E /* Release */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 0C240072BFD9E98A1E794B59 /* Pods-RnDiffAppTests.release.xcconfig */;
++			baseConfigurationReference = 53199DECD9E5DE200C408B41 /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+@@ -623,11 +626,16 @@
+ 		};
+ 		13B07F941A680F5B00A75B9A /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 66642040260A3CF16256CC0C /* Pods-RnDiffApp.debug.xcconfig */;
++			baseConfigurationReference = F8FBBB17D99BB200EF094F83 /* Pods-RnDiffApp.debug.xcconfig */;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
++				CLANG_ENABLE_MODULES = YES;
+ 				CURRENT_PROJECT_VERSION = 1;
+-				DEAD_CODE_STRIPPING = NO;
++				ENABLE_BITCODE = NO;
++				GCC_PREPROCESSOR_DEFINITIONS = (
++					"$(inherited)",
++					"FB_SONARKIT_ENABLED=1",
++				);
+ 				INFOPLIST_FILE = RnDiffApp/Info.plist;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+@@ -637,15 +645,18 @@
+ 				);
+ 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = RnDiffApp;
++				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
++				SWIFT_VERSION = 5.0;
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+ 			name = Debug;
+ 		};
+ 		13B07F951A680F5B00A75B9A /* Release */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = C6299C6C802DEC24412F3C9F /* Pods-RnDiffApp.release.xcconfig */;
++			baseConfigurationReference = E30513D44F62C60536377FC4 /* Pods-RnDiffApp.release.xcconfig */;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
++				CLANG_ENABLE_MODULES = YES;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				INFOPLIST_FILE = RnDiffApp/Info.plist;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+@@ -656,13 +667,14 @@
+ 				);
+ 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = RnDiffApp;
++				SWIFT_VERSION = 5.0;
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+ 			name = Release;
+ 		};
+ 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 196E527FC922BCAA8D8CAC9E /* Pods-RnDiffApp-tvOS.debug.xcconfig */;
++			baseConfigurationReference = 6A6A8F06D3353427FEEC76BE /* Pods-RnDiffApp-tvOS.debug.xcconfig */;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+ 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+@@ -680,7 +692,7 @@
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.RnDiffApp-tvOS";
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOS";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = appletvos;
+ 				TARGETED_DEVICE_FAMILY = 3;
+@@ -690,7 +702,7 @@
+ 		};
+ 		2D02E4981E0B4A5E006451C7 /* Release */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = ED110D7E0D90B341E0C157D2 /* Pods-RnDiffApp-tvOS.release.xcconfig */;
++			baseConfigurationReference = 37B66E16FF3BCDCD0F801751 /* Pods-RnDiffApp-tvOS.release.xcconfig */;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+ 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+@@ -708,7 +720,7 @@
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.RnDiffApp-tvOS";
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOS";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = appletvos;
+ 				TARGETED_DEVICE_FAMILY = 3;
+@@ -718,7 +730,7 @@
+ 		};
+ 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 379B51F9A8A365D165700FAB /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */;
++			baseConfigurationReference = B987C15AAAB63852FF085CAE /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				CLANG_ANALYZER_NONNULL = YES;
+@@ -735,7 +747,7 @@
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.RnDiffApp-tvOSTests";
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOSTests";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = appletvos;
+ 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp-tvOS.app/RnDiffApp-tvOS";
+@@ -745,7 +757,7 @@
+ 		};
+ 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = C0F18319F1A6077D0F2221B6 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */;
++			baseConfigurationReference = 4FCE85E29DC35CA043491F48 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				CLANG_ANALYZER_NONNULL = YES;
+@@ -762,7 +774,7 @@
+ 					"-ObjC",
+ 					"-lc++",
+ 				);
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.RnDiffApp-tvOSTests";
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOSTests";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = appletvos;
+ 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp-tvOS.app/RnDiffApp-tvOS";
+@@ -817,6 +829,12 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
++				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
++				LIBRARY_SEARCH_PATHS = (
++					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
++					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
++					"\"$(inherited)\"",
++				);
+ 				MTL_ENABLE_DEBUG_INFO = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+ 				SDKROOT = iphoneos;
+@@ -863,6 +881,12 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
++				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
++				LIBRARY_SEARCH_PATHS = (
++					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
++					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
++					"\"$(inherited)\"",
++				);
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
+deleted file mode 100644
+index c02632f91..000000000
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
++++ /dev/null
+@@ -1,129 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<Scheme
+-   LastUpgradeVersion = "0940"
+-   version = "1.3">
+-   <BuildAction
+-      parallelizeBuildables = "NO"
+-      buildImplicitDependencies = "YES">
+-      <BuildActionEntries>
+-         <BuildActionEntry
+-            buildForTesting = "YES"
+-            buildForRunning = "YES"
+-            buildForProfiling = "YES"
+-            buildForArchiving = "YES"
+-            buildForAnalyzing = "YES">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "2D2A28121D9B038B00D4039D"
+-               BuildableName = "libReact.a"
+-               BlueprintName = "React-tvOS"
+-               ReferencedContainer = "container:../node_modules/react-native/React/React.xcodeproj">
+-            </BuildableReference>
+-         </BuildActionEntry>
+-         <BuildActionEntry
+-            buildForTesting = "YES"
+-            buildForRunning = "YES"
+-            buildForProfiling = "YES"
+-            buildForArchiving = "YES"
+-            buildForAnalyzing = "YES">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+-               BuildableName = "RnDiffApp-tvOS.app"
+-               BlueprintName = "RnDiffApp-tvOS"
+-               ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-            </BuildableReference>
+-         </BuildActionEntry>
+-         <BuildActionEntry
+-            buildForTesting = "YES"
+-            buildForRunning = "YES"
+-            buildForProfiling = "NO"
+-            buildForArchiving = "NO"
+-            buildForAnalyzing = "YES">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
+-               BuildableName = "RnDiffApp-tvOSTests.xctest"
+-               BlueprintName = "RnDiffApp-tvOSTests"
+-               ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-            </BuildableReference>
+-         </BuildActionEntry>
+-      </BuildActionEntries>
+-   </BuildAction>
+-   <TestAction
+-      buildConfiguration = "Debug"
+-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+-      shouldUseLaunchSchemeArgsEnv = "YES">
+-      <Testables>
+-         <TestableReference
+-            skipped = "NO">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
+-               BuildableName = "RnDiffApp-tvOSTests.xctest"
+-               BlueprintName = "RnDiffApp-tvOSTests"
+-               ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-            </BuildableReference>
+-         </TestableReference>
+-      </Testables>
+-      <MacroExpansion>
+-         <BuildableReference
+-            BuildableIdentifier = "primary"
+-            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+-            BuildableName = "RnDiffApp-tvOS.app"
+-            BlueprintName = "RnDiffApp-tvOS"
+-            ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-         </BuildableReference>
+-      </MacroExpansion>
+-      <AdditionalOptions>
+-      </AdditionalOptions>
+-   </TestAction>
+-   <LaunchAction
+-      buildConfiguration = "Debug"
+-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+-      launchStyle = "0"
+-      useCustomWorkingDirectory = "NO"
+-      ignoresPersistentStateOnLaunch = "NO"
+-      debugDocumentVersioning = "YES"
+-      debugServiceExtension = "internal"
+-      allowLocationSimulation = "YES">
+-      <BuildableProductRunnable
+-         runnableDebuggingMode = "0">
+-         <BuildableReference
+-            BuildableIdentifier = "primary"
+-            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+-            BuildableName = "RnDiffApp-tvOS.app"
+-            BlueprintName = "RnDiffApp-tvOS"
+-            ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-         </BuildableReference>
+-      </BuildableProductRunnable>
+-      <AdditionalOptions>
+-      </AdditionalOptions>
+-   </LaunchAction>
+-   <ProfileAction
+-      buildConfiguration = "Release"
+-      shouldUseLaunchSchemeArgsEnv = "YES"
+-      savedToolIdentifier = ""
+-      useCustomWorkingDirectory = "NO"
+-      debugDocumentVersioning = "YES">
+-      <BuildableProductRunnable
+-         runnableDebuggingMode = "0">
+-         <BuildableReference
+-            BuildableIdentifier = "primary"
+-            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+-            BuildableName = "RnDiffApp-tvOS.app"
+-            BlueprintName = "RnDiffApp-tvOS"
+-            ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-         </BuildableReference>
+-      </BuildableProductRunnable>
+-   </ProfileAction>
+-   <AnalyzeAction
+-      buildConfiguration = "Debug">
+-   </AnalyzeAction>
+-   <ArchiveAction
+-      buildConfiguration = "Release"
+-      revealArchiveInOrganizer = "YES">
+-   </ArchiveAction>
+-</Scheme>
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
+deleted file mode 100644
+index 1b922ea25..000000000
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
++++ /dev/null
+@@ -1,129 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<Scheme
+-   LastUpgradeVersion = "0940"
+-   version = "1.3">
+-   <BuildAction
+-      parallelizeBuildables = "NO"
+-      buildImplicitDependencies = "YES">
+-      <BuildActionEntries>
+-         <BuildActionEntry
+-            buildForTesting = "YES"
+-            buildForRunning = "YES"
+-            buildForProfiling = "YES"
+-            buildForArchiving = "YES"
+-            buildForAnalyzing = "YES">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "83CBBA2D1A601D0E00E9B192"
+-               BuildableName = "libReact.a"
+-               BlueprintName = "React"
+-               ReferencedContainer = "container:../node_modules/react-native/React/React.xcodeproj">
+-            </BuildableReference>
+-         </BuildActionEntry>
+-         <BuildActionEntry
+-            buildForTesting = "YES"
+-            buildForRunning = "YES"
+-            buildForProfiling = "YES"
+-            buildForArchiving = "YES"
+-            buildForAnalyzing = "YES">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+-               BuildableName = "RnDiffApp.app"
+-               BlueprintName = "RnDiffApp"
+-               ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-            </BuildableReference>
+-         </BuildActionEntry>
+-         <BuildActionEntry
+-            buildForTesting = "YES"
+-            buildForRunning = "YES"
+-            buildForProfiling = "NO"
+-            buildForArchiving = "NO"
+-            buildForAnalyzing = "YES">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
+-               BuildableName = "RnDiffAppTests.xctest"
+-               BlueprintName = "RnDiffAppTests"
+-               ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-            </BuildableReference>
+-         </BuildActionEntry>
+-      </BuildActionEntries>
+-   </BuildAction>
+-   <TestAction
+-      buildConfiguration = "Debug"
+-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+-      shouldUseLaunchSchemeArgsEnv = "YES">
+-      <Testables>
+-         <TestableReference
+-            skipped = "NO">
+-            <BuildableReference
+-               BuildableIdentifier = "primary"
+-               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
+-               BuildableName = "RnDiffAppTests.xctest"
+-               BlueprintName = "RnDiffAppTests"
+-               ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-            </BuildableReference>
+-         </TestableReference>
+-      </Testables>
+-      <MacroExpansion>
+-         <BuildableReference
+-            BuildableIdentifier = "primary"
+-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+-            BuildableName = "RnDiffApp.app"
+-            BlueprintName = "RnDiffApp"
+-            ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-         </BuildableReference>
+-      </MacroExpansion>
+-      <AdditionalOptions>
+-      </AdditionalOptions>
+-   </TestAction>
+-   <LaunchAction
+-      buildConfiguration = "Debug"
+-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+-      launchStyle = "0"
+-      useCustomWorkingDirectory = "NO"
+-      ignoresPersistentStateOnLaunch = "NO"
+-      debugDocumentVersioning = "YES"
+-      debugServiceExtension = "internal"
+-      allowLocationSimulation = "YES">
+-      <BuildableProductRunnable
+-         runnableDebuggingMode = "0">
+-         <BuildableReference
+-            BuildableIdentifier = "primary"
+-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+-            BuildableName = "RnDiffApp.app"
+-            BlueprintName = "RnDiffApp"
+-            ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-         </BuildableReference>
+-      </BuildableProductRunnable>
+-      <AdditionalOptions>
+-      </AdditionalOptions>
+-   </LaunchAction>
+-   <ProfileAction
+-      buildConfiguration = "Release"
+-      shouldUseLaunchSchemeArgsEnv = "YES"
+-      savedToolIdentifier = ""
+-      useCustomWorkingDirectory = "NO"
+-      debugDocumentVersioning = "YES">
+-      <BuildableProductRunnable
+-         runnableDebuggingMode = "0">
+-         <BuildableReference
+-            BuildableIdentifier = "primary"
+-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+-            BuildableName = "RnDiffApp.app"
+-            BlueprintName = "RnDiffApp"
+-            ReferencedContainer = "container:RnDiffApp.xcodeproj">
+-         </BuildableReference>
+-      </BuildableProductRunnable>
+-   </ProfileAction>
+-   <AnalyzeAction
+-      buildConfiguration = "Debug">
+-   </AnalyzeAction>
+-   <ArchiveAction
+-      buildConfiguration = "Release"
+-      revealArchiveInOrganizer = "YES">
+-   </ArchiveAction>
+-</Scheme>
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+index 2726d5e13..ef1de86a2 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+@@ -1,10 +1,3 @@
+-/**
+- * Copyright (c) Facebook, Inc. and its affiliates.
+- *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
+- */
+-
+ #import <React/RCTBridgeDelegate.h>
+ #import <UIKit/UIKit.h>
+ 
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index 4c12ae4bb..c7db8b55d 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -1,20 +1,36 @@
+-/**
+- * Copyright (c) Facebook, Inc. and its affiliates.
+- *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
+- */
+-
+ #import "AppDelegate.h"
+ 
+ #import <React/RCTBridge.h>
+ #import <React/RCTBundleURLProvider.h>
+ #import <React/RCTRootView.h>
+ 
++#if DEBUG
++#import <FlipperKit/FlipperClient.h>
++#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
++#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
++#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
++#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
++#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
++
++static void InitializeFlipper(UIApplication *application) {
++  FlipperClient *client = [FlipperClient sharedClient];
++  SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
++  [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];
++  [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
++  [client addPlugin:[FlipperKitReactPlugin new]];
++  [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
++  [client start];
++}
++#endif
++
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
++#if DEBUG
++  InitializeFlipper(application);
++#endif
++
+   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                                    moduleName:@"RnDiffApp"
+diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
+index c316cf816..b1df44b95 100644
+--- a/RnDiffApp/ios/RnDiffApp/main.m
++++ b/RnDiffApp/ios/RnDiffApp/main.m
+@@ -1,10 +1,3 @@
+-/**
+- * Copyright (c) Facebook, Inc. and its affiliates.
+- *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
+- */
+-
+ #import <UIKit/UIKit.h>
+ 
+ #import "AppDelegate.h"
+diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+index c5d35d0be..fe83ad244 100644
+--- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
++++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+@@ -1,10 +1,3 @@
+-/**
+- * Copyright (c) Facebook, Inc. and its affiliates.
+- *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
+- */
+-
+ #import <UIKit/UIKit.h>
+ #import <XCTest/XCTest.h>
+ 
+@@ -59,7 +52,7 @@
+       return NO;
+     }];
+   }
+-  
++
+ #ifdef DEBUG
+   RCTSetLogFunction(RCTDefaultLogFunction);
+ #endif
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 15f211577..854df9c48 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,18 +10,18 @@
+     "lint": "eslint ."
+   },
+   "dependencies": {
+-    "react": "16.9.0",
+-    "react-native": "0.61.1"
++    "react": "16.11.0",
++    "react-native": "0.62.0-rc.2"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.6.2",
+     "@babel/runtime": "^7.6.2",
+     "@react-native-community/eslint-config": "^0.0.5",
+     "babel-jest": "^24.9.0",
+-    "eslint": "^6.4.0",
++    "eslint": "^6.5.1",
+     "jest": "^24.9.0",
+-    "metro-react-native-babel-preset": "^0.56.0",
+-    "react-test-renderer": "16.9.0"
++    "metro-react-native-babel-preset": "^0.58.0",
++    "react-test-renderer": "16.11.0"
+   },
+   "jest": {
+     "preset": "react-native"

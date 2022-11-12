@@ -1,0 +1,51 @@
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 40c4e0172..aeb1f56b0 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -233,6 +233,11 @@ android {
+ 
+         }
+     }
++
++    packagingOptions {
++        pickFirst '**/libhermes.so'
++        pickFirst '**/libjsc.so'
++    }
+ }
+ 
+ dependencies {
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index fa4feae5f..6e1a46f01 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -9,8 +9,8 @@
+ 
+ # Specifies the JVM arguments used for the daemon process.
+ # The setting is particularly useful for tweaking memory settings.
+-# Default value: -Xmx512m -XX:MaxMetaspaceSize=256m
+-org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
++# Default value: -Xmx1024m -XX:MaxPermSize=256m
++# org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+ 
+ # When configured, Gradle will run in incubating parallel mode.
+ # This option should only be used with decoupled projects. More details, visit
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 3232529c5..a16f1f2a2 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "RnDiffApp",
++  "name": "rndiffapp",
+   "version": "0.0.1",
+   "private": true,
+   "scripts": {
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "17.0.2",
+-    "react-native": "0.68.0-rc.1"
++    "react-native": "0.68.0-rc.0"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.12.9",

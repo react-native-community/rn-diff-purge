@@ -1,0 +1,4174 @@
+diff --git a/RnDiffApp/.bundle/config b/RnDiffApp/.bundle/config
+deleted file mode 100644
+index 848943bb5..000000000
+--- a/RnDiffApp/.bundle/config
++++ /dev/null
+@@ -1,2 +0,0 @@
+-BUNDLE_PATH: "vendor/bundle"
+-BUNDLE_FORCE_RUBY_PLATFORM: 1
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 3782e447c..b274ad1d6 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -8,11 +8,13 @@
+ ; Ignore polyfills
+ node_modules/react-native/Libraries/polyfills/.*
+ 
++; These should not be required directly
++; require from fbjs/lib instead: require('fbjs/lib/warning')
++node_modules/warning/.*
++
+ ; Flow doesn't support platforms
+ .*/Libraries/Utilities/LoadingView.js
+ 
+-.*/node_modules/resolve/test/resolver/malformed_package_json/package\.json$
+-
+ [untyped]
+ .*/node_modules/@react-native-community/cli/.*/.*
+ 
+@@ -25,9 +27,8 @@ node_modules/react-native/flow/
+ [options]
+ emoji=true
+ 
+-exact_by_default=true
+-
+-format.bracket_spacing=false
++esproposal.optional_chaining=enable
++esproposal.nullish_coalescing=enable
+ 
+ module.file_ext=.js
+ module.file_ext=.json
+@@ -43,6 +44,10 @@ suppress_type=$FlowFixMe
+ suppress_type=$FlowFixMeProps
+ suppress_type=$FlowFixMeState
+ 
++suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native\\(_ios\\)?_\\(oss\\|fb\\)[a-z,_]*\\)?)\\)
++suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native\\(_ios\\)?_\\(oss\\|fb\\)[a-z,_]*\\)?)\\)?:? #[0-9]+
++suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
++
+ [lints]
+ sketchy-null-number=warn
+ sketchy-null-mixed=warn
+@@ -52,6 +57,8 @@ nonstrict-import=warn
+ deprecated-type=warn
+ unsafe-getters-setters=warn
+ unnecessary-invariant=warn
++signature-verification-failure=warn
++deprecated-utility=error
+ 
+ [strict]
+ deprecated-type
+@@ -63,4 +70,4 @@ untyped-import
+ untyped-type-import
+ 
+ [version]
+-^0.182.0
++^0.122.0
+diff --git a/RnDiffApp/.gitattributes b/RnDiffApp/.gitattributes
+new file mode 100644
+index 000000000..d42ff1835
+--- /dev/null
++++ b/RnDiffApp/.gitattributes
+@@ -0,0 +1 @@
++*.pbxproj -text
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 2423126f7..ad572e632 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -20,7 +20,6 @@ DerivedData
+ *.hmap
+ *.ipa
+ *.xcuserstate
+-ios/.xcode.env.local
+ 
+ # Android/IntelliJ
+ #
+@@ -29,8 +28,6 @@ build/
+ .gradle
+ local.properties
+ *.iml
+-*.hprof
+-.cxx/
+ 
+ # node.js
+ #
+@@ -51,14 +48,12 @@ buck-out/
+ # For more information about the recommended setup visit:
+ # https://docs.fastlane.tools/best-practices/source-control/
+ 
+-**/fastlane/report.xml
+-**/fastlane/Preview.html
+-**/fastlane/screenshots
+-**/fastlane/test_output
++*/fastlane/report.xml
++*/fastlane/Preview.html
++*/fastlane/screenshots
+ 
+ # Bundle artifact
+ *.jsbundle
+ 
+-# Ruby / CocoaPods
++# CocoaPods
+ /ios/Pods/
+-/vendor/bundle/
+diff --git a/RnDiffApp/.node-version b/RnDiffApp/.node-version
+deleted file mode 100644
+index b6a7d89c6..000000000
+--- a/RnDiffApp/.node-version
++++ /dev/null
+@@ -1 +0,0 @@
+-16
+diff --git a/RnDiffApp/.prettierrc.js b/RnDiffApp/.prettierrc.js
+index 2b540746a..5c4de1a4f 100644
+--- a/RnDiffApp/.prettierrc.js
++++ b/RnDiffApp/.prettierrc.js
+@@ -1,7 +1,6 @@
+ module.exports = {
+-  arrowParens: 'avoid',
+-  bracketSameLine: true,
+   bracketSpacing: false,
++  jsxBracketSameLine: true,
+   singleQuote: true,
+   trailingComma: 'all',
+ };
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+deleted file mode 100644
+index a603bb50a..000000000
+--- a/RnDiffApp/.ruby-version
++++ /dev/null
+@@ -1 +0,0 @@
+-2.7.5
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
+index 4c97733b3..23cd158d8 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.js
+@@ -7,95 +7,82 @@
+  */
+ 
+ import React from 'react';
+-import type {Node} from 'react';
+ import {
+   SafeAreaView,
+-  ScrollView,
+-  StatusBar,
+   StyleSheet,
+-  Text,
+-  useColorScheme,
++  ScrollView,
+   View,
++  Text,
++  StatusBar,
+ } from 'react-native';
+ 
+ import {
+-  Colors,
+-  DebugInstructions,
+   Header,
+   LearnMoreLinks,
++  Colors,
++  DebugInstructions,
+   ReloadInstructions,
+ } from 'react-native/Libraries/NewAppScreen';
+ 
+-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
+- * LTI update could not be added via codemod */
+-const Section = ({children, title}): Node => {
+-  const isDarkMode = useColorScheme() === 'dark';
++const App: () => React$Node = () => {
+   return (
+-    <View style={styles.sectionContainer}>
+-      <Text
+-        style={[
+-          styles.sectionTitle,
+-          {
+-            color: isDarkMode ? Colors.white : Colors.black,
+-          },
+-        ]}>
+-        {title}
+-      </Text>
+-      <Text
+-        style={[
+-          styles.sectionDescription,
+-          {
+-            color: isDarkMode ? Colors.light : Colors.dark,
+-          },
+-        ]}>
+-        {children}
+-      </Text>
+-    </View>
+-  );
+-};
+-
+-const App: () => Node = () => {
+-  const isDarkMode = useColorScheme() === 'dark';
+-
+-  const backgroundStyle = {
+-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+-  };
+-
+-  return (
+-    <SafeAreaView style={backgroundStyle}>
+-      <StatusBar
+-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+-        backgroundColor={backgroundStyle.backgroundColor}
+-      />
+-      <ScrollView
+-        contentInsetAdjustmentBehavior="automatic"
+-        style={backgroundStyle}>
+-        <Header />
+-        <View
+-          style={{
+-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+-          }}>
+-          <Section title="Step One">
+-            Edit <Text style={styles.highlight}>App.js</Text> to change this
+-            screen and then come back to see your edits.
+-          </Section>
+-          <Section title="See Your Changes">
+-            <ReloadInstructions />
+-          </Section>
+-          <Section title="Debug">
+-            <DebugInstructions />
+-          </Section>
+-          <Section title="Learn More">
+-            Read the docs to discover what to do next:
+-          </Section>
+-          <LearnMoreLinks />
+-        </View>
+-      </ScrollView>
+-    </SafeAreaView>
++    <>
++      <StatusBar barStyle="dark-content" />
++      <SafeAreaView>
++        <ScrollView
++          contentInsetAdjustmentBehavior="automatic"
++          style={styles.scrollView}>
++          <Header />
++          {global.HermesInternal == null ? null : (
++            <View style={styles.engine}>
++              <Text style={styles.footer}>Engine: Hermes</Text>
++            </View>
++          )}
++          <View style={styles.body}>
++            <View style={styles.sectionContainer}>
++              <Text style={styles.sectionTitle}>Step One</Text>
++              <Text style={styles.sectionDescription}>
++                Edit <Text style={styles.highlight}>App.js</Text> to change this
++                screen and then come back to see your edits.
++              </Text>
++            </View>
++            <View style={styles.sectionContainer}>
++              <Text style={styles.sectionTitle}>See Your Changes</Text>
++              <Text style={styles.sectionDescription}>
++                <ReloadInstructions />
++              </Text>
++            </View>
++            <View style={styles.sectionContainer}>
++              <Text style={styles.sectionTitle}>Debug</Text>
++              <Text style={styles.sectionDescription}>
++                <DebugInstructions />
++              </Text>
++            </View>
++            <View style={styles.sectionContainer}>
++              <Text style={styles.sectionTitle}>Learn More</Text>
++              <Text style={styles.sectionDescription}>
++                Read the docs to discover what to do next:
++              </Text>
++            </View>
++            <LearnMoreLinks />
++          </View>
++        </ScrollView>
++      </SafeAreaView>
++    </>
+   );
+ };
+ 
+ const styles = StyleSheet.create({
++  scrollView: {
++    backgroundColor: Colors.lighter,
++  },
++  engine: {
++    position: 'absolute',
++    right: 0,
++  },
++  body: {
++    backgroundColor: Colors.white,
++  },
+   sectionContainer: {
+     marginTop: 32,
+     paddingHorizontal: 24,
+@@ -103,15 +90,25 @@ const styles = StyleSheet.create({
+   sectionTitle: {
+     fontSize: 24,
+     fontWeight: '600',
++    color: Colors.black,
+   },
+   sectionDescription: {
+     marginTop: 8,
+     fontSize: 18,
+     fontWeight: '400',
++    color: Colors.dark,
+   },
+   highlight: {
+     fontWeight: '700',
+   },
++  footer: {
++    color: Colors.dark,
++    fontSize: 12,
++    fontWeight: '600',
++    padding: 4,
++    paddingRight: 12,
++    textAlign: 'right',
++  },
+ });
+ 
+ export default App;
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+deleted file mode 100644
+index 5efda89f4..000000000
+--- a/RnDiffApp/Gemfile
++++ /dev/null
+@@ -1,6 +0,0 @@
+-source 'https://rubygems.org'
+-
+-# You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby '2.7.5'
+-
+-gem 'cocoapods', '~> 1.11', '>= 1.11.2'
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 4e19cfde8..ce0905c89 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -1,7 +1,6 @@
+ apply plugin: "com.android.application"
+ 
+ import com.android.build.OutputFile
+-import org.apache.tools.ant.taskdefs.condition.Os
+ 
+ /**
+  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
+@@ -79,7 +78,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
+  */
+ 
+ project.ext.react = [
+-    enableHermes: true,  // clean and rebuild if changing
++    enableHermes: false,  // clean and rebuild if changing
+ ]
+ 
+ apply from: "../../node_modules/react-native/react.gradle"
+@@ -115,99 +114,33 @@ def jscFlavor = 'org.webkit:android-jsc:+'
+ /**
+  * Whether to enable the Hermes VM.
+  *
+- * This should be set on project.ext.react and that value will be read here. If it is not set
++ * This should be set on project.ext.react and mirrored here.  If it is not set
+  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
+  * and the benefits of using Hermes will therefore be sharply reduced.
+  */
+ def enableHermes = project.ext.react.get("enableHermes", false);
+ 
+-/**
+- * Architectures to build native code for.
+- */
+-def reactNativeArchitectures() {
+-    def value = project.getProperties().get("reactNativeArchitectures")
+-    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+-}
+-
+ android {
+-    ndkVersion rootProject.ext.ndkVersion
+-
+     compileSdkVersion rootProject.ext.compileSdkVersion
+ 
++    compileOptions {
++        sourceCompatibility JavaVersion.VERSION_1_8
++        targetCompatibility JavaVersion.VERSION_1_8
++    }
++
+     defaultConfig {
+         applicationId "com.rndiffapp"
+         minSdkVersion rootProject.ext.minSdkVersion
+         targetSdkVersion rootProject.ext.targetSdkVersion
+         versionCode 1
+         versionName "1.0"
+-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+-
+-        if (isNewArchitectureEnabled()) {
+-            // We configure the CMake build only if you decide to opt-in for the New Architecture.
+-            externalNativeBuild {
+-                cmake {
+-                    arguments "-DPROJECT_BUILD_DIR=$buildDir",
+-                        "-DREACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
+-                        "-DREACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
+-                        "-DNODE_MODULES_DIR=$rootDir/../node_modules",
+-                        "-DANDROID_STL=c++_shared"
+-                }
+-            }
+-            if (!enableSeparateBuildPerCPUArchitecture) {
+-                ndk {
+-                    abiFilters (*reactNativeArchitectures())
+-                }
+-            }
+-        }
+     }
+-
+-    if (isNewArchitectureEnabled()) {
+-        // We configure the NDK build only if you decide to opt-in for the New Architecture.
+-        externalNativeBuild {
+-            cmake {
+-                path "$projectDir/src/main/jni/CMakeLists.txt"
+-            }
+-        }
+-        def reactAndroidProjectDir = project(':ReactAndroid').projectDir
+-        def packageReactNdkDebugLibs = tasks.register("packageReactNdkDebugLibs", Copy) {
+-            dependsOn(":ReactAndroid:packageReactNdkDebugLibsForBuck")
+-            from("$reactAndroidProjectDir/src/main/jni/prebuilt/lib")
+-            into("$buildDir/react-ndk/exported")
+-        }
+-        def packageReactNdkReleaseLibs = tasks.register("packageReactNdkReleaseLibs", Copy) {
+-            dependsOn(":ReactAndroid:packageReactNdkReleaseLibsForBuck")
+-            from("$reactAndroidProjectDir/src/main/jni/prebuilt/lib")
+-            into("$buildDir/react-ndk/exported")
+-        }
+-        afterEvaluate {
+-            // If you wish to add a custom TurboModule or component locally,
+-            // you should uncomment this line.
+-            // preBuild.dependsOn("generateCodegenArtifactsFromSchema")
+-            preDebugBuild.dependsOn(packageReactNdkDebugLibs)
+-            preReleaseBuild.dependsOn(packageReactNdkReleaseLibs)
+-
+-            // Due to a bug inside AGP, we have to explicitly set a dependency
+-            // between configureCMakeDebug* tasks and the preBuild tasks.
+-            // This can be removed once this is solved: https://issuetracker.google.com/issues/207403732
+-            configureCMakeRelWithDebInfo.dependsOn(preReleaseBuild)
+-            configureCMakeDebug.dependsOn(preDebugBuild)
+-            reactNativeArchitectures().each { architecture ->
+-                tasks.findByName("configureCMakeDebug[${architecture}]")?.configure {
+-                    dependsOn("preDebugBuild")
+-                }
+-                tasks.findByName("configureCMakeRelWithDebInfo[${architecture}]")?.configure {
+-                    dependsOn("preReleaseBuild")
+-                }
+-            }
+-        }
+-    }
+-
+     splits {
+         abi {
+             reset()
+             enable enableSeparateBuildPerCPUArchitecture
+             universalApk false  // If true, also generate a universal APK
+-            include (*reactNativeArchitectures())
++            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+         }
+     }
+     signingConfigs {
+@@ -236,12 +169,11 @@ android {
+         variant.outputs.each { output ->
+             // For each separate APK per architecture, set a unique version code as described here:
+             // https://developer.android.com/studio/build/configure-apk-splits.html
+-            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
+             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
+             def abi = output.getFilter(OutputFile.ABI)
+             if (abi != null) {  // null for the universal-debug, universal-release variants
+                 output.versionCodeOverride =
+-                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
++                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+             }
+ 
+         }
+@@ -250,19 +182,17 @@ android {
+ 
+ dependencies {
+     implementation fileTree(dir: "libs", include: ["*.jar"])
+-
+     //noinspection GradleDynamicVersion
+     implementation "com.facebook.react:react-native:+"  // From node_modules
+ 
+     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+ 
+     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+-        exclude group:'com.facebook.fbjni'
++      exclude group:'com.facebook.fbjni'
+     }
+ 
+     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+         exclude group:'com.facebook.flipper'
+-        exclude group:'com.squareup.okhttp3', module:'okhttp'
+     }
+ 
+     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+@@ -270,44 +200,19 @@ dependencies {
+     }
+ 
+     if (enableHermes) {
+-        //noinspection GradleDynamicVersion
+-        implementation("com.facebook.react:hermes-engine:+") { // From node_modules
+-            exclude group:'com.facebook.fbjni'
+-        }
++        def hermesPath = "../../node_modules/hermes-engine/android/";
++        debugImplementation files(hermesPath + "hermes-debug.aar")
++        releaseImplementation files(hermesPath + "hermes-release.aar")
+     } else {
+         implementation jscFlavor
+     }
+ }
+ 
+-if (isNewArchitectureEnabled()) {
+-    // If new architecture is enabled, we let you build RN from source
+-    // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
+-    // This will be applied to all the imported transtitive dependency.
+-    configurations.all {
+-        resolutionStrategy.dependencySubstitution {
+-            substitute(module("com.facebook.react:react-native"))
+-                    .using(project(":ReactAndroid"))
+-                    .because("On New Architecture we're building React Native from source")
+-            substitute(module("com.facebook.react:hermes-engine"))
+-                    .using(project(":ReactAndroid:hermes-engine"))
+-                    .because("On New Architecture we're building Hermes from source")
+-        }
+-    }
+-}
+-
+ // Run this once to be able to run the application with BUCK
+ // puts all compile dependencies into folder libs for BUCK to use
+ task copyDownloadableDepsToLibs(type: Copy) {
+-    from configurations.implementation
++    from configurations.compile
+     into 'libs'
+ }
+ 
+ apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+-
+-def isNewArchitectureEnabled() {
+-    // To opt-in for the New Architecture, you can either:
+-    // - Set `newArchEnabled` to true inside the `gradle.properties` file
+-    // - Invoke gradle with `-newArchEnabled=true`
+-    // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
+-    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+-}
+diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+index 4b185bc15..fa26aa56e 100644
+--- a/RnDiffApp/android/app/src/debug/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
+@@ -4,10 +4,5 @@
+ 
+     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+ 
+-    <application
+-        android:usesCleartextTraffic="true"
+-        tools:targetApi="28"
+-        tools:ignore="GoogleAppIndexingWarning">
+-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false" />
+-    </application>
++    <application android:usesCleartextTraffic="true" tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" />
+ </manifest>
+diff --git a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
+index b371cfd12..5c106db4b 100644
+--- a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
++++ b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
+@@ -1,5 +1,5 @@
+ /**
+- * Copyright (c) Meta Platforms, Inc. and affiliates.
++ * Copyright (c) Facebook, Inc. and its affiliates.
+  *
+  * <p>This source code is licensed under the MIT license found in the LICENSE file in the root
+  * directory of this source tree.
+@@ -19,7 +19,6 @@ import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
+ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
+ import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
+ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
+-import com.facebook.react.ReactInstanceEventListener;
+ import com.facebook.react.ReactInstanceManager;
+ import com.facebook.react.bridge.ReactContext;
+ import com.facebook.react.modules.network.NetworkingModule;
+@@ -52,7 +51,7 @@ public class ReactNativeFlipper {
+       ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+       if (reactContext == null) {
+         reactInstanceManager.addReactInstanceEventListener(
+-            new ReactInstanceEventListener() {
++            new ReactInstanceManager.ReactInstanceEventListener() {
+               @Override
+               public void onReactContextInitialized(ReactContext reactContext) {
+                 reactInstanceManager.removeReactInstanceEventListener(this);
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 314a74198..3e43f2621 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -13,14 +13,15 @@
+       <activity
+         android:name=".MainActivity"
+         android:label="@string/app_name"
+-        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
++        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+         android:launchMode="singleTask"
+-        android:windowSoftInputMode="adjustResize"
+-        android:exported="true">
++        android:windowSoftInputMode="adjustResize">
+         <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+             <category android:name="android.intent.category.LAUNCHER" />
+         </intent-filter>
+       </activity>
++      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+     </application>
++
+ </manifest>
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+index 31ae98f7f..e325e8cf9 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+@@ -1,8 +1,6 @@
+ package com.rndiffapp;
+ 
+ import com.facebook.react.ReactActivity;
+-import com.facebook.react.ReactActivityDelegate;
+-import com.facebook.react.ReactRootView;
+ 
+ public class MainActivity extends ReactActivity {
+ 
+@@ -14,35 +12,4 @@ public class MainActivity extends ReactActivity {
+   protected String getMainComponentName() {
+     return "RnDiffApp";
+   }
+-
+-  /**
+-   * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
+-   * you can specify the renderer you wish to use - the new renderer (Fabric) or the old renderer
+-   * (Paper).
+-   */
+-  @Override
+-  protected ReactActivityDelegate createReactActivityDelegate() {
+-    return new MainActivityDelegate(this, getMainComponentName());
+-  }
+-
+-  public static class MainActivityDelegate extends ReactActivityDelegate {
+-    public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+-      super(activity, mainComponentName);
+-    }
+-
+-    @Override
+-    protected ReactRootView createRootView() {
+-      ReactRootView reactRootView = new ReactRootView(getContext());
+-      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+-      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+-      return reactRootView;
+-    }
+-
+-    @Override
+-    protected boolean isConcurrentRootEnabled() {
+-      // If you opted-in for the New Architecture, we enable Concurrent Root (i.e. React 18).
+-      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
+-      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+-    }
+-  }
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index 9f2959294..04df56cf6 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+@@ -7,9 +7,7 @@ import com.facebook.react.ReactApplication;
+ import com.facebook.react.ReactInstanceManager;
+ import com.facebook.react.ReactNativeHost;
+ import com.facebook.react.ReactPackage;
+-import com.facebook.react.config.ReactFeatureFlags;
+ import com.facebook.soloader.SoLoader;
+-import com.rndiffapp.newarchitecture.MainApplicationReactNativeHost;
+ import java.lang.reflect.InvocationTargetException;
+ import java.util.List;
+ 
+@@ -37,23 +35,14 @@ public class MainApplication extends Application implements ReactApplication {
+         }
+       };
+ 
+-  private final ReactNativeHost mNewArchitectureNativeHost =
+-      new MainApplicationReactNativeHost(this);
+-
+   @Override
+   public ReactNativeHost getReactNativeHost() {
+-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+-      return mNewArchitectureNativeHost;
+-    } else {
+-      return mReactNativeHost;
+-    }
++    return mReactNativeHost;
+   }
+ 
+   @Override
+   public void onCreate() {
+     super.onCreate();
+-    // If you opted-in for the New Architecture, we enable the TurboModule system
+-    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+     SoLoader.init(this, /* native exopackage */ false);
+     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
+deleted file mode 100644
+index 4f8302218..000000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
++++ /dev/null
+@@ -1,116 +0,0 @@
+-package com.rndiffapp.newarchitecture;
+-
+-import android.app.Application;
+-import androidx.annotation.NonNull;
+-import com.facebook.react.PackageList;
+-import com.facebook.react.ReactInstanceManager;
+-import com.facebook.react.ReactNativeHost;
+-import com.facebook.react.ReactPackage;
+-import com.facebook.react.ReactPackageTurboModuleManagerDelegate;
+-import com.facebook.react.bridge.JSIModulePackage;
+-import com.facebook.react.bridge.JSIModuleProvider;
+-import com.facebook.react.bridge.JSIModuleSpec;
+-import com.facebook.react.bridge.JSIModuleType;
+-import com.facebook.react.bridge.JavaScriptContextHolder;
+-import com.facebook.react.bridge.ReactApplicationContext;
+-import com.facebook.react.bridge.UIManager;
+-import com.facebook.react.fabric.ComponentFactory;
+-import com.facebook.react.fabric.CoreComponentsRegistry;
+-import com.facebook.react.fabric.FabricJSIModuleProvider;
+-import com.facebook.react.fabric.ReactNativeConfig;
+-import com.facebook.react.uimanager.ViewManagerRegistry;
+-import com.rndiffapp.BuildConfig;
+-import com.rndiffapp.newarchitecture.components.MainComponentsRegistry;
+-import com.rndiffapp.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-/**
+- * A {@link ReactNativeHost} that helps you load everything needed for the New Architecture, both
+- * TurboModule delegates and the Fabric Renderer.
+- *
+- * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+- * `newArchEnabled` property). Is ignored otherwise.
+- */
+-public class MainApplicationReactNativeHost extends ReactNativeHost {
+-  public MainApplicationReactNativeHost(Application application) {
+-    super(application);
+-  }
+-
+-  @Override
+-  public boolean getUseDeveloperSupport() {
+-    return BuildConfig.DEBUG;
+-  }
+-
+-  @Override
+-  protected List<ReactPackage> getPackages() {
+-    List<ReactPackage> packages = new PackageList(this).getPackages();
+-    // Packages that cannot be autolinked yet can be added manually here, for example:
+-    //     packages.add(new MyReactNativePackage());
+-    // TurboModules must also be loaded here providing a valid TurboReactPackage implementation:
+-    //     packages.add(new TurboReactPackage() { ... });
+-    // If you have custom Fabric Components, their ViewManagers should also be loaded here
+-    // inside a ReactPackage.
+-    return packages;
+-  }
+-
+-  @Override
+-  protected String getJSMainModuleName() {
+-    return "index";
+-  }
+-
+-  @NonNull
+-  @Override
+-  protected ReactPackageTurboModuleManagerDelegate.Builder
+-      getReactPackageTurboModuleManagerDelegateBuilder() {
+-    // Here we provide the ReactPackageTurboModuleManagerDelegate Builder. This is necessary
+-    // for the new architecture and to use TurboModules correctly.
+-    return new MainApplicationTurboModuleManagerDelegate.Builder();
+-  }
+-
+-  @Override
+-  protected JSIModulePackage getJSIModulePackage() {
+-    return new JSIModulePackage() {
+-      @Override
+-      public List<JSIModuleSpec> getJSIModules(
+-          final ReactApplicationContext reactApplicationContext,
+-          final JavaScriptContextHolder jsContext) {
+-        final List<JSIModuleSpec> specs = new ArrayList<>();
+-
+-        // Here we provide a new JSIModuleSpec that will be responsible of providing the
+-        // custom Fabric Components.
+-        specs.add(
+-            new JSIModuleSpec() {
+-              @Override
+-              public JSIModuleType getJSIModuleType() {
+-                return JSIModuleType.UIManager;
+-              }
+-
+-              @Override
+-              public JSIModuleProvider<UIManager> getJSIModuleProvider() {
+-                final ComponentFactory componentFactory = new ComponentFactory();
+-                CoreComponentsRegistry.register(componentFactory);
+-
+-                // Here we register a Components Registry.
+-                // The one that is generated with the template contains no components
+-                // and just provides you the one from React Native core.
+-                MainComponentsRegistry.register(componentFactory);
+-
+-                final ReactInstanceManager reactInstanceManager = getReactInstanceManager();
+-
+-                ViewManagerRegistry viewManagerRegistry =
+-                    new ViewManagerRegistry(
+-                        reactInstanceManager.getOrCreateViewManagers(reactApplicationContext));
+-
+-                return new FabricJSIModuleProvider(
+-                    reactApplicationContext,
+-                    componentFactory,
+-                    ReactNativeConfig.DEFAULT_CONFIG,
+-                    viewManagerRegistry);
+-              }
+-            });
+-        return specs;
+-      }
+-    };
+-  }
+-}
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/components/MainComponentsRegistry.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/components/MainComponentsRegistry.java
+deleted file mode 100644
+index cdacb68ed..000000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/components/MainComponentsRegistry.java
++++ /dev/null
+@@ -1,36 +0,0 @@
+-package com.rndiffapp.newarchitecture.components;
+-
+-import com.facebook.jni.HybridData;
+-import com.facebook.proguard.annotations.DoNotStrip;
+-import com.facebook.react.fabric.ComponentFactory;
+-import com.facebook.soloader.SoLoader;
+-
+-/**
+- * Class responsible to load the custom Fabric Components. This class has native methods and needs a
+- * corresponding C++ implementation/header file to work correctly (already placed inside the jni/
+- * folder for you).
+- *
+- * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+- * `newArchEnabled` property). Is ignored otherwise.
+- */
+-@DoNotStrip
+-public class MainComponentsRegistry {
+-  static {
+-    SoLoader.loadLibrary("fabricjni");
+-  }
+-
+-  @DoNotStrip private final HybridData mHybridData;
+-
+-  @DoNotStrip
+-  private native HybridData initHybrid(ComponentFactory componentFactory);
+-
+-  @DoNotStrip
+-  private MainComponentsRegistry(ComponentFactory componentFactory) {
+-    mHybridData = initHybrid(componentFactory);
+-  }
+-
+-  @DoNotStrip
+-  public static MainComponentsRegistry register(ComponentFactory componentFactory) {
+-    return new MainComponentsRegistry(componentFactory);
+-  }
+-}
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java
+deleted file mode 100644
+index 10275588e..000000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java
++++ /dev/null
+@@ -1,48 +0,0 @@
+-package com.rndiffapp.newarchitecture.modules;
+-
+-import com.facebook.jni.HybridData;
+-import com.facebook.react.ReactPackage;
+-import com.facebook.react.ReactPackageTurboModuleManagerDelegate;
+-import com.facebook.react.bridge.ReactApplicationContext;
+-import com.facebook.soloader.SoLoader;
+-import java.util.List;
+-
+-/**
+- * Class responsible to load the TurboModules. This class has native methods and needs a
+- * corresponding C++ implementation/header file to work correctly (already placed inside the jni/
+- * folder for you).
+- *
+- * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+- * `newArchEnabled` property). Is ignored otherwise.
+- */
+-public class MainApplicationTurboModuleManagerDelegate
+-    extends ReactPackageTurboModuleManagerDelegate {
+-
+-  private static volatile boolean sIsSoLibraryLoaded;
+-
+-  protected MainApplicationTurboModuleManagerDelegate(
+-      ReactApplicationContext reactApplicationContext, List<ReactPackage> packages) {
+-    super(reactApplicationContext, packages);
+-  }
+-
+-  protected native HybridData initHybrid();
+-
+-  native boolean canCreateTurboModule(String moduleName);
+-
+-  public static class Builder extends ReactPackageTurboModuleManagerDelegate.Builder {
+-    protected MainApplicationTurboModuleManagerDelegate build(
+-        ReactApplicationContext context, List<ReactPackage> packages) {
+-      return new MainApplicationTurboModuleManagerDelegate(context, packages);
+-    }
+-  }
+-
+-  @Override
+-  protected synchronized void maybeLoadOtherSoLibraries() {
+-    if (!sIsSoLibraryLoaded) {
+-      // If you change the name of your application .so file in the Android.mk file,
+-      // make sure you update the name here as well.
+-      SoLoader.loadLibrary("rndiffapp_appmodules");
+-      sIsSoLibraryLoaded = true;
+-    }
+-  }
+-}
+diff --git a/RnDiffApp/android/app/src/main/jni/CMakeLists.txt b/RnDiffApp/android/app/src/main/jni/CMakeLists.txt
+deleted file mode 100644
+index 6e63f482b..000000000
+--- a/RnDiffApp/android/app/src/main/jni/CMakeLists.txt
++++ /dev/null
+@@ -1,7 +0,0 @@
+-cmake_minimum_required(VERSION 3.13)
+-
+-# Define the library name here.
+-project(rndiffapp_appmodules)
+-
+-# This file includes all the necessary to let you build your application with the New Architecture.
+-include(${REACT_ANDROID_DIR}/cmake-utils/ReactNative-application.cmake)
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.cpp b/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.cpp
+deleted file mode 100644
+index 26162dd87..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.cpp
++++ /dev/null
+@@ -1,32 +0,0 @@
+-#include "MainApplicationModuleProvider.h"
+-
+-#include <rncli.h>
+-#include <rncore.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-std::shared_ptr<TurboModule> MainApplicationModuleProvider(
+-    const std::string &moduleName,
+-    const JavaTurboModule::InitParams &params) {
+-  // Here you can provide your own module provider for TurboModules coming from
+-  // either your application or from external libraries. The approach to follow
+-  // is similar to the following (for a library called `samplelibrary`:
+-  //
+-  // auto module = samplelibrary_ModuleProvider(moduleName, params);
+-  // if (module != nullptr) {
+-  //    return module;
+-  // }
+-  // return rncore_ModuleProvider(moduleName, params);
+-
+-  // Module providers autolinked by RN CLI
+-  auto rncli_module = rncli_ModuleProvider(moduleName, params);
+-  if (rncli_module != nullptr) {
+-    return rncli_module;
+-  }
+-
+-  return rncore_ModuleProvider(moduleName, params);
+-}
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.h b/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.h
+deleted file mode 100644
+index b38ccf53f..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.h
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#pragma once
+-
+-#include <memory>
+-#include <string>
+-
+-#include <ReactCommon/JavaTurboModule.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-std::shared_ptr<TurboModule> MainApplicationModuleProvider(
+-    const std::string &moduleName,
+-    const JavaTurboModule::InitParams &params);
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp b/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp
+deleted file mode 100644
+index 5fd688c50..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp
++++ /dev/null
+@@ -1,45 +0,0 @@
+-#include "MainApplicationTurboModuleManagerDelegate.h"
+-#include "MainApplicationModuleProvider.h"
+-
+-namespace facebook {
+-namespace react {
+-
+-jni::local_ref<MainApplicationTurboModuleManagerDelegate::jhybriddata>
+-MainApplicationTurboModuleManagerDelegate::initHybrid(
+-    jni::alias_ref<jhybridobject>) {
+-  return makeCxxInstance();
+-}
+-
+-void MainApplicationTurboModuleManagerDelegate::registerNatives() {
+-  registerHybrid({
+-      makeNativeMethod(
+-          "initHybrid", MainApplicationTurboModuleManagerDelegate::initHybrid),
+-      makeNativeMethod(
+-          "canCreateTurboModule",
+-          MainApplicationTurboModuleManagerDelegate::canCreateTurboModule),
+-  });
+-}
+-
+-std::shared_ptr<TurboModule>
+-MainApplicationTurboModuleManagerDelegate::getTurboModule(
+-    const std::string &name,
+-    const std::shared_ptr<CallInvoker> &jsInvoker) {
+-  // Not implemented yet: provide pure-C++ NativeModules here.
+-  return nullptr;
+-}
+-
+-std::shared_ptr<TurboModule>
+-MainApplicationTurboModuleManagerDelegate::getTurboModule(
+-    const std::string &name,
+-    const JavaTurboModule::InitParams &params) {
+-  return MainApplicationModuleProvider(name, params);
+-}
+-
+-bool MainApplicationTurboModuleManagerDelegate::canCreateTurboModule(
+-    const std::string &name) {
+-  return getTurboModule(name, nullptr) != nullptr ||
+-      getTurboModule(name, {.moduleName = name}) != nullptr;
+-}
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h b/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h
+deleted file mode 100644
+index 58ced3338..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-#include <memory>
+-#include <string>
+-
+-#include <ReactCommon/TurboModuleManagerDelegate.h>
+-#include <fbjni/fbjni.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-class MainApplicationTurboModuleManagerDelegate
+-    : public jni::HybridClass<
+-          MainApplicationTurboModuleManagerDelegate,
+-          TurboModuleManagerDelegate> {
+- public:
+-  // Adapt it to the package you used for your Java class.
+-  static constexpr auto kJavaDescriptor =
+-      "Lcom/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate;";
+-
+-  static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject>);
+-
+-  static void registerNatives();
+-
+-  std::shared_ptr<TurboModule> getTurboModule(
+-      const std::string &name,
+-      const std::shared_ptr<CallInvoker> &jsInvoker) override;
+-  std::shared_ptr<TurboModule> getTurboModule(
+-      const std::string &name,
+-      const JavaTurboModule::InitParams &params) override;
+-
+-  /**
+-   * Test-only method. Allows user to verify whether a TurboModule can be
+-   * created by instances of this class.
+-   */
+-  bool canCreateTurboModule(const std::string &name);
+-};
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.cpp b/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.cpp
+deleted file mode 100644
+index 54f598a48..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.cpp
++++ /dev/null
+@@ -1,65 +0,0 @@
+-#include "MainComponentsRegistry.h"
+-
+-#include <CoreComponentsRegistry.h>
+-#include <fbjni/fbjni.h>
+-#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+-#include <react/renderer/components/rncore/ComponentDescriptors.h>
+-#include <rncli.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-MainComponentsRegistry::MainComponentsRegistry(ComponentFactory *delegate) {}
+-
+-std::shared_ptr<ComponentDescriptorProviderRegistry const>
+-MainComponentsRegistry::sharedProviderRegistry() {
+-  auto providerRegistry = CoreComponentsRegistry::sharedProviderRegistry();
+-
+-  // Autolinked providers registered by RN CLI
+-  rncli_registerProviders(providerRegistry);
+-
+-  // Custom Fabric Components go here. You can register custom
+-  // components coming from your App or from 3rd party libraries here.
+-  //
+-  // providerRegistry->add(concreteComponentDescriptorProvider<
+-  //        AocViewerComponentDescriptor>());
+-  return providerRegistry;
+-}
+-
+-jni::local_ref<MainComponentsRegistry::jhybriddata>
+-MainComponentsRegistry::initHybrid(
+-    jni::alias_ref<jclass>,
+-    ComponentFactory *delegate) {
+-  auto instance = makeCxxInstance(delegate);
+-
+-  auto buildRegistryFunction =
+-      [](EventDispatcher::Weak const &eventDispatcher,
+-         ContextContainer::Shared const &contextContainer)
+-      -> ComponentDescriptorRegistry::Shared {
+-    auto registry = MainComponentsRegistry::sharedProviderRegistry()
+-                        ->createComponentDescriptorRegistry(
+-                            {eventDispatcher, contextContainer});
+-
+-    auto mutableRegistry =
+-        std::const_pointer_cast<ComponentDescriptorRegistry>(registry);
+-
+-    mutableRegistry->setFallbackComponentDescriptor(
+-        std::make_shared<UnimplementedNativeViewComponentDescriptor>(
+-            ComponentDescriptorParameters{
+-                eventDispatcher, contextContainer, nullptr}));
+-
+-    return registry;
+-  };
+-
+-  delegate->buildRegistryFunction = buildRegistryFunction;
+-  return instance;
+-}
+-
+-void MainComponentsRegistry::registerNatives() {
+-  registerHybrid({
+-      makeNativeMethod("initHybrid", MainComponentsRegistry::initHybrid),
+-  });
+-}
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.h b/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.h
+deleted file mode 100644
+index 04e3d5786..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.h
++++ /dev/null
+@@ -1,32 +0,0 @@
+-#pragma once
+-
+-#include <ComponentFactory.h>
+-#include <fbjni/fbjni.h>
+-#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+-#include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-class MainComponentsRegistry
+-    : public facebook::jni::HybridClass<MainComponentsRegistry> {
+- public:
+-  // Adapt it to the package you used for your Java class.
+-  constexpr static auto kJavaDescriptor =
+-      "Lcom/rndiffapp/newarchitecture/components/MainComponentsRegistry;";
+-
+-  static void registerNatives();
+-
+-  MainComponentsRegistry(ComponentFactory *delegate);
+-
+- private:
+-  static std::shared_ptr<ComponentDescriptorProviderRegistry const>
+-  sharedProviderRegistry();
+-
+-  static jni::local_ref<jhybriddata> initHybrid(
+-      jni::alias_ref<jclass>,
+-      ComponentFactory *delegate);
+-};
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/OnLoad.cpp b/RnDiffApp/android/app/src/main/jni/OnLoad.cpp
+deleted file mode 100644
+index c569b6e86..000000000
+--- a/RnDiffApp/android/app/src/main/jni/OnLoad.cpp
++++ /dev/null
+@@ -1,11 +0,0 @@
+-#include <fbjni/fbjni.h>
+-#include "MainApplicationTurboModuleManagerDelegate.h"
+-#include "MainComponentsRegistry.h"
+-
+-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+-  return facebook::jni::initialize(vm, [] {
+-    facebook::react::MainApplicationTurboModuleManagerDelegate::
+-        registerNatives();
+-    facebook::react::MainComponentsRegistry::registerNatives();
+-  });
+-}
+diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
+deleted file mode 100644
+index f35d99620..000000000
+--- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
++++ /dev/null
+@@ -1,36 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<!-- Copyright (C) 2014 The Android Open Source Project
+-
+-     Licensed under the Apache License, Version 2.0 (the "License");
+-     you may not use this file except in compliance with the License.
+-     You may obtain a copy of the License at
+-
+-          http://www.apache.org/licenses/LICENSE-2.0
+-
+-     Unless required by applicable law or agreed to in writing, software
+-     distributed under the License is distributed on an "AS IS" BASIS,
+-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-     See the License for the specific language governing permissions and
+-     limitations under the License.
+--->
+-<inset xmlns:android="http://schemas.android.com/apk/res/android"
+-       android:insetLeft="@dimen/abc_edit_text_inset_horizontal_material"
+-       android:insetRight="@dimen/abc_edit_text_inset_horizontal_material"
+-       android:insetTop="@dimen/abc_edit_text_inset_top_material"
+-       android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
+-
+-    <selector>
+-        <!-- 
+-          This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
+-          The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
+-          NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
+-
+-          <item android:state_pressed="false" android:state_focused="false" android:drawable="@drawable/abc_textfield_default_mtrl_alpha"/>
+-
+-          For more info, see https://bit.ly/3CdLStv (react-native/pull/29452) and https://bit.ly/3nxOMoR.
+-        -->
+-        <item android:state_enabled="false" android:drawable="@drawable/abc_textfield_default_mtrl_alpha"/>
+-        <item android:drawable="@drawable/abc_textfield_activated_mtrl_alpha"/>
+-    </selector>
+-
+-</inset>
+diff --git a/RnDiffApp/android/app/src/main/res/values/styles.xml b/RnDiffApp/android/app/src/main/res/values/styles.xml
+index 7ba83a2ad..62fe59fa4 100644
+--- a/RnDiffApp/android/app/src/main/res/values/styles.xml
++++ b/RnDiffApp/android/app/src/main/res/values/styles.xml
+@@ -1,9 +1,9 @@
+ <resources>
+ 
+     <!-- Base application theme. -->
+-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
++    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+         <!-- Customize your theme here. -->
+-        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
++        <item name="android:textColor">#000000</item>
+     </style>
+ 
+ </resources>
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 8569fee3a..ed5a56842 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -2,27 +2,17 @@
+ 
+ buildscript {
+     ext {
+-        buildToolsVersion = "31.0.0"
+-        minSdkVersion = 21
+-        compileSdkVersion = 31
+-        targetSdkVersion = 31
+-
+-        if (System.properties['os.arch'] == "aarch64") {
+-            // For M1 Users we need to use the NDK 24 which added support for aarch64
+-            ndkVersion = "24.0.8215888"
+-        } else {
+-            // Otherwise we default to the side-by-side NDK version from AGP.
+-            ndkVersion = "21.4.7075529"
+-        }
++        buildToolsVersion = "29.0.2"
++        minSdkVersion = 16
++        compileSdkVersion = 29
++        targetSdkVersion = 29
+     }
+     repositories {
+         google()
+-        mavenCentral()
++        jcenter()
+     }
+     dependencies {
+-        classpath("com.android.tools.build:gradle:7.2.1")
+-        classpath("com.facebook.react:react-native-gradle-plugin")
+-        classpath("de.undercouch:gradle-download-task:5.0.1")
++        classpath("com.android.tools.build:gradle:3.5.3")
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+     }
+@@ -30,6 +20,7 @@ buildscript {
+ 
+ allprojects {
+     repositories {
++        mavenLocal()
+         maven {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+             url("$rootDir/../node_modules/react-native/android")
+@@ -38,14 +29,9 @@ allprojects {
+             // Android JSC is installed from npm
+             url("$rootDir/../node_modules/jsc-android/dist")
+         }
+-        mavenCentral {
+-            // We don't want to fetch react-native from Maven Central as there are
+-            // older versions over there.
+-            content {
+-                excludeGroup "com.facebook.react"
+-            }
+-        }
++
+         google()
++        jcenter()
+         maven { url 'https://www.jitpack.io' }
+     }
+ }
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index fa4feae5f..04ca0ef29 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -9,8 +9,8 @@
+ 
+ # Specifies the JVM arguments used for the daemon process.
+ # The setting is particularly useful for tweaking memory settings.
+-# Default value: -Xmx512m -XX:MaxMetaspaceSize=256m
+-org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
++# Default value: -Xmx10248m -XX:MaxPermSize=256m
++# org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+ 
+ # When configured, Gradle will run in incubating parallel mode.
+ # This option should only be used with decoupled projects. More details, visit
+@@ -25,16 +25,4 @@ android.useAndroidX=true
+ android.enableJetifier=true
+ 
+ # Version of flipper SDK to use with React Native
+-FLIPPER_VERSION=0.125.0
+-
+-# Use this property to specify which architecture you want to build.
+-# You can also override it from the CLI using
+-# ./gradlew <task> -PreactNativeArchitectures=x86_64
+-reactNativeArchitectures=armeabi-v7a,arm64-v8a,x86,x86_64
+-
+-# Use this property to enable support to the new architecture.
+-# This will allow you to use TurboModules and the Fabric render in
+-# your application. You should enable this flag either if you want
+-# to write custom TurboModules/Fabric components OR use libraries that
+-# are providing them.
+-newArchEnabled=false
++FLIPPER_VERSION=0.37.0
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar
+index 41d9927a4d4fb3f96a785543079b8df6723c946b..f3d88b1c2faf2fc91d853cd5d4242b5547257070 100644
+GIT binary patch
+delta 19599
+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
+zlSL5PsDDrzO9KQ7000OG0000%0D*MNzN8cY06;AO03eeQIvtaXMGk)_v%Jah*a9I8
+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
+Xy@ISzXb}vi0bL8wKYbhmV6guIjP_-M
+
+delta 20925
+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
+B>Zbqz
+
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 8fad3f5a9..842267020 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.5.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-6.2-all.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
+index 1b6c78733..2fe81a7d9 100755
+--- a/RnDiffApp/android/gradlew
++++ b/RnDiffApp/android/gradlew
+@@ -1,7 +1,7 @@
+-#!/bin/sh
++#!/usr/bin/env sh
+ 
+ #
+-# Copyright © 2015-2021 the original authors.
++# Copyright 2015 the original author or authors.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -17,113 +17,78 @@
+ #
+ 
+ ##############################################################################
+-#
+-#   Gradle start up script for POSIX generated by Gradle.
+-#
+-#   Important for running:
+-#
+-#   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
+-#       noncompliant, but you have some other compliant shell such as ksh or
+-#       bash, then to run this script, type that shell name before the whole
+-#       command line, like:
+-#
+-#           ksh Gradle
+-#
+-#       Busybox and similar reduced shells will NOT work, because this script
+-#       requires all of these POSIX shell features:
+-#         * functions;
+-#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
+-#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
+-#         * compound commands having a testable exit status, especially «case»;
+-#         * various built-in commands including «command», «set», and «ulimit».
+-#
+-#   Important for patching:
+-#
+-#   (2) This script targets any POSIX shell, so it avoids extensions provided
+-#       by Bash, Ksh, etc; in particular arrays are avoided.
+-#
+-#       The "traditional" practice of packing multiple parameters into a
+-#       space-separated string is a well documented source of bugs and security
+-#       problems, so this is (mostly) avoided, by progressively accumulating
+-#       options in "$@", and eventually passing that to Java.
+-#
+-#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
+-#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
+-#       see the in-line comments for details.
+-#
+-#       There are tweaks for specific operating systems such as AIX, CygWin,
+-#       Darwin, MinGW, and NonStop.
+-#
+-#   (3) This script is generated from the Groovy template
+-#       https://github.com/gradle/gradle/blob/master/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+-#       within the Gradle project.
+-#
+-#       You can find Gradle at https://github.com/gradle/gradle/.
+-#
++##
++##  Gradle start up script for UN*X
++##
+ ##############################################################################
+ 
+ # Attempt to set APP_HOME
+-
+ # Resolve links: $0 may be a link
+-app_path=$0
+-
+-# Need this for daisy-chained symlinks.
+-while
+-    APP_HOME=${app_path%"${app_path##*/}"}  # leaves a trailing /; empty if no leading path
+-    [ -h "$app_path" ]
+-do
+-    ls=$( ls -ld "$app_path" )
+-    link=${ls#*' -> '}
+-    case $link in             #(
+-      /*)   app_path=$link ;; #(
+-      *)    app_path=$APP_HOME$link ;;
+-    esac
++PRG="$0"
++# Need this for relative symlinks.
++while [ -h "$PRG" ] ; do
++    ls=`ls -ld "$PRG"`
++    link=`expr "$ls" : '.*-> \(.*\)$'`
++    if expr "$link" : '/.*' > /dev/null; then
++        PRG="$link"
++    else
++        PRG=`dirname "$PRG"`"/$link"
++    fi
+ done
+-
+-APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
++SAVED="`pwd`"
++cd "`dirname \"$PRG\"`/" >/dev/null
++APP_HOME="`pwd -P`"
++cd "$SAVED" >/dev/null
+ 
+ APP_NAME="Gradle"
+-APP_BASE_NAME=${0##*/}
++APP_BASE_NAME=`basename "$0"`
+ 
+ # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+ DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+ 
+ # Use the maximum available, or set MAX_FD != -1 to use that value.
+-MAX_FD=maximum
++MAX_FD="maximum"
+ 
+ warn () {
+     echo "$*"
+-} >&2
++}
+ 
+ die () {
+     echo
+     echo "$*"
+     echo
+     exit 1
+-} >&2
++}
+ 
+ # OS specific support (must be 'true' or 'false').
+ cygwin=false
+ msys=false
+ darwin=false
+ nonstop=false
+-case "$( uname )" in                #(
+-  CYGWIN* )         cygwin=true  ;; #(
+-  Darwin* )         darwin=true  ;; #(
+-  MSYS* | MINGW* )  msys=true    ;; #(
+-  NONSTOP* )        nonstop=true ;;
++case "`uname`" in
++  CYGWIN* )
++    cygwin=true
++    ;;
++  Darwin* )
++    darwin=true
++    ;;
++  MINGW* )
++    msys=true
++    ;;
++  NONSTOP* )
++    nonstop=true
++    ;;
+ esac
+ 
+ CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+ 
+-
+ # Determine the Java command to use to start the JVM.
+ if [ -n "$JAVA_HOME" ] ; then
+     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+         # IBM's JDK on AIX uses strange locations for the executables
+-        JAVACMD=$JAVA_HOME/jre/sh/java
++        JAVACMD="$JAVA_HOME/jre/sh/java"
+     else
+-        JAVACMD=$JAVA_HOME/bin/java
++        JAVACMD="$JAVA_HOME/bin/java"
+     fi
+     if [ ! -x "$JAVACMD" ] ; then
+         die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+@@ -132,7 +97,7 @@ Please set the JAVA_HOME variable in your environment to match the
+ location of your Java installation."
+     fi
+ else
+-    JAVACMD=java
++    JAVACMD="java"
+     which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+ 
+ Please set the JAVA_HOME variable in your environment to match the
+@@ -140,95 +105,79 @@ location of your Java installation."
+ fi
+ 
+ # Increase the maximum file descriptors if we can.
+-if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+-    case $MAX_FD in #(
+-      max*)
+-        MAX_FD=$( ulimit -H -n ) ||
+-            warn "Could not query maximum file descriptor limit"
+-    esac
+-    case $MAX_FD in  #(
+-      '' | soft) :;; #(
+-      *)
+-        ulimit -n "$MAX_FD" ||
+-            warn "Could not set maximum file descriptor limit to $MAX_FD"
+-    esac
++if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
++    MAX_FD_LIMIT=`ulimit -H -n`
++    if [ $? -eq 0 ] ; then
++        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
++            MAX_FD="$MAX_FD_LIMIT"
++        fi
++        ulimit -n $MAX_FD
++        if [ $? -ne 0 ] ; then
++            warn "Could not set maximum file descriptor limit: $MAX_FD"
++        fi
++    else
++        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
++    fi
+ fi
+ 
+-# Collect all arguments for the java command, stacking in reverse order:
+-#   * args from the command line
+-#   * the main class name
+-#   * -classpath
+-#   * -D...appname settings
+-#   * --module-path (only if needed)
+-#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
++# For Darwin, add options to specify how the application appears in the dock
++if $darwin; then
++    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
++fi
+ 
+ # For Cygwin or MSYS, switch paths to Windows format before running java
+-if "$cygwin" || "$msys" ; then
+-    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+-    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+-
+-    JAVACMD=$( cygpath --unix "$JAVACMD" )
+-
++if [ "$cygwin" = "true" -o "$msys" = "true" ] ; then
++    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
++    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
++    JAVACMD=`cygpath --unix "$JAVACMD"`
++
++    # We build the pattern for arguments to be converted via cygpath
++    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
++    SEP=""
++    for dir in $ROOTDIRSRAW ; do
++        ROOTDIRS="$ROOTDIRS$SEP$dir"
++        SEP="|"
++    done
++    OURCYGPATTERN="(^($ROOTDIRS))"
++    # Add a user-defined pattern to the cygpath arguments
++    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
++        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
++    fi
+     # Now convert the arguments - kludge to limit ourselves to /bin/sh
+-    for arg do
+-        if
+-            case $arg in                                #(
+-              -*)   false ;;                            # don't mess with options #(
+-              /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
+-                    [ -e "$t" ] ;;                      #(
+-              *)    false ;;
+-            esac
+-        then
+-            arg=$( cygpath --path --ignore --mixed "$arg" )
++    i=0
++    for arg in "$@" ; do
++        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
++        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
++
++        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
++            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
++        else
++            eval `echo args$i`="\"$arg\""
+         fi
+-        # Roll the args list around exactly as many times as the number of
+-        # args, so each arg winds up back in the position where it started, but
+-        # possibly modified.
+-        #
+-        # NB: a `for` loop captures its iteration list before it begins, so
+-        # changing the positional parameters here affects neither the number of
+-        # iterations, nor the values presented in `arg`.
+-        shift                   # remove old arg
+-        set -- "$@" "$arg"      # push replacement arg
++        i=`expr $i + 1`
+     done
++    case $i in
++        0) set -- ;;
++        1) set -- "$args0" ;;
++        2) set -- "$args0" "$args1" ;;
++        3) set -- "$args0" "$args1" "$args2" ;;
++        4) set -- "$args0" "$args1" "$args2" "$args3" ;;
++        5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
++        6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
++        7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
++        8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
++        9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
++    esac
+ fi
+ 
+-# Collect all arguments for the java command;
+-#   * $DEFAULT_JVM_OPTS, $JAVA_OPTS, and $GRADLE_OPTS can contain fragments of
+-#     shell script including quotes and variable substitutions, so put them in
+-#     double quotes to make sure that they get re-expanded; and
+-#   * put everything else in single quotes, so that it's not re-expanded.
+-
+-set -- \
+-        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+-        -classpath "$CLASSPATH" \
+-        org.gradle.wrapper.GradleWrapperMain \
+-        "$@"
+-
+-# Use "xargs" to parse quoted args.
+-#
+-# With -n1 it outputs one arg per line, with the quotes and backslashes removed.
+-#
+-# In Bash we could simply go:
+-#
+-#   readarray ARGS < <( xargs -n1 <<<"$var" ) &&
+-#   set -- "${ARGS[@]}" "$@"
+-#
+-# but POSIX shell has neither arrays nor command substitution, so instead we
+-# post-process each arg (as a line of input to sed) to backslash-escape any
+-# character that might be a shell metacharacter, then use eval to reverse
+-# that process (while maintaining the separation between arguments), and wrap
+-# the whole thing up as a single "set" statement.
+-#
+-# This will of course break if any of these variables contains a newline or
+-# an unmatched quote.
+-#
++# Escape application args
++save () {
++    for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
++    echo " "
++}
++APP_ARGS=`save "$@"`
+ 
+-eval "set -- $(
+-        printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS" |
+-        xargs -n1 |
+-        sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
+-        tr '\n' ' '
+-    )" '"$@"'
++# Collect all arguments for the java command, following the shell quoting and substitution rules
++eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
+ 
+ exec "$JAVACMD" "$@"
+diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
+index 107acd32c..62bd9b9cc 100644
+--- a/RnDiffApp/android/gradlew.bat
++++ b/RnDiffApp/android/gradlew.bat
+@@ -40,7 +40,7 @@ if defined JAVA_HOME goto findJavaFromJavaHome
+ 
+ set JAVA_EXE=java.exe
+ %JAVA_EXE% -version >NUL 2>&1
+-if "%ERRORLEVEL%" == "0" goto execute
++if "%ERRORLEVEL%" == "0" goto init
+ 
+ echo.
+ echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+@@ -54,7 +54,7 @@ goto fail
+ set JAVA_HOME=%JAVA_HOME:"=%
+ set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+ 
+-if exist "%JAVA_EXE%" goto execute
++if exist "%JAVA_EXE%" goto init
+ 
+ echo.
+ echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+@@ -64,14 +64,28 @@ echo location of your Java installation.
+ 
+ goto fail
+ 
++:init
++@rem Get command-line arguments, handling Windows variants
++
++if not "%OS%" == "Windows_NT" goto win9xME_args
++
++:win9xME_args
++@rem Slurp the command line arguments.
++set CMD_LINE_ARGS=
++set _SKIP=2
++
++:win9xME_args_slurp
++if "x%~1" == "x" goto execute
++
++set CMD_LINE_ARGS=%*
++
+ :execute
+ @rem Setup the command line
+ 
+ set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+ 
+-
+ @rem Execute Gradle
+-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
++"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
+ 
+ :end
+ @rem End local scope for the variables with windows NT shell
+diff --git a/RnDiffApp/android/settings.gradle b/RnDiffApp/android/settings.gradle
+index 2c19646a3..73a47b2ed 100644
+--- a/RnDiffApp/android/settings.gradle
++++ b/RnDiffApp/android/settings.gradle
+@@ -1,11 +1,3 @@
+ rootProject.name = 'RnDiffApp'
+ apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+ include ':app'
+-includeBuild('../node_modules/react-native-gradle-plugin')
+-
+-if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true") {
+-    include(":ReactAndroid")
+-    project(":ReactAndroid").projectDir = file('../node_modules/react-native/ReactAndroid')
+-    include(":ReactAndroid:hermes-engine")
+-    project(":ReactAndroid:hermes-engine").projectDir = file('../node_modules/react-native/ReactAndroid/hermes-engine')
+-}
+diff --git a/RnDiffApp/ios/.xcode.env b/RnDiffApp/ios/.xcode.env
+deleted file mode 100644
+index 3d5782c71..000000000
+--- a/RnDiffApp/ios/.xcode.env
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# This `.xcode.env` file is versioned and is used to source the environment
+-# used when running script phases inside Xcode.
+-# To customize your local environment, you can create an `.xcode.env.local`
+-# file that is not versioned.
+-
+-# NODE_BINARY variable contains the PATH to the node executable.
+-#
+-# Customize the NODE_BINARY variable here.
+-# For example, to use nvm with brew, add the following line
+-# . "$(brew --prefix nvm)/nvm.sh" --no-use
+-export NODE_BINARY=$(command -v node)
+diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
+index 392f80c6e..da114ee16 100644
+--- a/RnDiffApp/ios/Podfile
++++ b/RnDiffApp/ios/Podfile
+@@ -1,43 +1,33 @@
+ require_relative '../node_modules/react-native/scripts/react_native_pods'
+ require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ 
+-platform :ios, '12.4'
+-install! 'cocoapods', :deterministic_uuids => false
++platform :ios, '10.0'
+ 
+ target 'RnDiffApp' do
+   config = use_native_modules!
+ 
+-  # Flags change depending on the env values.
+-  flags = get_default_flags()
+-
+-  use_react_native!(
+-    :path => config[:reactNativePath],
+-    # Hermes is now enabled by default. Disable by setting this flag to false.
+-    # Upcoming versions of React Native may rely on get_default_flags(), but
+-    # we make it explicit here to aid in the React Native upgrade process.
+-    :hermes_enabled => true,
+-    :fabric_enabled => flags[:fabric_enabled],
+-    # Enables Flipper.
+-    #
+-    # Note that if you have use_frameworks! enabled, Flipper will not work and
+-    # you should disable the next line.
+-    :flipper_configuration => FlipperConfiguration.enabled,
+-    # An absolute path to your application root.
+-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+-  )
++  use_react_native!(:path => config["reactNativePath"])
+ 
+   target 'RnDiffAppTests' do
+     inherit! :complete
+     # Pods for testing
+   end
+ 
++  # Enables Flipper.
++  #
++  # Note that if you have use_frameworks! enabled, Flipper will not work and
++  # you should disable these next few lines.
++  use_flipper!
+   post_install do |installer|
+-    react_native_post_install(
+-      installer,
+-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
+-      # necessary for Mac Catalyst builds
+-      :mac_catalyst_enabled => false
+-    )
+-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
++    flipper_post_install(installer)
++  end
++end
++
++target 'RnDiffApp-tvOS' do
++  # Pods for RnDiffApp-tvOS
++
++  target 'RnDiffApp-tvOSTests' do
++    inherit! :search_paths
++    # Pods for testing
+   end
+ end
+diff --git a/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist b/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
+new file mode 100644
+index 000000000..ecbd496be
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
+@@ -0,0 +1,53 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<plist version="1.0">
++<dict>
++	<key>CFBundleDevelopmentRegion</key>
++	<string>en</string>
++	<key>CFBundleExecutable</key>
++	<string>$(EXECUTABLE_NAME)</string>
++	<key>CFBundleIdentifier</key>
++	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
++	<key>CFBundleInfoDictionaryVersion</key>
++	<string>6.0</string>
++	<key>CFBundleName</key>
++	<string>$(PRODUCT_NAME)</string>
++	<key>CFBundlePackageType</key>
++	<string>APPL</string>
++	<key>CFBundleShortVersionString</key>
++	<string>1.0</string>
++	<key>CFBundleSignature</key>
++	<string>????</string>
++	<key>CFBundleVersion</key>
++	<string>1</string>
++	<key>LSRequiresIPhoneOS</key>
++	<true/>
++	<key>NSAppTransportSecurity</key>
++	<dict>
++		<key>NSExceptionDomains</key>
++		<dict>
++			<key>localhost</key>
++			<dict>
++				<key>NSExceptionAllowsInsecureHTTPLoads</key>
++				<true/>
++			</dict>
++		</dict>
++	</dict>
++	<key>NSLocationWhenInUseUsageDescription</key>
++	<string></string>
++	<key>UILaunchStoryboardName</key>
++	<string>LaunchScreen</string>
++	<key>UIRequiredDeviceCapabilities</key>
++	<array>
++		<string>armv7</string>
++	</array>
++	<key>UISupportedInterfaceOrientations</key>
++	<array>
++		<string>UIInterfaceOrientationPortrait</string>
++		<string>UIInterfaceOrientationLandscapeLeft</string>
++		<string>UIInterfaceOrientationLandscapeRight</string>
++	</array>
++	<key>UIViewControllerBasedStatusBarAppearance</key>
++	<false/>
++</dict>
++</plist>
+diff --git a/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist b/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist
+new file mode 100644
+index 000000000..ba72822e8
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist
+@@ -0,0 +1,24 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<plist version="1.0">
++<dict>
++	<key>CFBundleDevelopmentRegion</key>
++	<string>en</string>
++	<key>CFBundleExecutable</key>
++	<string>$(EXECUTABLE_NAME)</string>
++	<key>CFBundleIdentifier</key>
++	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
++	<key>CFBundleInfoDictionaryVersion</key>
++	<string>6.0</string>
++	<key>CFBundleName</key>
++	<string>$(PRODUCT_NAME)</string>
++	<key>CFBundlePackageType</key>
++	<string>BNDL</string>
++	<key>CFBundleShortVersionString</key>
++	<string>1.0</string>
++	<key>CFBundleSignature</key>
++	<string>????</string>
++	<key>CFBundleVersion</key>
++	<string>1</string>
++</dict>
++</plist>
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index c8d8644e3..c161e803a 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -3,17 +3,23 @@
+ 	archiveVersion = 1;
+ 	classes = {
+ 	};
+-	objectVersion = 54;
++	objectVersion = 46;
+ 	objects = {
+ 
+ /* Begin PBXBuildFile section */
+ 		00E356F31AD99517003FC87E /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
+-		0C80B921A6F3F58F76C31292 /* libPods-RnDiffApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-RnDiffApp.a */; };
+-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
++		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+ 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+-		7699B88040F8A987B510C191 /* libPods-RnDiffApp-RnDiffAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-RnDiffApp-RnDiffAppTests.a */; };
++		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
++		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
++		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
++		2DCD954D1E0B4F2C00145EB5 /* RnDiffAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnDiffAppTests.m */; };
+ 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
++		9D52C2EDDF218E73E6DE5421 /* libPods-RnDiffApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AC58EC52520E41A9E9C0A7E /* libPods-RnDiffApp-tvOS.a */; };
++		A4918D00B405E78A4DFAC6A9 /* libPods-RnDiffApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13862986CE4B062F2E4352B1 /* libPods-RnDiffApp-tvOSTests.a */; };
++		AAA4444B17AB49FEDCC8AEB2 /* libPods-RnDiffApp-RnDiffAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 008FA60B9E0B9F7D7CECA50D /* libPods-RnDiffApp-RnDiffAppTests.a */; };
++		F1853ABC7C542CC8534F4CDD /* libPods-RnDiffApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BCD2D0F88B6F157F87E29CC /* libPods-RnDiffApp.a */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXContainerItemProxy section */
+@@ -24,26 +30,43 @@
+ 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+ 			remoteInfo = RnDiffApp;
+ 		};
++		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
++			proxyType = 1;
++			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
++			remoteInfo = "RnDiffApp-tvOS";
++		};
+ /* End PBXContainerItemProxy section */
+ 
+ /* Begin PBXFileReference section */
++		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
++		008FA60B9E0B9F7D7CECA50D /* libPods-RnDiffApp-RnDiffAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-RnDiffAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		00E356EE1AD99517003FC87E /* RnDiffAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RnDiffAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+ 		00E356F21AD99517003FC87E /* RnDiffAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RnDiffAppTests.m; sourceTree = "<group>"; };
++		09D29E40AC3D8217F55FFE13 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOSTests/Pods-RnDiffApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
++		0A91C5C53E2391768A84E7B4 /* Pods-RnDiffApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.release.xcconfig"; sourceTree = "<group>"; };
++		13862986CE4B062F2E4352B1 /* libPods-RnDiffApp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		13B07F961A680F5B00A75B9A /* RnDiffApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RnDiffApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RnDiffApp/AppDelegate.h; sourceTree = "<group>"; };
+-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = RnDiffApp/AppDelegate.mm; sourceTree = "<group>"; };
++		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RnDiffApp/AppDelegate.m; sourceTree = "<group>"; };
+ 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RnDiffApp/Images.xcassets; sourceTree = "<group>"; };
+ 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RnDiffApp/Info.plist; sourceTree = "<group>"; };
+ 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RnDiffApp/main.m; sourceTree = "<group>"; };
+-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-RnDiffApp-RnDiffAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-RnDiffAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+-		3B4392A12AC88292D35C810B /* Pods-RnDiffApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.debug.xcconfig"; sourceTree = "<group>"; };
+-		5709B34CF0A7D63546082F79 /* Pods-RnDiffApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.release.xcconfig"; sourceTree = "<group>"; };
+-		5B7EB9410499542E8C5724F5 /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+-		5DCACB8F33CDC322A6C60F78 /* libPods-RnDiffApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
++		2D02E47B1E0B4A5D006451C7 /* RnDiffApp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RnDiffApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
++		2D02E4901E0B4A5D006451C7 /* RnDiffApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RnDiffApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
++		44E051E4D9E91763F0619D3F /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig"; sourceTree = "<group>"; };
++		6AC58EC52520E41A9E9C0A7E /* libPods-RnDiffApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = RnDiffApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+-		89C6BE57DB24E9ADA2F236DE /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-RnDiffAppTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests.release.xcconfig"; sourceTree = "<group>"; };
++		8BCD2D0F88B6F157F87E29CC /* libPods-RnDiffApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
++		A5C90F60A18F6D0D9EFD5A2D /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOSTests/Pods-RnDiffApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
++		ACA717F0BA1A9004D9A24785 /* Pods-RnDiffApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOS/Pods-RnDiffApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
++		CC9038420FAA6A4C001A1761 /* Pods-RnDiffApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.debug.xcconfig"; sourceTree = "<group>"; };
++		EB309C5BD6C8B7625C5F251E /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-RnDiffAppTests.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests.release.xcconfig"; sourceTree = "<group>"; };
+ 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
++		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
++		F199367000A4D55B5CBF5501 /* Pods-RnDiffApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp-tvOS/Pods-RnDiffApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -51,7 +74,7 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				7699B88040F8A987B510C191 /* libPods-RnDiffApp-RnDiffAppTests.a in Frameworks */,
++				AAA4444B17AB49FEDCC8AEB2 /* libPods-RnDiffApp-RnDiffAppTests.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -59,7 +82,23 @@
+ 			isa = PBXFrameworksBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				0C80B921A6F3F58F76C31292 /* libPods-RnDiffApp.a in Frameworks */,
++				F1853ABC7C542CC8534F4CDD /* libPods-RnDiffApp.a in Frameworks */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++		2D02E4781E0B4A5D006451C7 /* Frameworks */ = {
++			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				9D52C2EDDF218E73E6DE5421 /* libPods-RnDiffApp-tvOS.a in Frameworks */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++		2D02E48D1E0B4A5D006451C7 /* Frameworks */ = {
++			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				A4918D00B405E78A4DFAC6A9 /* libPods-RnDiffApp-tvOSTests.a in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -86,8 +125,9 @@
+ 		13B07FAE1A68108700A75B9A /* RnDiffApp */ = {
+ 			isa = PBXGroup;
+ 			children = (
++				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+ 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
++				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+ 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+ 				13B07FB61A68108700A75B9A /* Info.plist */,
+ 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+@@ -100,8 +140,11 @@
+ 			isa = PBXGroup;
+ 			children = (
+ 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+-				5DCACB8F33CDC322A6C60F78 /* libPods-RnDiffApp.a */,
+-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-RnDiffApp-RnDiffAppTests.a */,
++				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
++				8BCD2D0F88B6F157F87E29CC /* libPods-RnDiffApp.a */,
++				008FA60B9E0B9F7D7CECA50D /* libPods-RnDiffApp-RnDiffAppTests.a */,
++				6AC58EC52520E41A9E9C0A7E /* libPods-RnDiffApp-tvOS.a */,
++				13862986CE4B062F2E4352B1 /* libPods-RnDiffApp-tvOSTests.a */,
+ 			);
+ 			name = Frameworks;
+ 			sourceTree = "<group>";
+@@ -121,7 +164,7 @@
+ 				00E356EF1AD99517003FC87E /* RnDiffAppTests */,
+ 				83CBBA001A601CBA00E9B192 /* Products */,
+ 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+-				BBD78D7AC51CEA395F1C20DB /* Pods */,
++				F2F36129198982F7561991A9 /* Pods */,
+ 			);
+ 			indentWidth = 2;
+ 			sourceTree = "<group>";
+@@ -133,18 +176,25 @@
+ 			children = (
+ 				13B07F961A680F5B00A75B9A /* RnDiffApp.app */,
+ 				00E356EE1AD99517003FC87E /* RnDiffAppTests.xctest */,
++				2D02E47B1E0B4A5D006451C7 /* RnDiffApp-tvOS.app */,
++				2D02E4901E0B4A5D006451C7 /* RnDiffApp-tvOSTests.xctest */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+ 		};
+-		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
++		F2F36129198982F7561991A9 /* Pods */ = {
+ 			isa = PBXGroup;
+ 			children = (
+-				3B4392A12AC88292D35C810B /* Pods-RnDiffApp.debug.xcconfig */,
+-				5709B34CF0A7D63546082F79 /* Pods-RnDiffApp.release.xcconfig */,
+-				5B7EB9410499542E8C5724F5 /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */,
+-				89C6BE57DB24E9ADA2F236DE /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */,
+-			);
++				CC9038420FAA6A4C001A1761 /* Pods-RnDiffApp.debug.xcconfig */,
++				0A91C5C53E2391768A84E7B4 /* Pods-RnDiffApp.release.xcconfig */,
++				44E051E4D9E91763F0619D3F /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */,
++				EB309C5BD6C8B7625C5F251E /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */,
++				F199367000A4D55B5CBF5501 /* Pods-RnDiffApp-tvOS.debug.xcconfig */,
++				ACA717F0BA1A9004D9A24785 /* Pods-RnDiffApp-tvOS.release.xcconfig */,
++				A5C90F60A18F6D0D9EFD5A2D /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */,
++				09D29E40AC3D8217F55FFE13 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */,
++			);
++			name = Pods;
+ 			path = Pods;
+ 			sourceTree = "<group>";
+ 		};
+@@ -155,12 +205,11 @@
+ 			isa = PBXNativeTarget;
+ 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "RnDiffAppTests" */;
+ 			buildPhases = (
+-				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
++				72163D60FC9D9AC74240AA67 /* [CP] Check Pods Manifest.lock */,
+ 				00E356EA1AD99517003FC87E /* Sources */,
+ 				00E356EB1AD99517003FC87E /* Frameworks */,
+ 				00E356EC1AD99517003FC87E /* Resources */,
+-				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
+-				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
++				A57D824A338BE83D6178C8EE /* [CP] Copy Pods Resources */,
+ 			);
+ 			buildRules = (
+ 			);
+@@ -176,14 +225,13 @@
+ 			isa = PBXNativeTarget;
+ 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RnDiffApp" */;
+ 			buildPhases = (
+-				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
++				448A110E14D61382F68141EE /* [CP] Check Pods Manifest.lock */,
+ 				FD10A7F022414F080027D42C /* Start Packager */,
+ 				13B07F871A680F5B00A75B9A /* Sources */,
+ 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+ 				13B07F8E1A680F5B00A75B9A /* Resources */,
+ 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+-				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
+-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
++				E1B9788D3298B51C54A4D7AC /* [CP] Copy Pods Resources */,
+ 			);
+ 			buildRules = (
+ 			);
+@@ -194,13 +242,52 @@
+ 			productReference = 13B07F961A680F5B00A75B9A /* RnDiffApp.app */;
+ 			productType = "com.apple.product-type.application";
+ 		};
++		2D02E47A1E0B4A5D006451C7 /* RnDiffApp-tvOS */ = {
++			isa = PBXNativeTarget;
++			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "RnDiffApp-tvOS" */;
++			buildPhases = (
++				9B30EC4ED6B2E82E70E250D5 /* [CP] Check Pods Manifest.lock */,
++				FD10A7F122414F3F0027D42C /* Start Packager */,
++				2D02E4771E0B4A5D006451C7 /* Sources */,
++				2D02E4781E0B4A5D006451C7 /* Frameworks */,
++				2D02E4791E0B4A5D006451C7 /* Resources */,
++				2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */,
++			);
++			buildRules = (
++			);
++			dependencies = (
++			);
++			name = "RnDiffApp-tvOS";
++			productName = "RnDiffApp-tvOS";
++			productReference = 2D02E47B1E0B4A5D006451C7 /* RnDiffApp-tvOS.app */;
++			productType = "com.apple.product-type.application";
++		};
++		2D02E48F1E0B4A5D006451C7 /* RnDiffApp-tvOSTests */ = {
++			isa = PBXNativeTarget;
++			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "RnDiffApp-tvOSTests" */;
++			buildPhases = (
++				2DA9204B50354BF3A57D0043 /* [CP] Check Pods Manifest.lock */,
++				2D02E48C1E0B4A5D006451C7 /* Sources */,
++				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
++				2D02E48E1E0B4A5D006451C7 /* Resources */,
++			);
++			buildRules = (
++			);
++			dependencies = (
++				2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */,
++			);
++			name = "RnDiffApp-tvOSTests";
++			productName = "RnDiffApp-tvOSTests";
++			productReference = 2D02E4901E0B4A5D006451C7 /* RnDiffApp-tvOSTests.xctest */;
++			productType = "com.apple.product-type.bundle.unit-test";
++		};
+ /* End PBXNativeTarget section */
+ 
+ /* Begin PBXProject section */
+ 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+ 			isa = PBXProject;
+ 			attributes = {
+-				LastUpgradeCheck = 1210;
++				LastUpgradeCheck = 1130;
+ 				TargetAttributes = {
+ 					00E356ED1AD99517003FC87E = {
+ 						CreatedOnToolsVersion = 6.2;
+@@ -209,10 +296,19 @@
+ 					13B07F861A680F5B00A75B9A = {
+ 						LastSwiftMigration = 1120;
+ 					};
++					2D02E47A1E0B4A5D006451C7 = {
++						CreatedOnToolsVersion = 8.2.1;
++						ProvisioningStyle = Automatic;
++					};
++					2D02E48F1E0B4A5D006451C7 = {
++						CreatedOnToolsVersion = 8.2.1;
++						ProvisioningStyle = Automatic;
++						TestTargetID = 2D02E47A1E0B4A5D006451C7;
++					};
+ 				};
+ 			};
+ 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RnDiffApp" */;
+-			compatibilityVersion = "Xcode 12.0";
++			compatibilityVersion = "Xcode 3.2";
+ 			developmentRegion = en;
+ 			hasScannedForEncodings = 0;
+ 			knownRegions = (
+@@ -226,6 +322,8 @@
+ 			targets = (
+ 				13B07F861A680F5B00A75B9A /* RnDiffApp */,
+ 				00E356ED1AD99517003FC87E /* RnDiffAppTests */,
++				2D02E47A1E0B4A5D006451C7 /* RnDiffApp-tvOS */,
++				2D02E48F1E0B4A5D006451C7 /* RnDiffApp-tvOSTests */,
+ 			);
+ 		};
+ /* End PBXProject section */
+@@ -247,6 +345,21 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
++		2D02E4791E0B4A5D006451C7 /* Resources */ = {
++			isa = PBXResourcesBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++		2D02E48E1E0B4A5D006451C7 /* Resources */ = {
++			isa = PBXResourcesBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
+ /* End PBXResourcesBuildPhase section */
+ 
+ /* Begin PBXShellScriptBuildPhase section */
+@@ -256,34 +369,51 @@
+ 			files = (
+ 			);
+ 			inputPaths = (
+-				"$(SRCROOT)/.xcode.env.local",
+-				"$(SRCROOT)/.xcode.env",
+ 			);
+ 			name = "Bundle React Native code and images";
+ 			outputPaths = (
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
++			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+ 		};
+-		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
++		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
++			isa = PBXShellScriptBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++			);
++			inputPaths = (
++			);
++			name = "Bundle React Native Code And Images";
++			outputPaths = (
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++			shellPath = /bin/sh;
++			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
++		};
++		2DA9204B50354BF3A57D0043 /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 			);
+ 			inputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+ 			);
+-			name = "[CP] Embed Pods Frameworks";
++			inputPaths = (
++				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
++				"${PODS_ROOT}/Manifest.lock",
++			);
++			name = "[CP] Check Pods Manifest.lock";
+ 			outputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
++			);
++			outputPaths = (
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-tvOSTests-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-frameworks.sh\"\n";
++			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
++		448A110E14D61382F68141EE /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -298,14 +428,14 @@
+ 			outputFileListPaths = (
+ 			);
+ 			outputPaths = (
+-				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-RnDiffAppTests-checkManifestLockResult.txt",
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
++		72163D60FC9D9AC74240AA67 /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -320,65 +450,91 @@
+ 			outputFileListPaths = (
+ 			);
+ 			outputPaths = (
+-				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-checkManifestLockResult.txt",
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-RnDiffAppTests-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */ = {
++		9B30EC4ED6B2E82E70E250D5 /* [CP] Check Pods Manifest.lock */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 			);
+ 			inputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+ 			);
+-			name = "[CP] Embed Pods Frameworks";
++			inputPaths = (
++				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
++				"${PODS_ROOT}/Manifest.lock",
++			);
++			name = "[CP] Check Pods Manifest.lock";
+ 			outputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
++			);
++			outputPaths = (
++				"$(DERIVED_FILE_DIR)/Pods-RnDiffApp-tvOS-checkManifestLockResult.txt",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-frameworks.sh\"\n";
++			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
++		A57D824A338BE83D6178C8EE /* [CP] Copy Pods Resources */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 			);
+-			inputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-resources-${CONFIGURATION}-input-files.xcfilelist",
++			inputPaths = (
++				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-resources.sh",
++				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+ 			);
+ 			name = "[CP] Copy Pods Resources";
+-			outputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-resources-${CONFIGURATION}-output-files.xcfilelist",
++			outputPaths = (
++				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++			shellPath = /bin/sh;
++			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-resources.sh\"\n";
++			showEnvVarsInLog = 0;
++		};
++		E1B9788D3298B51C54A4D7AC /* [CP] Copy Pods Resources */ = {
++			isa = PBXShellScriptBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++			);
++			inputPaths = (
++				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-resources.sh",
++				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
++			);
++			name = "[CP] Copy Pods Resources";
++			outputPaths = (
++				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp-resources.sh\"\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
++		FD10A7F022414F080027D42C /* Start Packager */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 			);
+ 			inputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+ 			);
+-			name = "[CP] Copy Pods Resources";
++			inputPaths = (
++			);
++			name = "Start Packager";
+ 			outputFileListPaths = (
+-				"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-resources-${CONFIGURATION}-output-files.xcfilelist",
++			);
++			outputPaths = (
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnDiffApp-RnDiffAppTests/Pods-RnDiffApp-RnDiffAppTests-resources.sh\"\n";
++			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+ 			showEnvVarsInLog = 0;
+ 		};
+-		FD10A7F022414F080027D42C /* Start Packager */ = {
++		FD10A7F122414F3F0027D42C /* Start Packager */ = {
+ 			isa = PBXShellScriptBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+@@ -412,11 +568,28 @@
+ 			isa = PBXSourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
+-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
++				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+ 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
++		2D02E4771E0B4A5D006451C7 /* Sources */ = {
++			isa = PBXSourcesBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */,
++				2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++		2D02E48C1E0B4A5D006451C7 /* Sources */ = {
++			isa = PBXSourcesBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				2DCD954D1E0B4F2C00145EB5 /* RnDiffAppTests.m in Sources */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
+ /* End PBXSourcesBuildPhase section */
+ 
+ /* Begin PBXTargetDependency section */
+@@ -425,12 +598,17 @@
+ 			target = 13B07F861A680F5B00A75B9A /* RnDiffApp */;
+ 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
+ 		};
++		2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */ = {
++			isa = PBXTargetDependency;
++			target = 2D02E47A1E0B4A5D006451C7 /* RnDiffApp-tvOS */;
++			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
++		};
+ /* End PBXTargetDependency section */
+ 
+ /* Begin XCBuildConfiguration section */
+ 		00E356F61AD99517003FC87E /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */;
++			baseConfigurationReference = 44E051E4D9E91763F0619D3F /* Pods-RnDiffApp-RnDiffAppTests.debug.xcconfig */;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				GCC_PREPROCESSOR_DEFINITIONS = (
+@@ -438,12 +616,8 @@
+ 					"$(inherited)",
+ 				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+-				LD_RUNPATH_SEARCH_PATHS = (
+-					"$(inherited)",
+-					"@executable_path/Frameworks",
+-					"@loader_path/Frameworks",
+-				);
++				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"-ObjC",
+ 					"-lc++",
+@@ -457,17 +631,13 @@
+ 		};
+ 		00E356F71AD99517003FC87E /* Release */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */;
++			baseConfigurationReference = EB309C5BD6C8B7625C5F251E /* Pods-RnDiffApp-RnDiffAppTests.release.xcconfig */;
+ 			buildSettings = {
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+-				LD_RUNPATH_SEARCH_PATHS = (
+-					"$(inherited)",
+-					"@executable_path/Frameworks",
+-					"@loader_path/Frameworks",
+-				);
++				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"-ObjC",
+ 					"-lc++",
+@@ -481,17 +651,14 @@
+ 		};
+ 		13B07F941A680F5B00A75B9A /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-RnDiffApp.debug.xcconfig */;
++			baseConfigurationReference = CC9038420FAA6A4C001A1761 /* Pods-RnDiffApp.debug.xcconfig */;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CLANG_ENABLE_MODULES = YES;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				ENABLE_BITCODE = NO;
+ 				INFOPLIST_FILE = RnDiffApp/Info.plist;
+-				LD_RUNPATH_SEARCH_PATHS = (
+-					"$(inherited)",
+-					"@executable_path/Frameworks",
+-				);
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-ObjC",
+@@ -507,16 +674,13 @@
+ 		};
+ 		13B07F951A680F5B00A75B9A /* Release */ = {
+ 			isa = XCBuildConfiguration;
+-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-RnDiffApp.release.xcconfig */;
++			baseConfigurationReference = 0A91C5C53E2391768A84E7B4 /* Pods-RnDiffApp.release.xcconfig */;
+ 			buildSettings = {
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CLANG_ENABLE_MODULES = YES;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				INFOPLIST_FILE = RnDiffApp/Info.plist;
+-				LD_RUNPATH_SEARCH_PATHS = (
+-					"$(inherited)",
+-					"@executable_path/Frameworks",
+-				);
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-ObjC",
+@@ -529,12 +693,122 @@
+ 			};
+ 			name = Release;
+ 		};
++		2D02E4971E0B4A5E006451C7 /* Debug */ = {
++			isa = XCBuildConfiguration;
++			baseConfigurationReference = F199367000A4D55B5CBF5501 /* Pods-RnDiffApp-tvOS.debug.xcconfig */;
++			buildSettings = {
++				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
++				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
++				CLANG_ANALYZER_NONNULL = YES;
++				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
++				CLANG_WARN_INFINITE_RECURSION = YES;
++				CLANG_WARN_SUSPICIOUS_MOVE = YES;
++				DEBUG_INFORMATION_FORMAT = dwarf;
++				ENABLE_TESTABILITY = YES;
++				GCC_NO_COMMON_BLOCKS = YES;
++				INFOPLIST_FILE = "RnDiffApp-tvOS/Info.plist";
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
++				OTHER_LDFLAGS = (
++					"$(inherited)",
++					"-ObjC",
++					"-lc++",
++				);
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOS";
++				PRODUCT_NAME = "$(TARGET_NAME)";
++				SDKROOT = appletvos;
++				TARGETED_DEVICE_FAMILY = 3;
++				TVOS_DEPLOYMENT_TARGET = 10.0;
++			};
++			name = Debug;
++		};
++		2D02E4981E0B4A5E006451C7 /* Release */ = {
++			isa = XCBuildConfiguration;
++			baseConfigurationReference = ACA717F0BA1A9004D9A24785 /* Pods-RnDiffApp-tvOS.release.xcconfig */;
++			buildSettings = {
++				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
++				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
++				CLANG_ANALYZER_NONNULL = YES;
++				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
++				CLANG_WARN_INFINITE_RECURSION = YES;
++				CLANG_WARN_SUSPICIOUS_MOVE = YES;
++				COPY_PHASE_STRIP = NO;
++				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
++				GCC_NO_COMMON_BLOCKS = YES;
++				INFOPLIST_FILE = "RnDiffApp-tvOS/Info.plist";
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
++				OTHER_LDFLAGS = (
++					"$(inherited)",
++					"-ObjC",
++					"-lc++",
++				);
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOS";
++				PRODUCT_NAME = "$(TARGET_NAME)";
++				SDKROOT = appletvos;
++				TARGETED_DEVICE_FAMILY = 3;
++				TVOS_DEPLOYMENT_TARGET = 10.0;
++			};
++			name = Release;
++		};
++		2D02E4991E0B4A5E006451C7 /* Debug */ = {
++			isa = XCBuildConfiguration;
++			baseConfigurationReference = A5C90F60A18F6D0D9EFD5A2D /* Pods-RnDiffApp-tvOSTests.debug.xcconfig */;
++			buildSettings = {
++				BUNDLE_LOADER = "$(TEST_HOST)";
++				CLANG_ANALYZER_NONNULL = YES;
++				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
++				CLANG_WARN_INFINITE_RECURSION = YES;
++				CLANG_WARN_SUSPICIOUS_MOVE = YES;
++				DEBUG_INFORMATION_FORMAT = dwarf;
++				ENABLE_TESTABILITY = YES;
++				GCC_NO_COMMON_BLOCKS = YES;
++				INFOPLIST_FILE = "RnDiffApp-tvOSTests/Info.plist";
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
++				OTHER_LDFLAGS = (
++					"$(inherited)",
++					"-ObjC",
++					"-lc++",
++				);
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOSTests";
++				PRODUCT_NAME = "$(TARGET_NAME)";
++				SDKROOT = appletvos;
++				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp-tvOS.app/RnDiffApp-tvOS";
++				TVOS_DEPLOYMENT_TARGET = 10.1;
++			};
++			name = Debug;
++		};
++		2D02E49A1E0B4A5E006451C7 /* Release */ = {
++			isa = XCBuildConfiguration;
++			baseConfigurationReference = 09D29E40AC3D8217F55FFE13 /* Pods-RnDiffApp-tvOSTests.release.xcconfig */;
++			buildSettings = {
++				BUNDLE_LOADER = "$(TEST_HOST)";
++				CLANG_ANALYZER_NONNULL = YES;
++				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
++				CLANG_WARN_INFINITE_RECURSION = YES;
++				CLANG_WARN_SUSPICIOUS_MOVE = YES;
++				COPY_PHASE_STRIP = NO;
++				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
++				GCC_NO_COMMON_BLOCKS = YES;
++				INFOPLIST_FILE = "RnDiffApp-tvOSTests/Info.plist";
++				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
++				OTHER_LDFLAGS = (
++					"$(inherited)",
++					"-ObjC",
++					"-lc++",
++				);
++				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.RnDiffApp-tvOSTests";
++				PRODUCT_NAME = "$(TARGET_NAME)";
++				SDKROOT = appletvos;
++				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RnDiffApp-tvOS.app/RnDiffApp-tvOS";
++				TVOS_DEPLOYMENT_TARGET = 10.1;
++			};
++			name = Release;
++		};
+ 		83CBBA201A601CBA00E9B192 /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				ALWAYS_SEARCH_USER_PATHS = NO;
+ 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
++				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+ 				CLANG_CXX_LIBRARY = "libc++";
+ 				CLANG_ENABLE_MODULES = YES;
+ 				CLANG_ENABLE_OBJC_ARC = YES;
+@@ -552,7 +826,6 @@
+ 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+ 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+ 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+ 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+ 				CLANG_WARN_STRICT_PROTOTYPES = YES;
+ 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+@@ -562,7 +835,6 @@
+ 				COPY_PHASE_STRIP = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				ENABLE_TESTABILITY = YES;
+-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+ 				GCC_C_LANGUAGE_STANDARD = gnu99;
+ 				GCC_DYNAMIC_NO_PIC = NO;
+ 				GCC_NO_COMMON_BLOCKS = YES;
+@@ -578,24 +850,15 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+-				LD_RUNPATH_SEARCH_PATHS = (
+-					/usr/lib/swift,
+-					"$(inherited)",
+-				);
++				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
++				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+ 				LIBRARY_SEARCH_PATHS = (
+-					"\"$(SDKROOT)/usr/lib/swift\"",
+ 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
++					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+ 					"\"$(inherited)\"",
+ 				);
+ 				MTL_ENABLE_DEBUG_INFO = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+-				OTHER_CPLUSPLUSFLAGS = (
+-					"$(OTHER_CFLAGS)",
+-					"-DFOLLY_NO_CONFIG",
+-					"-DFOLLY_MOBILE=1",
+-					"-DFOLLY_USE_LIBCPP=1",
+-				);
+ 				SDKROOT = iphoneos;
+ 			};
+ 			name = Debug;
+@@ -605,7 +868,7 @@
+ 			buildSettings = {
+ 				ALWAYS_SEARCH_USER_PATHS = NO;
+ 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
++				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+ 				CLANG_CXX_LIBRARY = "libc++";
+ 				CLANG_ENABLE_MODULES = YES;
+ 				CLANG_ENABLE_OBJC_ARC = YES;
+@@ -623,7 +886,6 @@
+ 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+ 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+ 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+ 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+ 				CLANG_WARN_STRICT_PROTOTYPES = YES;
+ 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+@@ -633,7 +895,6 @@
+ 				COPY_PHASE_STRIP = YES;
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+ 				GCC_C_LANGUAGE_STANDARD = gnu99;
+ 				GCC_NO_COMMON_BLOCKS = YES;
+ 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+@@ -642,23 +903,14 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+-				LD_RUNPATH_SEARCH_PATHS = (
+-					/usr/lib/swift,
+-					"$(inherited)",
+-				);
++				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
++				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+ 				LIBRARY_SEARCH_PATHS = (
+-					"\"$(SDKROOT)/usr/lib/swift\"",
+ 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
++					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+ 					"\"$(inherited)\"",
+ 				);
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+-				OTHER_CPLUSPLUSFLAGS = (
+-					"$(OTHER_CFLAGS)",
+-					"-DFOLLY_NO_CONFIG",
+-					"-DFOLLY_MOBILE=1",
+-					"-DFOLLY_USE_LIBCPP=1",
+-				);
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+ 			};
+@@ -685,6 +937,24 @@
+ 			defaultConfigurationIsVisible = 0;
+ 			defaultConfigurationName = Release;
+ 		};
++		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "RnDiffApp-tvOS" */ = {
++			isa = XCConfigurationList;
++			buildConfigurations = (
++				2D02E4971E0B4A5E006451C7 /* Debug */,
++				2D02E4981E0B4A5E006451C7 /* Release */,
++			);
++			defaultConfigurationIsVisible = 0;
++			defaultConfigurationName = Release;
++		};
++		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "RnDiffApp-tvOSTests" */ = {
++			isa = XCConfigurationList;
++			buildConfigurations = (
++				2D02E4991E0B4A5E006451C7 /* Debug */,
++				2D02E49A1E0B4A5E006451C7 /* Release */,
++			);
++			defaultConfigurationIsVisible = 0;
++			defaultConfigurationName = Release;
++		};
+ 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RnDiffApp" */ = {
+ 			isa = XCConfigurationList;
+ 			buildConfigurations = (
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
+new file mode 100644
+index 000000000..39ea48eb9
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
+@@ -0,0 +1,88 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Scheme
++   LastUpgradeVersion = "1130"
++   version = "1.3">
++   <BuildAction
++      parallelizeBuildables = "YES"
++      buildImplicitDependencies = "YES">
++      <BuildActionEntries>
++         <BuildActionEntry
++            buildForTesting = "YES"
++            buildForRunning = "YES"
++            buildForProfiling = "YES"
++            buildForArchiving = "YES"
++            buildForAnalyzing = "YES">
++            <BuildableReference
++               BuildableIdentifier = "primary"
++               BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
++               BuildableName = "RnDiffApp-tvOS.app"
++               BlueprintName = "RnDiffApp-tvOS"
++               ReferencedContainer = "container:RnDiffApp.xcodeproj">
++            </BuildableReference>
++         </BuildActionEntry>
++      </BuildActionEntries>
++   </BuildAction>
++   <TestAction
++      buildConfiguration = "Debug"
++      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
++      shouldUseLaunchSchemeArgsEnv = "YES">
++      <Testables>
++         <TestableReference
++            skipped = "NO">
++            <BuildableReference
++               BuildableIdentifier = "primary"
++               BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
++               BuildableName = "RnDiffApp-tvOSTests.xctest"
++               BlueprintName = "RnDiffApp-tvOSTests"
++               ReferencedContainer = "container:RnDiffApp.xcodeproj">
++            </BuildableReference>
++         </TestableReference>
++      </Testables>
++   </TestAction>
++   <LaunchAction
++      buildConfiguration = "Debug"
++      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
++      launchStyle = "0"
++      useCustomWorkingDirectory = "NO"
++      ignoresPersistentStateOnLaunch = "NO"
++      debugDocumentVersioning = "YES"
++      debugServiceExtension = "internal"
++      allowLocationSimulation = "YES">
++      <BuildableProductRunnable
++         runnableDebuggingMode = "0">
++         <BuildableReference
++            BuildableIdentifier = "primary"
++            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
++            BuildableName = "RnDiffApp-tvOS.app"
++            BlueprintName = "RnDiffApp-tvOS"
++            ReferencedContainer = "container:RnDiffApp.xcodeproj">
++         </BuildableReference>
++      </BuildableProductRunnable>
++   </LaunchAction>
++   <ProfileAction
++      buildConfiguration = "Release"
++      shouldUseLaunchSchemeArgsEnv = "YES"
++      savedToolIdentifier = ""
++      useCustomWorkingDirectory = "NO"
++      debugDocumentVersioning = "YES">
++      <BuildableProductRunnable
++         runnableDebuggingMode = "0">
++         <BuildableReference
++            BuildableIdentifier = "primary"
++            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
++            BuildableName = "RnDiffApp-tvOS.app"
++            BlueprintName = "RnDiffApp-tvOS"
++            ReferencedContainer = "container:RnDiffApp.xcodeproj">
++         </BuildableReference>
++      </BuildableProductRunnable>
++   </ProfileAction>
++   <AnalyzeAction
++      buildConfiguration = "Debug">
++   </AnalyzeAction>
++   <ArchiveAction
++      buildConfiguration = "Release"
++      revealArchiveInOrganizer = "YES">
++   </ArchiveAction>
++</Scheme>
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
+index e1d631ba5..d7445abc1 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <Scheme
+-   LastUpgradeVersion = "1210"
++   LastUpgradeVersion = "1130"
+    version = "1.3">
+    <BuildAction
+       parallelizeBuildables = "YES"
+diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+new file mode 100644
+index 000000000..0afd6876a
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Workspace
++   version = "1.0">
++   <FileRef
++      location = "group:RnDiffApp.xcodeproj">
++   </FileRef>
++   <FileRef
++      location = "group:Pods/Pods.xcodeproj">
++   </FileRef>
++</Workspace>
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+new file mode 100644
+index 000000000..8a7cfe81a
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -0,0 +1,58 @@
++#import "AppDelegate.h"
++
++#import <React/RCTBridge.h>
++#import <React/RCTBundleURLProvider.h>
++#import <React/RCTRootView.h>
++
++#ifdef FB_SONARKIT_ENABLED
++#import <FlipperKit/FlipperClient.h>
++#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
++#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
++#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
++#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
++#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
++
++static void InitializeFlipper(UIApplication *application) {
++  FlipperClient *client = [FlipperClient sharedClient];
++  SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
++  [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];
++  [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
++  [client addPlugin:[FlipperKitReactPlugin new]];
++  [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
++  [client start];
++}
++#endif
++
++@implementation AppDelegate
++
++- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
++{
++#ifdef FB_SONARKIT_ENABLED
++  InitializeFlipper(application);
++#endif
++
++  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
++  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
++                                                   moduleName:@"RnDiffApp"
++                                            initialProperties:nil];
++
++  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
++
++  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
++  UIViewController *rootViewController = [UIViewController new];
++  rootViewController.view = rootView;
++  self.window.rootViewController = rootViewController;
++  [self.window makeKeyAndVisible];
++  return YES;
++}
++
++- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
++{
++#if DEBUG
++  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
++#else
++  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
++#endif
++}
++
++@end
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+deleted file mode 100644
+index e3debc9fd..000000000
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
++++ /dev/null
+@@ -1,133 +0,0 @@
+-#import "AppDelegate.h"
+-
+-#import <React/RCTBridge.h>
+-#import <React/RCTBundleURLProvider.h>
+-#import <React/RCTRootView.h>
+-
+-#import <React/RCTAppSetupUtils.h>
+-
+-#if RCT_NEW_ARCH_ENABLED
+-#import <React/CoreModulesPlugins.h>
+-#import <React/RCTCxxBridgeDelegate.h>
+-#import <React/RCTFabricSurfaceHostingProxyRootView.h>
+-#import <React/RCTSurfacePresenter.h>
+-#import <React/RCTSurfacePresenterBridgeAdapter.h>
+-#import <ReactCommon/RCTTurboModuleManager.h>
+-
+-#import <react/config/ReactNativeConfig.h>
+-
+-static NSString *const kRNConcurrentRoot = @"concurrentRoot";
+-
+-@interface AppDelegate () <RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate> {
+-  RCTTurboModuleManager *_turboModuleManager;
+-  RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
+-  std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
+-  facebook::react::ContextContainer::Shared _contextContainer;
+-}
+-@end
+-#endif
+-
+-@implementation AppDelegate
+-
+-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+-{
+-  RCTAppSetupPrepareApp(application);
+-
+-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+-
+-#if RCT_NEW_ARCH_ENABLED
+-  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
+-  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
+-  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
+-  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
+-  bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
+-#endif
+-
+-  NSDictionary *initProps = [self prepareInitialProps];
+-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"RnDiffApp", initProps);
+-
+-  if (@available(iOS 13.0, *)) {
+-    rootView.backgroundColor = [UIColor systemBackgroundColor];
+-  } else {
+-    rootView.backgroundColor = [UIColor whiteColor];
+-  }
+-
+-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+-  UIViewController *rootViewController = [UIViewController new];
+-  rootViewController.view = rootView;
+-  self.window.rootViewController = rootViewController;
+-  [self.window makeKeyAndVisible];
+-  return YES;
+-}
+-
+-/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
+-///
+-/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
+-/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
+-/// @return: `true` if the `concurrentRoot` feture is enabled. Otherwise, it returns `false`.
+-- (BOOL)concurrentRootEnabled
+-{
+-  // Switch this bool to turn on and off the concurrent root
+-  return true;
+-}
+-
+-- (NSDictionary *)prepareInitialProps
+-{
+-  NSMutableDictionary *initProps = [NSMutableDictionary new];
+-
+-#ifdef RCT_NEW_ARCH_ENABLED
+-  initProps[kRNConcurrentRoot] = @([self concurrentRootEnabled]);
+-#endif
+-
+-  return initProps;
+-}
+-
+-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+-{
+-#if DEBUG
+-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+-#else
+-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+-#endif
+-}
+-
+-#if RCT_NEW_ARCH_ENABLED
+-
+-#pragma mark - RCTCxxBridgeDelegate
+-
+-- (std::unique_ptr<facebook::react::JSExecutorFactory>)jsExecutorFactoryForBridge:(RCTBridge *)bridge
+-{
+-  _turboModuleManager = [[RCTTurboModuleManager alloc] initWithBridge:bridge
+-                                                             delegate:self
+-                                                            jsInvoker:bridge.jsCallInvoker];
+-  return RCTAppSetupDefaultJsExecutorFactory(bridge, _turboModuleManager);
+-}
+-
+-#pragma mark RCTTurboModuleManagerDelegate
+-
+-- (Class)getModuleClassFromName:(const char *)name
+-{
+-  return RCTCoreModulesClassProvider(name);
+-}
+-
+-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
+-                                                      jsInvoker:(std::shared_ptr<facebook::react::CallInvoker>)jsInvoker
+-{
+-  return nullptr;
+-}
+-
+-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
+-                                                     initParams:
+-                                                         (const facebook::react::ObjCTurboModule::InitParams &)params
+-{
+-  return nullptr;
+-}
+-
+-- (id<RCTTurboModule>)getModuleInstanceFromClass:(Class)moduleClass
+-{
+-  return RCTAppSetupDefaultModuleFromClass(moduleClass);
+-}
+-
+-#endif
+-
+-@end
+diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
+index 81213230d..118c98f74 100644
+--- a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
++++ b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
+@@ -2,52 +2,37 @@
+   "images" : [
+     {
+       "idiom" : "iphone",
+-      "scale" : "2x",
+-      "size" : "20x20"
++      "size" : "29x29",
++      "scale" : "2x"
+     },
+     {
+       "idiom" : "iphone",
+-      "scale" : "3x",
+-      "size" : "20x20"
++      "size" : "29x29",
++      "scale" : "3x"
+     },
+     {
+       "idiom" : "iphone",
+-      "scale" : "2x",
+-      "size" : "29x29"
++      "size" : "40x40",
++      "scale" : "2x"
+     },
+     {
+       "idiom" : "iphone",
+-      "scale" : "3x",
+-      "size" : "29x29"
++      "size" : "40x40",
++      "scale" : "3x"
+     },
+     {
+       "idiom" : "iphone",
+-      "scale" : "2x",
+-      "size" : "40x40"
++      "size" : "60x60",
++      "scale" : "2x"
+     },
+     {
+       "idiom" : "iphone",
+-      "scale" : "3x",
+-      "size" : "40x40"
+-    },
+-    {
+-      "idiom" : "iphone",
+-      "scale" : "2x",
+-      "size" : "60x60"
+-    },
+-    {
+-      "idiom" : "iphone",
+-      "scale" : "3x",
+-      "size" : "60x60"
+-    },
+-    {
+-      "idiom" : "ios-marketing",
+-      "scale" : "1x",
+-      "size" : "1024x1024"
++      "size" : "60x60",
++      "scale" : "3x"
+     }
+   ],
+   "info" : {
+-    "author" : "xcode",
+-    "version" : 1
++    "version" : 1,
++    "author" : "xcode"
+   }
+-}
++}
+\ No newline at end of file
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index 903b7921c..1e7814116 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -26,6 +26,8 @@
+ 	<true/>
+ 	<key>NSAppTransportSecurity</key>
+ 	<dict>
++		<key>NSAllowsArbitraryLoads</key>
++		<true/>
+ 		<key>NSExceptionDomains</key>
+ 		<dict>
+ 			<key>localhost</key>
+diff --git a/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard b/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
+index 8f74d3c92..105a4fa5b 100644
+--- a/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
++++ b/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
+@@ -16,21 +16,32 @@
+                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                         <subviews>
++                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
++                                <rect key="frame" x="0.0" y="647" width="375" height="0.0"/>
++                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
++                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
++                                <nil key="highlightedColor"/>
++                            </label>
+                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RnDiffApp" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="GJd-Yh-RWb">
+                                 <rect key="frame" x="0.0" y="202" width="375" height="43"/>
+                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
++                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                 <nil key="highlightedColor"/>
+                             </label>
+                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Powered by React Native" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="MN2-I3-ftu">
+                                 <rect key="frame" x="0.0" y="626" width="375" height="21"/>
+                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
++                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                 <nil key="highlightedColor"/>
+                             </label>
+                         </subviews>
+-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
++                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                         <constraints>
++                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="centerX" secondItem="obG-Y5-kRd" secondAttribute="centerX" id="5cz-MP-9tL"/>
+                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="MN2-I3-ftu" secondAttribute="bottom" constant="20" id="OZV-Vh-mqD"/>
+                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="centerX" secondItem="GJd-Yh-RWb" secondAttribute="centerX" id="Q3B-4B-g5h"/>
++                            <constraint firstItem="obG-Y5-kRd" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" symbolic="YES" id="SfN-ll-jLj"/>
++                            <constraint firstAttribute="bottom" secondItem="obG-Y5-kRd" secondAttribute="bottom" constant="20" id="Y44-ml-fuU"/>
+                             <constraint firstItem="MN2-I3-ftu" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="akx-eg-2ui"/>
+                             <constraint firstItem="MN2-I3-ftu" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="i1E-0Y-4RG"/>
+                             <constraint firstItem="GJd-Yh-RWb" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="bottom" multiplier="1/3" constant="1" id="moa-c2-u7t"/>
+diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
+index d645c7246..b1df44b95 100644
+--- a/RnDiffApp/ios/RnDiffApp/main.m
++++ b/RnDiffApp/ios/RnDiffApp/main.m
+@@ -2,8 +2,7 @@
+ 
+ #import "AppDelegate.h"
+ 
+-int main(int argc, char *argv[])
+-{
++int main(int argc, char * argv[]) {
+   @autoreleasepool {
+     return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+   }
+diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+index fae48110a..fe83ad244 100644
+--- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
++++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
+@@ -13,7 +13,7 @@
+ 
+ @implementation RnDiffAppTests
+ 
+-- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
++- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
+ {
+   if (test(view)) {
+     return YES;
+@@ -34,25 +34,23 @@
+ 
+   __block NSString *redboxError = nil;
+ #ifdef DEBUG
+-  RCTSetLogFunction(
+-      ^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
+-        if (level >= RCTLogLevelError) {
+-          redboxError = message;
+-        }
+-      });
++  RCTSetLogFunction(^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
++    if (level >= RCTLogLevelError) {
++      redboxError = message;
++    }
++  });
+ #endif
+ 
+   while ([date timeIntervalSinceNow] > 0 && !foundElement && !redboxError) {
+     [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+     [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+ 
+-    foundElement = [self findSubviewInView:vc.view
+-                                  matching:^BOOL(UIView *view) {
+-                                    if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
+-                                      return YES;
+-                                    }
+-                                    return NO;
+-                                  }];
++    foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
++      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
++        return YES;
++      }
++      return NO;
++    }];
+   }
+ 
+ #ifdef DEBUG
+@@ -63,4 +61,5 @@
+   XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
+ }
+ 
++
+ @end
+diff --git a/RnDiffApp/metro.config.js b/RnDiffApp/metro.config.js
+index e91aba937..13a964217 100644
+--- a/RnDiffApp/metro.config.js
++++ b/RnDiffApp/metro.config.js
+@@ -10,7 +10,7 @@ module.exports = {
+     getTransformOptions: async () => ({
+       transform: {
+         experimentalImportSupport: false,
+-        inlineRequires: true,
++        inlineRequires: false,
+       },
+     }),
+   },
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 6bb24fe64..7adf44161 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,18 +10,18 @@
+     "lint": "eslint ."
+   },
+   "dependencies": {
+-    "react": "18.1.0",
+-    "react-native": "0.70.4"
++    "react": "16.13.1",
++    "react-native": "0.63.1"
+   },
+   "devDependencies": {
+-    "@babel/core": "^7.12.9",
+-    "@babel/runtime": "^7.12.5",
+-    "@react-native-community/eslint-config": "^2.0.0",
+-    "babel-jest": "^26.6.3",
+-    "eslint": "^7.32.0",
+-    "jest": "^26.6.3",
+-    "metro-react-native-babel-preset": "0.72.3",
+-    "react-test-renderer": "18.1.0"
++    "@babel/core": "^7.8.4",
++    "@babel/runtime": "^7.8.4",
++    "@react-native-community/eslint-config": "^1.1.0",
++    "babel-jest": "^25.1.0",
++    "eslint": "^6.5.1",
++    "jest": "^25.1.0",
++    "metro-react-native-babel-preset": "^0.59.0",
++    "react-test-renderer": "16.13.1"
+   },
+   "jest": {
+     "preset": "react-native"
