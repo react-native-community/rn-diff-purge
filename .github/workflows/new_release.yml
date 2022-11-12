@@ -11,6 +11,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Setup asdf
+        uses: asdf-vm/actions/setup@v1
+
+      - name: Cache asdf
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
       - name: asdf install
         uses: asdf-vm/actions/install@v1
 
