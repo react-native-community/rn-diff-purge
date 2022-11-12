@@ -56,7 +56,7 @@ function generateNewReleaseBranch () {
     git checkout -b "$branchName"
 
     # generate app
-   npx react-native init "$AppName" --version "$newRelease" --skip-installation
+   npx react-native init "$AppName" --version "$newRelease" --skip-install
 
     # commit and push branch
     git add "$AppName"
@@ -116,11 +116,11 @@ function pushMaster () {
 }
 
 function generateTable () {
-    head -n "$NumberOfReleases" "$ReleasesFile" | ./generate-table.js > "$ReadmeTable"
+    head -n "$NumberOfReleases" "$ReleasesFile" | ./generate-table.mjs > "$ReadmeTable"
 }
 
 function generateBigTable () {
-    cat "$ReleasesFile" | ./generate-table.js --big > "$ReadmeTableBig"
+    cat "$ReleasesFile" | ./generate-table.mjs --big > "$ReadmeTableBig"
 }
 
 ReadmeHeader=README_HEADER.md
