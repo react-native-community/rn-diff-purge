@@ -7875,12 +7875,12 @@ index 91963b267..903b7921c 100644
  	<key>CFBundleInfoDictionaryVersion</key>
  	<string>6.0</string>
  	<key>CFBundleName</key>
-@@ -22,6 +24,19 @@
- 	<string>1</string>
- 	<key>LSRequiresIPhoneOS</key>
+@@ -24,8 +26,14 @@
  	<true/>
-+	<key>NSAppTransportSecurity</key>
-+	<dict>
+ 	<key>NSAppTransportSecurity</key>
+ 	<dict>
+-		<key>NSAllowsArbitraryLoads</key>
+-		<true/>
 +		<key>NSExceptionDomains</key>
 +		<dict>
 +			<key>localhost</key>
@@ -7889,26 +7889,9 @@ index 91963b267..903b7921c 100644
 +				<true/>
 +			</dict>
 +		</dict>
-+	</dict>
-+	<key>NSLocationWhenInUseUsageDescription</key>
-+	<string></string>
- 	<key>UILaunchStoryboardName</key>
- 	<string>LaunchScreen</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-@@ -36,13 +51,5 @@
- 	</array>
- 	<key>UIViewControllerBasedStatusBarAppearance</key>
- 	<false/>
--	<key>NSLocationWhenInUseUsageDescription</key>
--	<string></string>
--  <key>NSAppTransportSecurity</key>
--  <dict>
--    <!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
--    <key>NSAllowsArbitraryLoads</key>
--    <true/>
--  </dict>
- </dict>
- </plist>
+ 	</dict>
+ 	<key>NSLocationWhenInUseUsageDescription</key>
+ 	<string></string>
 diff --git a/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard b/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
 new file mode 100644
 index 000000000..8f74d3c92
