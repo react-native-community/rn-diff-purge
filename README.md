@@ -64,15 +64,6 @@ Lastly, the [rn-diff-purge](https://github.com/react-native-community/rn-diff-pu
 
 Many thanks to you for using this repo, many thanks to Nicolas for starting this, and many thanks to the React Native Core team and React Native Contributors team for helping make this repo and RN project upgrading awesome.
 
-### Hooks
-React Native [0.59.0-rc.0](https://github.com/react-native-community/rn-diff-purge#version-changes) gets hooks! 🎉🥳
-Here are some docs:
-- [Hooks API Reference](https://reactjs.org/docs/hooks-reference.html)
-- [Introducing Hooks](https://reactjs.org/docs/hooks-intro.html)
-- [Hooks at a Glance](https://reactjs.org/docs/hooks-overview.html)
-
-Thanks to the RN team!
-
 ## Why this repository?
 `react-native-git-upgrade` is painful. A simple diff by recreating the project is a much much simpler way to get a diff on every new React Native release.
 
