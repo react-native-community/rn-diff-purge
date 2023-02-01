@@ -1,0 +1,2370 @@
+diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
+deleted file mode 100644
+index 934256cb2..000000000
+--- a/RnDiffApp/.buckconfig
++++ /dev/null
+@@ -1,6 +0,0 @@
+-
+-[android]
+-  target = Google Inc.:Google APIs:23
+-
+-[maven_repositories]
+-  central = https://repo1.maven.org/maven2
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+deleted file mode 100644
+index 08c564b42..000000000
+--- a/RnDiffApp/.flowconfig
++++ /dev/null
+@@ -1,65 +0,0 @@
+-[ignore]
+-; We fork some components by platform
+-.*/*[.]android.js
+-
+-; Ignore "BUCK" generated dirs
+-<PROJECT_ROOT>/\.buckd/
+-
+-; Ignore polyfills
+-node_modules/react-native/Libraries/polyfills/.*
+-
+-; Flow doesn't support platforms
+-.*/Libraries/Utilities/LoadingView.js
+-
+-[untyped]
+-.*/node_modules/@react-native-community/cli/.*/.*
+-
+-[include]
+-
+-[libs]
+-node_modules/react-native/interface.js
+-node_modules/react-native/flow/
+-
+-[options]
+-emoji=true
+-
+-exact_by_default=true
+-
+-format.bracket_spacing=false
+-
+-module.file_ext=.js
+-module.file_ext=.json
+-module.file_ext=.ios.js
+-
+-munge_underscores=true
+-
+-module.name_mapper='^react-native/\(.*\)$' -> '<PROJECT_ROOT>/node_modules/react-native/\1'
+-module.name_mapper='^@?[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/Image/RelativeImageStub'
+-
+-suppress_type=$FlowIssue
+-suppress_type=$FlowFixMe
+-suppress_type=$FlowFixMeProps
+-suppress_type=$FlowFixMeState
+-
+-[lints]
+-sketchy-null-number=warn
+-sketchy-null-mixed=warn
+-sketchy-number=warn
+-untyped-type-import=warn
+-nonstrict-import=warn
+-deprecated-type=warn
+-unsafe-getters-setters=warn
+-unnecessary-invariant=warn
+-signature-verification-failure=warn
+-
+-[strict]
+-deprecated-type
+-nonstrict-import
+-sketchy-null
+-unclear-type
+-unsafe-getters-setters
+-untyped-import
+-untyped-type-import
+-
+-[version]
+-^0.170.0
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 81570d991..16f8c3077 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -20,6 +20,7 @@ DerivedData
+ *.hmap
+ *.ipa
+ *.xcuserstate
++ios/.xcode.env.local
+ 
+ # Android/IntelliJ
+ #
+@@ -29,6 +30,9 @@ build/
+ local.properties
+ *.iml
+ *.hprof
++.cxx/
++*.keystore
++!debug.keystore
+ 
+ # node.js
+ #
+@@ -36,12 +40,6 @@ node_modules/
+ npm-debug.log
+ yarn-error.log
+ 
+-# BUCK
+-buck-out/
+-\.buckd/
+-*.keystore
+-!debug.keystore
+-
+ # fastlane
+ #
+ # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+@@ -49,9 +47,10 @@ buck-out/
+ # For more information about the recommended setup visit:
+ # https://docs.fastlane.tools/best-practices/source-control/
+ 
+-*/fastlane/report.xml
+-*/fastlane/Preview.html
+-*/fastlane/screenshots
++**/fastlane/report.xml
++**/fastlane/Preview.html
++**/fastlane/screenshots
++**/fastlane/test_output
+ 
+ # Bundle artifact
+ *.jsbundle
+@@ -59,3 +58,6 @@ buck-out/
+ # Ruby / CocoaPods
+ /ios/Pods/
+ /vendor/bundle/
++
++# Temporary files created by Metro to check the health of the file watcher
++.metro-health-check*
+diff --git a/RnDiffApp/.node-version b/RnDiffApp/.node-version
+new file mode 100644
+index 000000000..3c032078a
+--- /dev/null
++++ b/RnDiffApp/.node-version
+@@ -0,0 +1 @@
++18
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+index a4dd9dba4..49cdd668e 100644
+--- a/RnDiffApp/.ruby-version
++++ b/RnDiffApp/.ruby-version
+@@ -1 +1 @@
+-2.7.4
++2.7.6
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.tsx
+similarity index 83%
+rename from RnDiffApp/App.js
+rename to RnDiffApp/App.tsx
+index f85f38d87..bf24c3316 100644
+--- a/RnDiffApp/App.js
++++ b/RnDiffApp/App.tsx
+@@ -3,11 +3,10 @@
+  * https://github.com/facebook/react-native
+  *
+  * @format
+- * @flow strict-local
+  */
+ 
+ import React from 'react';
+-import type {Node} from 'react';
++import type {PropsWithChildren} from 'react';
+ import {
+   SafeAreaView,
+   ScrollView,
+@@ -26,7 +25,11 @@ import {
+   ReloadInstructions,
+ } from 'react-native/Libraries/NewAppScreen';
+ 
+-const Section = ({children, title}): Node => {
++type SectionProps = PropsWithChildren<{
++  title: string;
++}>;
++
++function Section({children, title}: SectionProps): JSX.Element {
+   const isDarkMode = useColorScheme() === 'dark';
+   return (
+     <View style={styles.sectionContainer}>
+@@ -50,9 +53,9 @@ const Section = ({children, title}): Node => {
+       </Text>
+     </View>
+   );
+-};
++}
+ 
+-const App: () => Node = () => {
++function App(): JSX.Element {
+   const isDarkMode = useColorScheme() === 'dark';
+ 
+   const backgroundStyle = {
+@@ -61,7 +64,10 @@ const App: () => Node = () => {
+ 
+   return (
+     <SafeAreaView style={backgroundStyle}>
+-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
++      <StatusBar
++        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
++        backgroundColor={backgroundStyle.backgroundColor}
++      />
+       <ScrollView
+         contentInsetAdjustmentBehavior="automatic"
+         style={backgroundStyle}>
+@@ -71,7 +77,7 @@ const App: () => Node = () => {
+             backgroundColor: isDarkMode ? Colors.black : Colors.white,
+           }}>
+           <Section title="Step One">
+-            Edit <Text style={styles.highlight}>App.js</Text> to change this
++            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+             screen and then come back to see your edits.
+           </Section>
+           <Section title="See Your Changes">
+@@ -88,7 +94,7 @@ const App: () => Node = () => {
+       </ScrollView>
+     </SafeAreaView>
+   );
+-};
++}
+ 
+ const styles = StyleSheet.create({
+   sectionContainer: {
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 2c3edcf4b..567e59805 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -1,6 +1,6 @@
+ source 'https://rubygems.org'
+ 
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby '2.7.4'
++ruby File.read(File.join(__dir__, '.ruby-version')).strip
+ 
+-gem 'cocoapods', '~> 1.11', '>= 1.11.2'
++gem 'cocoapods', '~> 1.11', '>= 1.11.3'
+diff --git a/RnDiffApp/Gemfile.lock b/RnDiffApp/Gemfile.lock
+deleted file mode 100644
+index 285424cd4..000000000
+--- a/RnDiffApp/Gemfile.lock
++++ /dev/null
+@@ -1,100 +0,0 @@
+-GEM
+-  remote: https://rubygems.org/
+-  specs:
+-    CFPropertyList (3.0.5)
+-      rexml
+-    activesupport (6.1.4.4)
+-      concurrent-ruby (~> 1.0, >= 1.0.2)
+-      i18n (>= 1.6, < 2)
+-      minitest (>= 5.1)
+-      tzinfo (~> 2.0)
+-      zeitwerk (~> 2.3)
+-    addressable (2.8.0)
+-      public_suffix (>= 2.0.2, < 5.0)
+-    algoliasearch (1.27.5)
+-      httpclient (~> 2.8, >= 2.8.3)
+-      json (>= 1.5.1)
+-    atomos (0.1.3)
+-    claide (1.1.0)
+-    cocoapods (1.11.2)
+-      addressable (~> 2.8)
+-      claide (>= 1.0.2, < 2.0)
+-      cocoapods-core (= 1.11.2)
+-      cocoapods-deintegrate (>= 1.0.3, < 2.0)
+-      cocoapods-downloader (>= 1.4.0, < 2.0)
+-      cocoapods-plugins (>= 1.0.0, < 2.0)
+-      cocoapods-search (>= 1.0.0, < 2.0)
+-      cocoapods-trunk (>= 1.4.0, < 2.0)
+-      cocoapods-try (>= 1.1.0, < 2.0)
+-      colored2 (~> 3.1)
+-      escape (~> 0.0.4)
+-      fourflusher (>= 2.3.0, < 3.0)
+-      gh_inspector (~> 1.0)
+-      molinillo (~> 0.8.0)
+-      nap (~> 1.0)
+-      ruby-macho (>= 1.0, < 3.0)
+-      xcodeproj (>= 1.21.0, < 2.0)
+-    cocoapods-core (1.11.2)
+-      activesupport (>= 5.0, < 7)
+-      addressable (~> 2.8)
+-      algoliasearch (~> 1.0)
+-      concurrent-ruby (~> 1.1)
+-      fuzzy_match (~> 2.0.4)
+-      nap (~> 1.0)
+-      netrc (~> 0.11)
+-      public_suffix (~> 4.0)
+-      typhoeus (~> 1.0)
+-    cocoapods-deintegrate (1.0.5)
+-    cocoapods-downloader (1.5.1)
+-    cocoapods-plugins (1.0.0)
+-      nap
+-    cocoapods-search (1.0.1)
+-    cocoapods-trunk (1.6.0)
+-      nap (>= 0.8, < 2.0)
+-      netrc (~> 0.11)
+-    cocoapods-try (1.2.0)
+-    colored2 (3.1.2)
+-    concurrent-ruby (1.1.9)
+-    escape (0.0.4)
+-    ethon (0.15.0)
+-      ffi (>= 1.15.0)
+-    ffi (1.15.5)
+-    fourflusher (2.3.1)
+-    fuzzy_match (2.0.4)
+-    gh_inspector (1.1.3)
+-    httpclient (2.8.3)
+-    i18n (1.9.1)
+-      concurrent-ruby (~> 1.0)
+-    json (2.6.1)
+-    minitest (5.15.0)
+-    molinillo (0.8.0)
+-    nanaimo (0.3.0)
+-    nap (1.1.0)
+-    netrc (0.11.0)
+-    public_suffix (4.0.6)
+-    rexml (3.2.5)
+-    ruby-macho (2.5.1)
+-    typhoeus (1.4.0)
+-      ethon (>= 0.9.0)
+-    tzinfo (2.0.4)
+-      concurrent-ruby (~> 1.0)
+-    xcodeproj (1.21.0)
+-      CFPropertyList (>= 2.3.3, < 4.0)
+-      atomos (~> 0.1.3)
+-      claide (>= 1.0.2, < 2.0)
+-      colored2 (~> 3.1)
+-      nanaimo (~> 0.3.0)
+-      rexml (~> 3.2.4)
+-    zeitwerk (2.5.4)
+-
+-PLATFORMS
+-  ruby
+-
+-DEPENDENCIES
+-  cocoapods (~> 1.11, >= 1.11.2)
+-
+-RUBY VERSION
+-   ruby 2.7.4p191
+-
+-BUNDLED WITH
+-   2.2.27
+diff --git a/RnDiffApp/__tests__/App-test.js b/RnDiffApp/__tests__/App-test.tsx
+similarity index 100%
+rename from RnDiffApp/__tests__/App-test.js
+rename to RnDiffApp/__tests__/App-test.tsx
+diff --git a/RnDiffApp/android/app/_BUCK b/RnDiffApp/android/app/_BUCK
+deleted file mode 100644
+index 70a29f41b..000000000
+--- a/RnDiffApp/android/app/_BUCK
++++ /dev/null
+@@ -1,55 +0,0 @@
+-# To learn about Buck see [Docs](https://buckbuild.com/).
+-# To run your application with Buck:
+-# - install Buck
+-# - `npm start` - to start the packager
+-# - `cd android`
+-# - `keytool -genkey -v -keystore keystores/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"`
+-# - `./gradlew :app:copyDownloadableDepsToLibs` - make all Gradle compile dependencies available to Buck
+-# - `buck install -r android/app` - compile, install and run application
+-#
+-
+-load(":build_defs.bzl", "create_aar_targets", "create_jar_targets")
+-
+-lib_deps = []
+-
+-create_aar_targets(glob(["libs/*.aar"]))
+-
+-create_jar_targets(glob(["libs/*.jar"]))
+-
+-android_library(
+-    name = "all-libs",
+-    exported_deps = lib_deps,
+-)
+-
+-android_library(
+-    name = "app-code",
+-    srcs = glob([
+-        "src/main/java/**/*.java",
+-    ]),
+-    deps = [
+-        ":all-libs",
+-        ":build_config",
+-        ":res",
+-    ],
+-)
+-
+-android_build_config(
+-    name = "build_config",
+-    package = "com.rndiffapp",
+-)
+-
+-android_resource(
+-    name = "res",
+-    package = "com.rndiffapp",
+-    res = "src/main/res",
+-)
+-
+-android_binary(
+-    name = "app",
+-    keystore = "//android/keystores:debug",
+-    manifest = "src/main/AndroidManifest.xml",
+-    package_type = "debug",
+-    deps = [
+-        ":app-code",
+-    ],
+-)
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index aeb1f56b0..fccf99f93 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -1,127 +1,87 @@
+ apply plugin: "com.android.application"
++apply plugin: "com.facebook.react"
+ 
+ import com.android.build.OutputFile
+ 
+ /**
+- * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
+- * and bundleReleaseJsAndAssets).
+- * These basically call `react-native bundle` with the correct arguments during the Android build
+- * cycle. By default, bundleDebugJsAndAssets is skipped, as in debug/dev mode we prefer to load the
+- * bundle directly from the development server. Below you can see all the possible configurations
+- * and their defaults. If you decide to add a configuration block, make sure to add it before the
+- * `apply from: "../../node_modules/react-native/react.gradle"` line.
+- *
+- * project.ext.react = [
+- *   // the name of the generated asset file containing your JS bundle
+- *   bundleAssetName: "index.android.bundle",
+- *
+- *   // the entry file for bundle generation. If none specified and
+- *   // "index.android.js" exists, it will be used. Otherwise "index.js" is
+- *   // default. Can be overridden with ENTRY_FILE environment variable.
+- *   entryFile: "index.android.js",
+- *
+- *   // https://reactnative.dev/docs/performance#enable-the-ram-format
+- *   bundleCommand: "ram-bundle",
+- *
+- *   // whether to bundle JS and assets in debug mode
+- *   bundleInDebug: false,
+- *
+- *   // whether to bundle JS and assets in release mode
+- *   bundleInRelease: true,
+- *
+- *   // whether to bundle JS and assets in another build variant (if configured).
+- *   // See http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Build-Variants
+- *   // The configuration property can be in the following formats
+- *   //         'bundleIn${productFlavor}${buildType}'
+- *   //         'bundleIn${buildType}'
+- *   // bundleInFreeDebug: true,
+- *   // bundleInPaidRelease: true,
+- *   // bundleInBeta: true,
+- *
+- *   // whether to disable dev mode in custom build variants (by default only disabled in release)
+- *   // for example: to disable dev mode in the staging build type (if configured)
+- *   devDisabledInStaging: true,
+- *   // The configuration property can be in the following formats
+- *   //         'devDisabledIn${productFlavor}${buildType}'
+- *   //         'devDisabledIn${buildType}'
+- *
+- *   // the root of your project, i.e. where "package.json" lives
+- *   root: "../../",
+- *
+- *   // where to put the JS bundle asset in debug mode
+- *   jsBundleDirDebug: "$buildDir/intermediates/assets/debug",
+- *
+- *   // where to put the JS bundle asset in release mode
+- *   jsBundleDirRelease: "$buildDir/intermediates/assets/release",
+- *
+- *   // where to put drawable resources / React Native assets, e.g. the ones you use via
+- *   // require('./image.png')), in debug mode
+- *   resourcesDirDebug: "$buildDir/intermediates/res/merged/debug",
+- *
+- *   // where to put drawable resources / React Native assets, e.g. the ones you use via
+- *   // require('./image.png')), in release mode
+- *   resourcesDirRelease: "$buildDir/intermediates/res/merged/release",
+- *
+- *   // by default the gradle tasks are skipped if none of the JS files or assets change; this means
+- *   // that we don't look at files in android/ or ios/ to determine whether the tasks are up to
+- *   // date; if you have any other folders that you want to ignore for performance reasons (gradle
+- *   // indexes the entire tree), add them here. Alternatively, if you have JS files in android/
+- *   // for example, you might want to remove it from here.
+- *   inputExcludes: ["android/**", "ios/**"],
+- *
+- *   // override which node gets called and with what additional arguments
+- *   nodeExecutableAndArgs: ["node"],
+- *
+- *   // supply additional arguments to the packager
+- *   extraPackagerArgs: []
+- * ]
++ * This is the configuration block to customize your React Native Android app.
++ * By default you don't need to apply any configuration, just uncomment the lines you need.
+  */
+-
+-project.ext.react = [
+-    enableHermes: false,  // clean and rebuild if changing
+-]
+-
+-apply from: "../../node_modules/react-native/react.gradle"
++react {
++    /* Folders */
++    //   The root of your project, i.e. where "package.json" lives. Default is '..'
++    // root = file("../")
++    //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
++    // reactNativeDir = file("../node_modules/react-native")
++    //   The folder where the react-native Codegen package is. Default is ../node_modules/react-native-codegen
++    // codegenDir = file("../node_modules/react-native-codegen")
++    //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
++    // cliFile = file("../node_modules/react-native/cli.js")
++
++    /* Variants */
++    //   The list of variants to that are debuggable. For those we're going to
++    //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
++    //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
++    // debuggableVariants = ["liteDebug", "prodDebug"]
++
++    /* Bundling */
++    //   A list containing the node command and its flags. Default is just 'node'.
++    // nodeExecutableAndArgs = ["node"]
++    //
++    //   The command to run when bundling. By default is 'bundle'
++    // bundleCommand = "ram-bundle"
++    //
++    //   The path to the CLI configuration file. Default is empty.
++    // bundleConfig = file(../rn-cli.config.js)
++    //
++    //   The name of the generated asset file containing your JS bundle
++    // bundleAssetName = "MyApplication.android.bundle"
++    //
++    //   The entry file for bundle generation. Default is 'index.android.js' or 'index.js'
++    // entryFile = file("../js/MyApplication.android.js")
++    //
++    //   A list of extra flags to pass to the 'bundle' commands.
++    //   See https://github.com/react-native-community/cli/blob/main/docs/commands.md#bundle
++    // extraPackagerArgs = []
++
++    /* Hermes Commands */
++    //   The hermes compiler command to run. By default it is 'hermesc'
++    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
++    //
++    //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
++    // hermesFlags = ["-O", "-output-source-map"]
++}
+ 
+ /**
+- * Set this to true to create two separate APKs instead of one:
+- *   - An APK that only works on ARM devices
+- *   - An APK that only works on x86 devices
+- * The advantage is the size of the APK is reduced by about 4MB.
+- * Upload all the APKs to the Play Store and people will download
+- * the correct one based on the CPU architecture of their device.
++ * Set this to true to create four separate APKs instead of one,
++ * one for each native architecture. This is useful if you don't
++ * use App Bundles (https://developer.android.com/guide/app-bundle/)
++ * and want to have separate APKs to upload to the Play Store.
+  */
+ def enableSeparateBuildPerCPUArchitecture = false
+ 
+ /**
+- * Run Proguard to shrink the Java bytecode in release builds.
++ * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+  */
+ def enableProguardInReleaseBuilds = false
+ 
+ /**
+- * The preferred build flavor of JavaScriptCore.
++ * The preferred build flavor of JavaScriptCore (JSC)
+  *
+  * For example, to use the international variant, you can use:
+  * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+  *
+  * The international variant includes ICU i18n library and necessary data
+  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+- * give correct results when using with locales other than en-US.  Note that
++ * give correct results when using with locales other than en-US. Note that
+  * this variant is about 6MiB larger per architecture than default.
+  */
+ def jscFlavor = 'org.webkit:android-jsc:+'
+ 
+ /**
+- * Whether to enable the Hermes VM.
+- *
+- * This should be set on project.ext.react and that value will be read here. If it is not set
+- * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
+- * and the benefits of using Hermes will therefore be sharply reduced.
+- */
+-def enableHermes = project.ext.react.get("enableHermes", false);
+-
+-/**
+- * Architectures to build native code for.
++ * Private function to get the list of Native Architectures you want to build.
++ * This reads the value from reactNativeArchitectures in your gradle.properties
++ * file and works together with the --active-arch-only flag of react-native run-android.
+  */
+ def reactNativeArchitectures() {
+     def value = project.getProperties().get("reactNativeArchitectures")
+@@ -133,60 +93,13 @@ android {
+ 
+     compileSdkVersion rootProject.ext.compileSdkVersion
+ 
++    namespace "com.rndiffapp"
+     defaultConfig {
+         applicationId "com.rndiffapp"
+         minSdkVersion rootProject.ext.minSdkVersion
+         targetSdkVersion rootProject.ext.targetSdkVersion
+         versionCode 1
+         versionName "1.0"
+-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+-
+-        if (isNewArchitectureEnabled()) {
+-            // We configure the NDK build only if you decide to opt-in for the New Architecture.
+-            externalNativeBuild {
+-                ndkBuild {
+-                    arguments "APP_PLATFORM=android-21",
+-                        "APP_STL=c++_shared",
+-                        "NDK_TOOLCHAIN_VERSION=clang",
+-                        "GENERATED_SRC_DIR=$buildDir/generated/source",
+-                        "PROJECT_BUILD_DIR=$buildDir",
+-                        "REACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
+-                        "REACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build"
+-                    cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
+-                    cppFlags "-std=c++17"
+-                    // Make sure this target name is the same you specify inside the
+-                    // src/main/jni/Android.mk file for the `LOCAL_MODULE` variable.
+-                    targets "rndiffapp_appmodules"
+-                }
+-            }
+-        }
+-    }
+-
+-    if (isNewArchitectureEnabled()) {
+-        // We configure the NDK build only if you decide to opt-in for the New Architecture.
+-        externalNativeBuild {
+-            ndkBuild {
+-                path "$projectDir/src/main/jni/Android.mk"
+-            }
+-        }
+-        def reactAndroidProjectDir = project(':ReactAndroid').projectDir
+-        def packageReactNdkDebugLibs = tasks.register("packageReactNdkDebugLibs", Copy) {
+-            dependsOn(":ReactAndroid:packageReactNdkDebugLibsForBuck")
+-            from("$reactAndroidProjectDir/src/main/jni/prebuilt/lib")
+-            into("$buildDir/react-ndk/exported")
+-        }
+-        def packageReactNdkReleaseLibs = tasks.register("packageReactNdkReleaseLibs", Copy) {
+-            dependsOn(":ReactAndroid:packageReactNdkReleaseLibsForBuck")
+-            from("$reactAndroidProjectDir/src/main/jni/prebuilt/lib")
+-            into("$buildDir/react-ndk/exported")
+-        }
+-        afterEvaluate {
+-            // If you wish to add a custom TurboModule or component locally,
+-            // you should uncomment this line.
+-            // preBuild.dependsOn("generateCodegenArtifactsFromSchema")
+-            preDebugBuild.dependsOn(packageReactNdkDebugLibs)
+-            preReleaseBuild.dependsOn(packageReactNdkReleaseLibs)
+-        }
+     }
+ 
+     splits {
+@@ -233,62 +146,25 @@ android {
+ 
+         }
+     }
+-
+-    packagingOptions {
+-        pickFirst '**/libhermes.so'
+-        pickFirst '**/libjsc.so'
+-    }
+ }
+ 
+ dependencies {
+-    implementation fileTree(dir: "libs", include: ["*.jar"])
++    // The version of react-native is set by the React Native Gradle Plugin
++    implementation("com.facebook.react:react-android")
+ 
+-    // If new architecture is enabled, we let you build RN from source
+-    // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
+-    if (isNewArchitectureEnabled()) {
+-        implementation project(":ReactAndroid")
+-    } else {
+-        //noinspection GradleDynamicVersion
+-        implementation "com.facebook.react:react-native:+"  // From node_modules
+-    }
+-
+-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+-
+-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+-        exclude group:'com.facebook.fbjni'
+-    }
++    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+ 
++    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
+     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+-        exclude group:'com.facebook.flipper'
+         exclude group:'com.squareup.okhttp3', module:'okhttp'
+     }
+ 
+-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+-        exclude group:'com.facebook.flipper'
+-    }
+-
+-    if (enableHermes) {
+-        def hermesPath = "../../node_modules/hermes-engine/android/";
+-        debugImplementation files(hermesPath + "hermes-debug.aar")
+-        releaseImplementation files(hermesPath + "hermes-release.aar")
++    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
++    if (hermesEnabled.toBoolean()) {
++        implementation("com.facebook.react:hermes-android")
+     } else {
+         implementation jscFlavor
+     }
+ }
+ 
+-// Run this once to be able to run the application with BUCK
+-// puts all compile dependencies into folder libs for BUCK to use
+-task copyDownloadableDepsToLibs(type: Copy) {
+-    from configurations.implementation
+-    into 'libs'
+-}
+-
+ apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+-
+-def isNewArchitectureEnabled() {
+-    // To opt-in for the New Architecture, you can either:
+-    // - Set `newArchEnabled` to true inside the `gradle.properties` file
+-    // - Invoke gradle with `-newArchEnabled=true`
+-    // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
+-    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+-}
+diff --git a/RnDiffApp/android/app/build_defs.bzl b/RnDiffApp/android/app/build_defs.bzl
+deleted file mode 100644
+index fff270f8d..000000000
+--- a/RnDiffApp/android/app/build_defs.bzl
++++ /dev/null
+@@ -1,19 +0,0 @@
+-"""Helper definitions to glob .aar and .jar targets"""
+-
+-def create_aar_targets(aarfiles):
+-    for aarfile in aarfiles:
+-        name = "aars__" + aarfile[aarfile.rindex("/") + 1:aarfile.rindex(".aar")]
+-        lib_deps.append(":" + name)
+-        android_prebuilt_aar(
+-            name = name,
+-            aar = aarfile,
+-        )
+-
+-def create_jar_targets(jarfiles):
+-    for jarfile in jarfiles:
+-        name = "jars__" + jarfile[jarfile.rindex("/") + 1:jarfile.rindex(".jar")]
+-        lib_deps.append(":" + name)
+-        prebuilt_jar(
+-            name = name,
+-            binary_jar = jarfile,
+-        )
+diff --git a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
+index b371cfd12..7b39146ca 100644
+--- a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
++++ b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
+@@ -17,7 +17,6 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping;
+ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
+ import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
+ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
+-import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
+ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
+ import com.facebook.react.ReactInstanceEventListener;
+ import com.facebook.react.ReactInstanceManager;
+@@ -25,13 +24,16 @@ import com.facebook.react.bridge.ReactContext;
+ import com.facebook.react.modules.network.NetworkingModule;
+ import okhttp3.OkHttpClient;
+ 
++/**
++ * Class responsible of loading Flipper inside your React Native application. This is the debug
++ * flavor of it. Here you can add your own plugins and customize the Flipper setup.
++ */
+ public class ReactNativeFlipper {
+   public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+     if (FlipperUtils.shouldEnableFlipper(context)) {
+       final FlipperClient client = AndroidFlipperClient.getInstance(context);
+ 
+       client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
+-      client.addPlugin(new ReactFlipperPlugin());
+       client.addPlugin(new DatabasesFlipperPlugin(context));
+       client.addPlugin(new SharedPreferencesFlipperPlugin(context));
+       client.addPlugin(CrashReporterPlugin.getInstance());
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index 314a74198..4122f36a5 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -1,5 +1,4 @@
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-  package="com.rndiffapp">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+ 
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+index 615951b73..98eb1cdea 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+@@ -2,7 +2,8 @@ package com.rndiffapp;
+ 
+ import com.facebook.react.ReactActivity;
+ import com.facebook.react.ReactActivityDelegate;
+-import com.facebook.react.ReactRootView;
++import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
++import com.facebook.react.defaults.DefaultReactActivityDelegate;
+ 
+ public class MainActivity extends ReactActivity {
+ 
+@@ -16,25 +17,19 @@ public class MainActivity extends ReactActivity {
+   }
+ 
+   /**
+-   * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
+-   * you can specify the rendered you wish to use (Fabric or the older renderer).
++   * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
++   * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
++   * (aka React 18) with two boolean flags.
+    */
+   @Override
+   protected ReactActivityDelegate createReactActivityDelegate() {
+-    return new MainActivityDelegate(this, getMainComponentName());
+-  }
+-
+-  public static class MainActivityDelegate extends ReactActivityDelegate {
+-    public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+-      super(activity, mainComponentName);
+-    }
+-
+-    @Override
+-    protected ReactRootView createRootView() {
+-      ReactRootView reactRootView = new ReactRootView(getContext());
+-      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+-      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+-      return reactRootView;
+-    }
++    return new DefaultReactActivityDelegate(
++        this,
++        getMainComponentName(),
++        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
++        DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
++        // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
++        DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
++        );
+   }
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index 9f2959294..8687dc632 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+@@ -1,22 +1,19 @@
+ package com.rndiffapp;
+ 
+ import android.app.Application;
+-import android.content.Context;
+ import com.facebook.react.PackageList;
+ import com.facebook.react.ReactApplication;
+-import com.facebook.react.ReactInstanceManager;
+ import com.facebook.react.ReactNativeHost;
+ import com.facebook.react.ReactPackage;
+-import com.facebook.react.config.ReactFeatureFlags;
++import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
++import com.facebook.react.defaults.DefaultReactNativeHost;
+ import com.facebook.soloader.SoLoader;
+-import com.rndiffapp.newarchitecture.MainApplicationReactNativeHost;
+-import java.lang.reflect.InvocationTargetException;
+ import java.util.List;
+ 
+ public class MainApplication extends Application implements ReactApplication {
+ 
+   private final ReactNativeHost mReactNativeHost =
+-      new ReactNativeHost(this) {
++      new DefaultReactNativeHost(this) {
+         @Override
+         public boolean getUseDeveloperSupport() {
+           return BuildConfig.DEBUG;
+@@ -35,57 +32,31 @@ public class MainApplication extends Application implements ReactApplication {
+         protected String getJSMainModuleName() {
+           return "index";
+         }
+-      };
+ 
+-  private final ReactNativeHost mNewArchitectureNativeHost =
+-      new MainApplicationReactNativeHost(this);
++        @Override
++        protected boolean isNewArchEnabled() {
++          return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
++        }
++
++        @Override
++        protected Boolean isHermesEnabled() {
++          return BuildConfig.IS_HERMES_ENABLED;
++        }
++      };
+ 
+   @Override
+   public ReactNativeHost getReactNativeHost() {
+-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+-      return mNewArchitectureNativeHost;
+-    } else {
+-      return mReactNativeHost;
+-    }
++    return mReactNativeHost;
+   }
+ 
+   @Override
+   public void onCreate() {
+     super.onCreate();
+-    // If you opted-in for the New Architecture, we enable the TurboModule system
+-    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+     SoLoader.init(this, /* native exopackage */ false);
+-    initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+-  }
+-
+-  /**
+-   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+-   * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+-   *
+-   * @param context
+-   * @param reactInstanceManager
+-   */
+-  private static void initializeFlipper(
+-      Context context, ReactInstanceManager reactInstanceManager) {
+-    if (BuildConfig.DEBUG) {
+-      try {
+-        /*
+-         We use reflection here to pick up the class that initializes Flipper,
+-        since Flipper library is not available in release mode
+-        */
+-        Class<?> aClass = Class.forName("com.rndiffapp.ReactNativeFlipper");
+-        aClass
+-            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+-            .invoke(null, context, reactInstanceManager);
+-      } catch (ClassNotFoundException e) {
+-        e.printStackTrace();
+-      } catch (NoSuchMethodException e) {
+-        e.printStackTrace();
+-      } catch (IllegalAccessException e) {
+-        e.printStackTrace();
+-      } catch (InvocationTargetException e) {
+-        e.printStackTrace();
+-      }
++    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
++      // If you opted-in for the New Architecture, we load the native entry point for this app.
++      DefaultNewArchitectureEntryPoint.load();
+     }
++    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   }
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
+deleted file mode 100644
+index 434b9421a..000000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
++++ /dev/null
+@@ -1,116 +0,0 @@
+-package com.rndiffapp.newarchitecture;
+-
+-import android.app.Application;
+-import androidx.annotation.NonNull;
+-import com.facebook.react.PackageList;
+-import com.facebook.react.ReactInstanceManager;
+-import com.facebook.react.ReactNativeHost;
+-import com.facebook.react.ReactPackage;
+-import com.facebook.react.ReactPackageTurboModuleManagerDelegate;
+-import com.facebook.react.bridge.JSIModulePackage;
+-import com.facebook.react.bridge.JSIModuleProvider;
+-import com.facebook.react.bridge.JSIModuleSpec;
+-import com.facebook.react.bridge.JSIModuleType;
+-import com.facebook.react.bridge.JavaScriptContextHolder;
+-import com.facebook.react.bridge.ReactApplicationContext;
+-import com.facebook.react.bridge.UIManager;
+-import com.facebook.react.fabric.ComponentFactory;
+-import com.facebook.react.fabric.CoreComponentsRegistry;
+-import com.facebook.react.fabric.EmptyReactNativeConfig;
+-import com.facebook.react.fabric.FabricJSIModuleProvider;
+-import com.facebook.react.uimanager.ViewManagerRegistry;
+-import com.rndiffapp.BuildConfig;
+-import com.rndiffapp.newarchitecture.components.MainComponentsRegistry;
+-import com.rndiffapp.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-/**
+- * A {@link ReactNativeHost} that helps you load everything needed for the New Architecture, both
+- * TurboModule delegates and the Fabric Renderer.
+- *
+- * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+- * `newArchEnabled` property). Is ignored otherwise.
+- */
+-public class MainApplicationReactNativeHost extends ReactNativeHost {
+-  public MainApplicationReactNativeHost(Application application) {
+-    super(application);
+-  }
+-
+-  @Override
+-  public boolean getUseDeveloperSupport() {
+-    return BuildConfig.DEBUG;
+-  }
+-
+-  @Override
+-  protected List<ReactPackage> getPackages() {
+-    List<ReactPackage> packages = new PackageList(this).getPackages();
+-    // Packages that cannot be autolinked yet can be added manually here, for example:
+-    //     packages.add(new MyReactNativePackage());
+-    // TurboModules must also be loaded here providing a valid TurboReactPackage implementation:
+-    //     packages.add(new TurboReactPackage() { ... });
+-    // If you have custom Fabric Components, their ViewManagers should also be loaded here
+-    // inside a ReactPackage.
+-    return packages;
+-  }
+-
+-  @Override
+-  protected String getJSMainModuleName() {
+-    return "index";
+-  }
+-
+-  @NonNull
+-  @Override
+-  protected ReactPackageTurboModuleManagerDelegate.Builder
+-      getReactPackageTurboModuleManagerDelegateBuilder() {
+-    // Here we provide the ReactPackageTurboModuleManagerDelegate Builder. This is necessary
+-    // for the new architecture and to use TurboModules correctly.
+-    return new MainApplicationTurboModuleManagerDelegate.Builder();
+-  }
+-
+-  @Override
+-  protected JSIModulePackage getJSIModulePackage() {
+-    return new JSIModulePackage() {
+-      @Override
+-      public List<JSIModuleSpec> getJSIModules(
+-          final ReactApplicationContext reactApplicationContext,
+-          final JavaScriptContextHolder jsContext) {
+-        final List<JSIModuleSpec> specs = new ArrayList<>();
+-
+-        // Here we provide a new JSIModuleSpec that will be responsible of providing the
+-        // custom Fabric Components.
+-        specs.add(
+-            new JSIModuleSpec() {
+-              @Override
+-              public JSIModuleType getJSIModuleType() {
+-                return JSIModuleType.UIManager;
+-              }
+-
+-              @Override
+-              public JSIModuleProvider<UIManager> getJSIModuleProvider() {
+-                final ComponentFactory componentFactory = new ComponentFactory();
+-                CoreComponentsRegistry.register(componentFactory);
+-
+-                // Here we register a Components Registry.
+-                // The one that is generated with the template contains no components
+-                // and just provides you the one from React Native core.
+-                MainComponentsRegistry.register(componentFactory);
+-
+-                final ReactInstanceManager reactInstanceManager = getReactInstanceManager();
+-
+-                ViewManagerRegistry viewManagerRegistry =
+-                    new ViewManagerRegistry(
+-                        reactInstanceManager.getOrCreateViewManagers(reactApplicationContext));
+-
+-                return new FabricJSIModuleProvider(
+-                    reactApplicationContext,
+-                    componentFactory,
+-                    new EmptyReactNativeConfig(),
+-                    viewManagerRegistry);
+-              }
+-            });
+-        return specs;
+-      }
+-    };
+-  }
+-}
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/components/MainComponentsRegistry.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/components/MainComponentsRegistry.java
+deleted file mode 100644
+index cdacb68ed..000000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/components/MainComponentsRegistry.java
++++ /dev/null
+@@ -1,36 +0,0 @@
+-package com.rndiffapp.newarchitecture.components;
+-
+-import com.facebook.jni.HybridData;
+-import com.facebook.proguard.annotations.DoNotStrip;
+-import com.facebook.react.fabric.ComponentFactory;
+-import com.facebook.soloader.SoLoader;
+-
+-/**
+- * Class responsible to load the custom Fabric Components. This class has native methods and needs a
+- * corresponding C++ implementation/header file to work correctly (already placed inside the jni/
+- * folder for you).
+- *
+- * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+- * `newArchEnabled` property). Is ignored otherwise.
+- */
+-@DoNotStrip
+-public class MainComponentsRegistry {
+-  static {
+-    SoLoader.loadLibrary("fabricjni");
+-  }
+-
+-  @DoNotStrip private final HybridData mHybridData;
+-
+-  @DoNotStrip
+-  private native HybridData initHybrid(ComponentFactory componentFactory);
+-
+-  @DoNotStrip
+-  private MainComponentsRegistry(ComponentFactory componentFactory) {
+-    mHybridData = initHybrid(componentFactory);
+-  }
+-
+-  @DoNotStrip
+-  public static MainComponentsRegistry register(ComponentFactory componentFactory) {
+-    return new MainComponentsRegistry(componentFactory);
+-  }
+-}
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java
+deleted file mode 100644
+index 10275588e..000000000
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java
++++ /dev/null
+@@ -1,48 +0,0 @@
+-package com.rndiffapp.newarchitecture.modules;
+-
+-import com.facebook.jni.HybridData;
+-import com.facebook.react.ReactPackage;
+-import com.facebook.react.ReactPackageTurboModuleManagerDelegate;
+-import com.facebook.react.bridge.ReactApplicationContext;
+-import com.facebook.soloader.SoLoader;
+-import java.util.List;
+-
+-/**
+- * Class responsible to load the TurboModules. This class has native methods and needs a
+- * corresponding C++ implementation/header file to work correctly (already placed inside the jni/
+- * folder for you).
+- *
+- * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+- * `newArchEnabled` property). Is ignored otherwise.
+- */
+-public class MainApplicationTurboModuleManagerDelegate
+-    extends ReactPackageTurboModuleManagerDelegate {
+-
+-  private static volatile boolean sIsSoLibraryLoaded;
+-
+-  protected MainApplicationTurboModuleManagerDelegate(
+-      ReactApplicationContext reactApplicationContext, List<ReactPackage> packages) {
+-    super(reactApplicationContext, packages);
+-  }
+-
+-  protected native HybridData initHybrid();
+-
+-  native boolean canCreateTurboModule(String moduleName);
+-
+-  public static class Builder extends ReactPackageTurboModuleManagerDelegate.Builder {
+-    protected MainApplicationTurboModuleManagerDelegate build(
+-        ReactApplicationContext context, List<ReactPackage> packages) {
+-      return new MainApplicationTurboModuleManagerDelegate(context, packages);
+-    }
+-  }
+-
+-  @Override
+-  protected synchronized void maybeLoadOtherSoLibraries() {
+-    if (!sIsSoLibraryLoaded) {
+-      // If you change the name of your application .so file in the Android.mk file,
+-      // make sure you update the name here as well.
+-      SoLoader.loadLibrary("rndiffapp_appmodules");
+-      sIsSoLibraryLoaded = true;
+-    }
+-  }
+-}
+diff --git a/RnDiffApp/android/app/src/main/jni/Android.mk b/RnDiffApp/android/app/src/main/jni/Android.mk
+deleted file mode 100644
+index 22303eea4..000000000
+--- a/RnDiffApp/android/app/src/main/jni/Android.mk
++++ /dev/null
+@@ -1,49 +0,0 @@
+-THIS_DIR := $(call my-dir)
+-
+-include $(REACT_ANDROID_DIR)/Android-prebuilt.mk
+-
+-# If you wish to add a custom TurboModule or Fabric component in your app you
+-# will have to include the following autogenerated makefile.
+-# include $(GENERATED_SRC_DIR)/codegen/jni/Android.mk
+-include $(CLEAR_VARS)
+-
+-LOCAL_PATH := $(THIS_DIR)
+-
+-# You can customize the name of your application .so file here.
+-LOCAL_MODULE := rndiffapp_appmodules
+-
+-LOCAL_C_INCLUDES := $(LOCAL_PATH)
+-LOCAL_SRC_FILES := $(wildcard $(LOCAL_PATH)/*.cpp)
+-LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
+-
+-# If you wish to add a custom TurboModule or Fabric component in your app you
+-# will have to uncomment those lines to include the generated source 
+-# files from the codegen (placed in $(GENERATED_SRC_DIR)/codegen/jni)
+-#
+-# LOCAL_C_INCLUDES += $(GENERATED_SRC_DIR)/codegen/jni
+-# LOCAL_SRC_FILES += $(wildcard $(GENERATED_SRC_DIR)/codegen/jni/*.cpp)
+-# LOCAL_EXPORT_C_INCLUDES += $(GENERATED_SRC_DIR)/codegen/jni
+-
+-# Here you should add any native library you wish to depend on.
+-LOCAL_SHARED_LIBRARIES := \
+-  libfabricjni \
+-  libfbjni \
+-  libfolly_futures \
+-  libfolly_json \
+-  libglog \
+-  libjsi \
+-  libreact_codegen_rncore \
+-  libreact_debug \
+-  libreact_nativemodule_core \
+-  libreact_render_componentregistry \
+-  libreact_render_core \
+-  libreact_render_debug \
+-  libreact_render_graphics \
+-  librrc_view \
+-  libruntimeexecutor \
+-  libturbomodulejsijni \
+-  libyoga
+-
+-LOCAL_CFLAGS := -DLOG_TAG=\"ReactNative\" -fexceptions -frtti -std=c++17 -Wall
+-
+-include $(BUILD_SHARED_LIBRARY)
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.cpp b/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.cpp
+deleted file mode 100644
+index 0ac23cc62..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.cpp
++++ /dev/null
+@@ -1,24 +0,0 @@
+-#include "MainApplicationModuleProvider.h"
+-
+-#include <rncore.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-std::shared_ptr<TurboModule> MainApplicationModuleProvider(
+-    const std::string moduleName,
+-    const JavaTurboModule::InitParams &params) {
+-  // Here you can provide your own module provider for TurboModules coming from
+-  // either your application or from external libraries. The approach to follow
+-  // is similar to the following (for a library called `samplelibrary`:
+-  //
+-  // auto module = samplelibrary_ModuleProvider(moduleName, params);
+-  // if (module != nullptr) {
+-  //    return module;
+-  // }
+-  // return rncore_ModuleProvider(moduleName, params);
+-  return rncore_ModuleProvider(moduleName, params);
+-}
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.h b/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.h
+deleted file mode 100644
+index 0fa43fa69..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationModuleProvider.h
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#pragma once
+-
+-#include <memory>
+-#include <string>
+-
+-#include <ReactCommon/JavaTurboModule.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-std::shared_ptr<TurboModule> MainApplicationModuleProvider(
+-    const std::string moduleName,
+-    const JavaTurboModule::InitParams &params);
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp b/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp
+deleted file mode 100644
+index dbbdc3d13..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp
++++ /dev/null
+@@ -1,45 +0,0 @@
+-#include "MainApplicationTurboModuleManagerDelegate.h"
+-#include "MainApplicationModuleProvider.h"
+-
+-namespace facebook {
+-namespace react {
+-
+-jni::local_ref<MainApplicationTurboModuleManagerDelegate::jhybriddata>
+-MainApplicationTurboModuleManagerDelegate::initHybrid(
+-    jni::alias_ref<jhybridobject>) {
+-  return makeCxxInstance();
+-}
+-
+-void MainApplicationTurboModuleManagerDelegate::registerNatives() {
+-  registerHybrid({
+-      makeNativeMethod(
+-          "initHybrid", MainApplicationTurboModuleManagerDelegate::initHybrid),
+-      makeNativeMethod(
+-          "canCreateTurboModule",
+-          MainApplicationTurboModuleManagerDelegate::canCreateTurboModule),
+-  });
+-}
+-
+-std::shared_ptr<TurboModule>
+-MainApplicationTurboModuleManagerDelegate::getTurboModule(
+-    const std::string name,
+-    const std::shared_ptr<CallInvoker> jsInvoker) {
+-  // Not implemented yet: provide pure-C++ NativeModules here.
+-  return nullptr;
+-}
+-
+-std::shared_ptr<TurboModule>
+-MainApplicationTurboModuleManagerDelegate::getTurboModule(
+-    const std::string name,
+-    const JavaTurboModule::InitParams &params) {
+-  return MainApplicationModuleProvider(name, params);
+-}
+-
+-bool MainApplicationTurboModuleManagerDelegate::canCreateTurboModule(
+-    std::string name) {
+-  return getTurboModule(name, nullptr) != nullptr ||
+-      getTurboModule(name, {.moduleName = name}) != nullptr;
+-}
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h b/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h
+deleted file mode 100644
+index aabec53aa..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-#include <memory>
+-#include <string>
+-
+-#include <ReactCommon/TurboModuleManagerDelegate.h>
+-#include <fbjni/fbjni.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-class MainApplicationTurboModuleManagerDelegate
+-    : public jni::HybridClass<
+-          MainApplicationTurboModuleManagerDelegate,
+-          TurboModuleManagerDelegate> {
+- public:
+-  // Adapt it to the package you used for your Java class.
+-  static constexpr auto kJavaDescriptor =
+-      "Lcom/rndiffapp/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate;";
+-
+-  static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject>);
+-
+-  static void registerNatives();
+-
+-  std::shared_ptr<TurboModule> getTurboModule(
+-      const std::string name,
+-      const std::shared_ptr<CallInvoker> jsInvoker) override;
+-  std::shared_ptr<TurboModule> getTurboModule(
+-      const std::string name,
+-      const JavaTurboModule::InitParams &params) override;
+-
+-  /**
+-   * Test-only method. Allows user to verify whether a TurboModule can be
+-   * created by instances of this class.
+-   */
+-  bool canCreateTurboModule(std::string name);
+-};
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.cpp b/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.cpp
+deleted file mode 100644
+index 8f7edffd6..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.cpp
++++ /dev/null
+@@ -1,61 +0,0 @@
+-#include "MainComponentsRegistry.h"
+-
+-#include <CoreComponentsRegistry.h>
+-#include <fbjni/fbjni.h>
+-#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+-#include <react/renderer/components/rncore/ComponentDescriptors.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-MainComponentsRegistry::MainComponentsRegistry(ComponentFactory *delegate) {}
+-
+-std::shared_ptr<ComponentDescriptorProviderRegistry const>
+-MainComponentsRegistry::sharedProviderRegistry() {
+-  auto providerRegistry = CoreComponentsRegistry::sharedProviderRegistry();
+-
+-  // Custom Fabric Components go here. You can register custom
+-  // components coming from your App or from 3rd party libraries here.
+-  //
+-  // providerRegistry->add(concreteComponentDescriptorProvider<
+-  //        AocViewerComponentDescriptor>());
+-  return providerRegistry;
+-}
+-
+-jni::local_ref<MainComponentsRegistry::jhybriddata>
+-MainComponentsRegistry::initHybrid(
+-    jni::alias_ref<jclass>,
+-    ComponentFactory *delegate) {
+-  auto instance = makeCxxInstance(delegate);
+-
+-  auto buildRegistryFunction =
+-      [](EventDispatcher::Weak const &eventDispatcher,
+-         ContextContainer::Shared const &contextContainer)
+-      -> ComponentDescriptorRegistry::Shared {
+-    auto registry = MainComponentsRegistry::sharedProviderRegistry()
+-                        ->createComponentDescriptorRegistry(
+-                            {eventDispatcher, contextContainer});
+-
+-    auto mutableRegistry =
+-        std::const_pointer_cast<ComponentDescriptorRegistry>(registry);
+-
+-    mutableRegistry->setFallbackComponentDescriptor(
+-        std::make_shared<UnimplementedNativeViewComponentDescriptor>(
+-            ComponentDescriptorParameters{
+-                eventDispatcher, contextContainer, nullptr}));
+-
+-    return registry;
+-  };
+-
+-  delegate->buildRegistryFunction = buildRegistryFunction;
+-  return instance;
+-}
+-
+-void MainComponentsRegistry::registerNatives() {
+-  registerHybrid({
+-      makeNativeMethod("initHybrid", MainComponentsRegistry::initHybrid),
+-  });
+-}
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.h b/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.h
+deleted file mode 100644
+index 04e3d5786..000000000
+--- a/RnDiffApp/android/app/src/main/jni/MainComponentsRegistry.h
++++ /dev/null
+@@ -1,32 +0,0 @@
+-#pragma once
+-
+-#include <ComponentFactory.h>
+-#include <fbjni/fbjni.h>
+-#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+-#include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
+-
+-namespace facebook {
+-namespace react {
+-
+-class MainComponentsRegistry
+-    : public facebook::jni::HybridClass<MainComponentsRegistry> {
+- public:
+-  // Adapt it to the package you used for your Java class.
+-  constexpr static auto kJavaDescriptor =
+-      "Lcom/rndiffapp/newarchitecture/components/MainComponentsRegistry;";
+-
+-  static void registerNatives();
+-
+-  MainComponentsRegistry(ComponentFactory *delegate);
+-
+- private:
+-  static std::shared_ptr<ComponentDescriptorProviderRegistry const>
+-  sharedProviderRegistry();
+-
+-  static jni::local_ref<jhybriddata> initHybrid(
+-      jni::alias_ref<jclass>,
+-      ComponentFactory *delegate);
+-};
+-
+-} // namespace react
+-} // namespace facebook
+diff --git a/RnDiffApp/android/app/src/main/jni/OnLoad.cpp b/RnDiffApp/android/app/src/main/jni/OnLoad.cpp
+deleted file mode 100644
+index c569b6e86..000000000
+--- a/RnDiffApp/android/app/src/main/jni/OnLoad.cpp
++++ /dev/null
+@@ -1,11 +0,0 @@
+-#include <fbjni/fbjni.h>
+-#include "MainApplicationTurboModuleManagerDelegate.h"
+-#include "MainComponentsRegistry.h"
+-
+-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+-  return facebook::jni::initialize(vm, [] {
+-    facebook::react::MainApplicationTurboModuleManagerDelegate::
+-        registerNatives();
+-    facebook::react::MainComponentsRegistry::registerNatives();
+-  });
+-}
+diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
+new file mode 100644
+index 000000000..b755b303c
+--- /dev/null
++++ b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
+@@ -0,0 +1,20 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * <p>This source code is licensed under the MIT license found in the LICENSE file in the root
++ * directory of this source tree.
++ */
++package com.rndiffapp;
++
++import android.content.Context;
++import com.facebook.react.ReactInstanceManager;
++
++/**
++ * Class responsible of loading Flipper inside your React Native application. This is the release
++ * flavor of it so it's empty as we don't want to load Flipper.
++ */
++public class ReactNativeFlipper {
++  public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
++    // Do nothing as we don't want to initialize Flipper on Release.
++  }
++}
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 8a1d68f9c..67d887b03 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -2,43 +2,20 @@
+ 
+ buildscript {
+     ext {
+-        buildToolsVersion = "31.0.0"
++        buildToolsVersion = "33.0.0"
+         minSdkVersion = 21
+-        compileSdkVersion = 31
+-        targetSdkVersion = 31
+-        ndkVersion = "21.4.7075529"
++        compileSdkVersion = 33
++        targetSdkVersion = 33
++
++        // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
++        ndkVersion = "23.1.7779620"
+     }
+     repositories {
+         google()
+         mavenCentral()
+     }
+     dependencies {
+-        classpath("com.android.tools.build:gradle:7.0.4")
++        classpath("com.android.tools.build:gradle:7.3.1")
+         classpath("com.facebook.react:react-native-gradle-plugin")
+-        classpath("de.undercouch:gradle-download-task:4.1.2")
+-        // NOTE: Do not place your application dependencies here; they belong
+-        // in the individual module build.gradle files
+-    }
+-}
+-
+-allprojects {
+-    repositories {
+-        maven {
+-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+-            url("$rootDir/../node_modules/react-native/android")
+-        }
+-        maven {
+-            // Android JSC is installed from npm
+-            url("$rootDir/../node_modules/jsc-android/dist")
+-        }
+-        mavenCentral {
+-            // We don't want to fetch react-native from Maven Central as there are
+-            // older versions over there.
+-            content {
+-                excludeGroup "com.facebook.react"
+-            }
+-        }
+-        google()
+-        maven { url 'https://www.jitpack.io' }
+     }
+ }
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index 6e1a46f01..e4af465e8 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -9,8 +9,8 @@
+ 
+ # Specifies the JVM arguments used for the daemon process.
+ # The setting is particularly useful for tweaking memory settings.
+-# Default value: -Xmx1024m -XX:MaxPermSize=256m
+-# org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
++# Default value: -Xmx512m -XX:MaxMetaspaceSize=256m
++org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
+ 
+ # When configured, Gradle will run in incubating parallel mode.
+ # This option should only be used with decoupled projects. More details, visit
+@@ -38,3 +38,7 @@ reactNativeArchitectures=armeabi-v7a,arm64-v8a,x86,x86_64
+ # to write custom TurboModules/Fabric components OR use libraries that
+ # are providing them.
+ newArchEnabled=false
++
++# Use this property to enable or disable the Hermes JS engine.
++# If set to false, you will be using JSC instead.
++hermesEnabled=true
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar
+index 7454180f2ae8848c63b8b4dea2cb829da983f2fa..41d9927a4d4fb3f96a785543079b8df6723c946b 100644
+GIT binary patch
+delta 8958
+zcmY+KWl$VIlZIh&f(Hri?gR<$?iyT!TL`X;1^2~W7YVSq1qtqM!JWlDxLm%}UESUM
+zndj}Uny%^UnjhVhFb!8V3s(a#fIy>`VW15{5nuy;_V&a5O#0S&!a4dSkUMz_VHu3S
+zGA@p9Q$T|Sj}tYGWdjH;Mpp8m&yu&YURcrt{K;R|kM~(*{v%QwrBJIUF+K1kX5ZmF
+zty3i{d`y0;DgE+d<pEk7Pr|u=*zNE>e>vN@yYqFPe1Ud{!&G*Q?iUc^V=|H%4~2|N
+zW+DM)W!`b&V2mQ0Y4u<ea&fhP8Zl}9enFLMGA78rwN)ZSva{tuDBrFm!)H9vOM3m4
+z-niSubJ&a4xSs}+dP%fO+GC$_<4)P0YuO<_KzvEJ?(Ir@)@_h}QPu8eKx^*hOS|ob
+zglR#!I=XV6e96{sFaTqa*yroz1qr?Te(?&#62a<0lDtodq4P_}6zQ3XQ@k&Wac@zj
+z!xW|4+QCtgyAKtcH=EZr)8(8$Sk&Y@4x_8dchwcHlyPSsIYtMhD7{~tRr%@kj%5Vm
+z;7_r0klH%P3r<%Wk32g(qX3Vlvsh(>_)uB=P@-2`v|Wm{>CxE<!zXQ=*HWl2>R1P^
+z>c}ZPZ)xxdOCDu59{X^~2id7+6l6x)U}C4Em?H~F`uOxS1?}xMxTV|5@}PlN%Cg$(
+z<u@mW976lW8Jb6)e1=uV8`_*8fnDQKnsWpmN8p7Nc?_FdC-=Z>wY6c}r60=z5ZA1L
+zTMe;84rLtYvcm?M(H~ZqU;6F7Evo{P7!<V=+h%r|+GH1ai~D70{AN;wJ6scs_bdsL
+zk~o&+!QijE(H{-r{aJH0mTO&C64O&h_H<P$ZX>LGcdwO|qf1w+)MsnvK5^c@Uzj<{
+zUoej1>95tuSvDJ|5K6k%&UF*uE6kBn47QJw^yE&#G;u^Z9oYWrK(+oL97hBsUMc_^
+z;-lmxebwlB`Er_kXp2$`&o+rPJAN<`WX3ws2K{q@qUp}XTfV{t%KrsZ5vM!Q#4{V&
+zq>iO$MCiLq#%wXj%`W$_%FRg_WR*quv65TdHhdpV&jlq<=K^K`&!Kl5mA6p4n~p3u
+zWE{20^hYpn1M}}VmSHBXl1*-)2MP=0_k)EPr#>EoZukiXFDz?Di1I>2@Z^P$pvaF+
+zN+qUy63jek2m59;YG)`r^F3-O)0RDIXPhf)XOOdkmu`3SMMSW(g+`Ajt{=h1dt~ks
+ztrhhP|L4G%5x79N#kwAHh5N){@{fzE7n&%dnisCm65Za<8r_hKvfx4Bg*`%-*-Mvn
+zFvn~)VP@}1sAyD+B{{8l{EjD10Av&Mz9^Xff*t`lU=q=S#(|>ls520;n3<}X#pyh&
+z*{CJf7$*&~!9jMnw_D~ikUKJ2+UnXmN6qak{xx%W;BKuXt7@ky!LPI1qk?gDwG@@o
+zkY+BkIie>{{q==5)kXw(*t#I?__Kwi>`=+s?Gq6X+vtSsaAO&Tf+Bl$vKnzc&%BHM
+z=loWOQq~n}>l=EL(5&6((ESsQC3^@4jlO5Od{qN#sWV)vqXw}aA>*uvwZopNN(|-T
+zRTF%5Y_k1R$;(d-)n;hWex{;7b6KgdAVE@&0pd(*qDzBO#YZV%kh%pYt1`hnQ(Fa&
+zYiDrOTDqk5M7hzp9kI2h!PxNnuJ<B`^Mhe3ly%$^w$3*WOd4DLEzfG@J3$}Y)fnX)
+zH;<m_AN0yr_leAC%G$CR3<-^>&xl*zF8sx6!67bA49R1bmUF5bpK&&{eI0U~cH}PM
+z3aW1$lRb|ItkG<M4<w%Yk)iJvsJ=qk(wBabc9wCBgqqQUl?_J0j@dtLNgo0oTIBMw
+zFmxG2{&>5~_eBNu$|I|vYIdAA9a!pVq<+UTx*M}f<Cydl3cV>G`23zxXp&E=FfnY-
+zEzKj;Cu_s4v>leO7M2-mE(UzKHL4c$c`3dS*19OpLV^4NI*hWWnJQ9lvzP4c;c?do
+zqrcsKT*i~eIHl0D3r4N{)+RsB6XhrC^;sp2cf_Eq#6*CV;t8v=V!ISe>>9kPgh}NI
+z=1UZutslxcT$Ad;_P^;Oouoa(cs!Ctpvi>%aQ+Zp=1d|h{W9Wmf7JWxa(~<#<N|-x
+z+wB5>tSZ?C%wu4_5F!fc!<@PIBeJ)Nr^$bB6!_Gic_7}c3J{<c?hHY$$whr&k?{Y6
+znNJn%ZB2QXBU93>QI~Gg5g5jTp9}V6KYgrgaX>pJt}7$!wOht&KO|+z{Iw@YL|@~D
+zMww}+lG}rm2^peNx>58ME||ZQxFQeVSX8iogHLq_vXb`>RnoEKaTWBF-$JD#Q4BMv
+zt2(2Qb*x-?ur1Y(NsW8AdtX0#rDB?O(Vs4_xA(u-o!-tBG03OI!pQD+2UytbL5>lG
+z*(F)KacHqMa4?dxa(Vcrw>IIAeB$3cx#;;5r2X;HE8|}eYdAgCw#tpXNy7C3w1q`9
+zGxZ6;@1G%8shz9e+!K2MO*{_RjO}Jo6eL3{TSZ>nY7)Qs`Dhi5><@oh0r)gT7H-?3
+zLDsd^@m<xQVzcNd`(P7s86P>%JvrS8sta5`QiZNs^*GT}Hiy^zjK2^Ni%`Z|ma)D2
+zuyumbvw$M8$haCTI~6M%d4+P)uX%u{Sfg4Al+F7c6;O-*)DKI7E8izSOKB#FcV{M+
+zEvY0FBkq!$J0EW$Cxl}3{JwV^ki-T?q6C30Y5e&p@8Rd?$ST-Ghn*-`tB{k54W<>F
+z5I)TFpUC!E9298=sk>m#FI4sUDy_!8?51F<M%uN*Ajyq*bGIeIeUdXoo%Xd3XTV_s
+zo>qqW!9LN1(zuDnB3$!<jN%eFzQRV+_R;j^$*k0bf`MjlUD&itHhuf_;vw1w4BRM?
+z6D;>pEUjL>N>RNgAG~-9Xm|1lqHseW(%v&6K(DZ3Pano(1-Qe?3%J&>0`~w^Q-p&@
+zg@HjvhJk?*hpF7$9P|gkzz`zBz_5Z!C4_-%fCcAgiSilzFQef!@amHDrW!YZS@?7C
+zs2Y9~>yqO<a2K5*Q;s{+>+rkih?kXztzvnB^6W=f52*iyuZPv$<OX>c42$WK7>PHb
+z6%MYIr5D32KPdwL1hJf{_#jn?`k(taW?mwmZVvrr=y~fNcV$`}v(8};o9AjOJumS4
+z`889O91^pkF+|@$d9wVoZ3<bnIfu#o3!UfMc5V%(mOg>;^j;^sUs&Ubo_qD&MTL%O
+z&*SE0ujG~<CGD(ok$`?}t)%pTf{IbQ(>zm;?<jNixA~e@gZ*6U>x)8TLC&ft))nyI
+zcg44@*Q{cYT+qGrA=In_X{NNCD+B0w#;@g)jvBU;_8od6U>;7HIo@F*=g8CQUo(u^
+z3r4FJ7#<@)MXO&5+DgKE&^>^`r!loe7CWE*1k0*0wLFzSOV8jvlX~<chY>WOQ?$1v
+zk$Or}!;ix0g78^6W;+<=J>z@CBs!<<)HvF(Ls-&`mat<kA@dLCUcQ=31Rg+;+4kFq
+zMtMu68RC?D0`}krH?jJL21$$HZ{Lsv3X)mHiwI4hrTnt?y2RfqwFnpo_DGwe6uJ3A
+zv|B1aggMlaQ%*i&<>pesJ5kkjC)6nGB@b{ii6-Uoho$BT%iJgugTOeZ$5Xo4D7Pd<
+zC*LJh5V@2#5%aBZCgzlQi3@<_!VfiL0<l-dOmBG0&Iil%Hq+E?Sf^KQ(|bI4!OpXy
+zVRBc5#N^$i6+{=62?W$DwMDtPX+J-4uBMRSZ1m0%a%LR*o4)iDuAWoJVbBFktzX97
+z3sONNH5G)`)=!)`1yxB-Ty^?M2IkLZ>7ywc)ZbwKPfcR|ElQoS(8x|a7#IR}7#Io=
+zwg4$8S{egr-NffD)Fg&X9bJSoM25pF&%hf>(T&9bI}=#dPQyNYz;ZZ7EZ<P2*spI-
+zU~l_wK|f7_K)-tdJ_gn9c)@?Z$)mZdsj<<w(WdjQ)!B+m9x>=u1n701<vS^S$MWWS
+z*2<^a_4=z<N^2*xa+XX)H4|Y5SH4~?Q`*}ms)P}km{%f@@-<^%&uN>SWKkZ9n(-qU
+ztN`sdWL1uxQ1mKS@x11;O|@^AD9!NeoPx}?EKIr!2>1Qq4gjfGU)tr6?Z5l7JAS3j
+zZeq{vG{rb%DFE4%$szK}d2UzB{4>L?Tv+NAlE*&Nq6g+XauaSI+N2Y8PJLw+aNg1p
+zbxr|hI8wcMP&&+(Cu|%+Jq|r>+BHk@{AvfBXKiVldN)@}TBS0LdIpnANCVE26WL-}
+zV}HJ^?m&$Rkq;Zf*i-hoasnpJVyTH__dbGWrB_R55d*>pTyl6(?$EO@>RCmTX1Hzr
+zT2)rOng?D4FfZ_C49hjMV*UonG2DlG$^+k=Y%|?Dqae4}JOU=8=fgY4Uh!pa9eEqf
+zFX&WLPu!jArN*^(>|H>dj~g`ONZhaaD%h_HHrHkk%d~TR_RrX{&eM#P@3x=S^%_6h
+zh=A)A{id16$zEFq@-D7La;kTuE!oopx^9{uA3y<}<CA$fk1IT{4FjGWgv!&Qj=->9
+z^bQ@U<&pJV6kq7LRF47&!UAvgkBx=)KS_<sRR+!6RZC5cwwj}~S;x)Q)+5fHbM32@
+zs9Dpw6*_`sQMYrP%1#j|U1c3>X!NY28^gQr27P=gKh0+E>$aCx&^vj2uc}ycsfSEP
+zedhTgUwPx%?;+dESs!g1z}5q9EC+fol}tAH9#fhZQ?q1GjyIaR@}lGCSpM-014T~l
+zEwriqt~ftwz=@2tn$xP&-rJt?nn5sy8sJ5Roy;pavj@O+tm}d_qmAlvhG(&k>(arz
+z;e|SiTr+0<&6(-An0*4{7akwUk~Yf4<JX9Tq5J!*OP4&wi-J3;wg&c+D8MXROBM9x
+zY%+{fj6XCxVA3e*V+E4ZaC2?*_b$@bw?dl3w)Md>M!!YKj^swp9WOa%al`%R>V7mi
+z+5+UodFAaPdi4(8_FO&O!Ymb#@yxk<HZ;C?aw~lw1!ng28dO31y6a^%A?mrZiLhlq
+z*)r9D-qc@_^Yo)QL>uVMrog(7gkj$G@FLA#ENMxG)4f<}S%Fn?Up$+C%{02AgMKa^
+z4SFGWp6U>{Q6VRJV}yjxXT*e`1XaX}(dW1F&RNhpTzvC<hla}alUMpFiPxiUEJDg)
+z5T@OEnNE}Jw;&G3crL{}5pCqBws~Gb_7$63#%$YX!r1fagPH-PbSt2dQ@`XI+!FpO
+zPBg3@LF}wg;SB#}QqN)V$tpZHYJGRjf`Z$Cq<>tzuu;LMhMfJ2LBEy?{^GHG!OF!!
+zDvs64TG)?MX&9NCE#H3(M0K>O>`ca0WT2YR>PTe&tn?~0FV!MRtdb@v?MAUG&Ef7v
+zW%7>H<yyBb4^02^=S~lp(==aV^=yU&QsYS{R$Z#_MPQ}KX>(;Mm)RJkt18GXv!&np
+z?RUxOrCfs;m{fBz5MVlq59idhov21di5>WXWD-594L-X5;|@kyWi@N+(jLuh=o+5l
+zGGTi~)nflP_G}Yg5Pi%pl88U4+^*ihDoMP&zA*^xJE_X*Ah!jODrijCqQ^{=&hD7&
+z^)qv3;cu?olaT3pc{)Kcy9jA2E8I)#Kn8qO>70SQ5P8YSCN<o_4{q)RX(xgDwNlZH
+zzebPidQyv5yfB^u)f8#wF9D2~qZ>=_+_&)qg)OYBg|-k^d3*@jRAeB?;yd-O1A0wJ
+z?K*RDm|wE<(PBz~+C%2CTtzCTUohxP2*1kE8Of~{KRAvMrO_}NN&@P7SUO{;zx0iK
+z@or9<q8_W=jB;CG$!3sa>R8ydYOFZ<QmE(^V7$Xl0ZTLH#4LQ49$*&tdo06GSY2B5
+zWAbnOoFOm;0r9<^opq%%1#>f(cHASCAatL%;62IL27~SmASr(7F&NMr+#gNw@z1VM
+z_ALFwo3)SoANEwRerBdRV`>y`t72#aF2ConmWQp(Xy|msN9$yxhZ1jAQ67lq{vbC5
+zujj|MlGo`6Bfn0TfKgi(k=gq0`K~W+X(@GzYlPI4g0M;owH3yG14rhK>lG8lS{`!K
+z+Nc@glT-DGz?Ym?v#Hq|_mEdPAlHH5jZuh*6glq!+>Lk$S%ED2@+ea6CE@&1-9a?s
+znglt|fmIK}fg<9@XgHe4*q!aO<-;Xj$T?IzB-{&2`<ytxLqDCA^PWKz2Ct4sO5e`N
+z#3V>#eA6rdtCi80mpP&vw(Uytxu$#YzNI_<LOg^VxHp(U<w~GJ1f1W5T<#!>cB>LS
+z<BGD5FQUI9ZdhON9ZG|Z2$;M>mim>ys;ir;*Dzbr22ZDxO2s;671&J0U<9(n1yj)J
+zHFNz=ufPcQVEG+ePjB<5C;=H0{>Mi*xD>hQq8`Vi7TjJ$V04$`h3EZGL|}a07oQdR
+z?{cR(z+d>arn^AUug&voOzzi$ZqaS)blz-z3zr;10x;oP2)|Cyb^WtN2*wNn`YX!Y
+z+$Pji<7|!XyMCEw4so}xXLU)p)BA~2fl>y2Tt}o9*BPm?AXA8UE8a;>rOgyCwZBFa
+zyl42y`bc3}+hiZL_|L_LY29vVerM+BVE@YxK>TGm@dHi@Uw*7AIq?QA9?THL603J%
+zIBJ4y3n8OFzsOI;NH%DZ!MDwMl<#$)d9eVVeqVl(5ZX$PPbt*p_(_9VSXhaUPa9Qu
+z7)q4vqYKX7ieVSjOmVEbLj4VYtnDpe*0Y&+>0dS^bJ<8s*eHq3tjRAw^+Mu4W^-E=
+z4;&namG4G;3pVDyPkUw#0kWEO1;HI6M51(1<0|*pa(I!sj}F^)avrE`ShVMKBz}nE
+zzKgOPMSEp6M>h<xzBqqC2r<F^H92Aw&4uudWPKvL8@MToS|loeJ@cW2tFfXRh#&3M
+zmy2Twln2FD@uLUm4efWiER|oHpuZBo0oOKxa%U{r=@uGv42}`By+%ym)Y7RDXH&du
+zoEx|?JqEWM#fL@T=I%`p-wa5K`f*Y;?romQLrl!#2OvbxCL(4R_Rj)fPeHt@ZfZ6z
+z!;^0XxFdQkgf|tVjx9o8i${;IN?3&o^gkMA7K`xtqNSPm346BF^Tw77TU$f7fhUZg
+zx>JzyTHHcjV%W*;Tdb}1xJjCP#=iQuBk_Eho6yCRVp<B-D5qnXH^$;Z)Q%;=b)~TV
+zma>&e!}4IBJ&?ksVc&u#g3+G$oNlJ?mWfADjeBS-Ph3`DKk-~Z70XugH8sq2eba@4
+zIC1H_J$`9b$K`J)sGX3d!&>OmC@@rx1TL~NinQOYy72Q_+^&Mg>Ku(fTgaXdr$p_V
+z#gav1o{k~c>#)u3r@~6v^o)Lf=C{rAlL@!s457pq)pO;Cojx7U{urO4cvXP|E>+dV
+zmr2?!-5)tk-&*ap^D^2x7NG6nOop2zNFQ9v8-EZ{WCz-h36C)<<!{n3lmWRTJS2LL
+zKqeb1k2ia;BW>^|f{V#R_WE^@(T0+d-at5hXX{U?zak*ac-XnyINo+yBD~~3O1I=a
+z99|CI>502&s-Qi5bv>^2#cQ%ut<4d7KgQ^kE|=%6#VlGiY8$rdJUH{sra;P~cyb_i
+zeX(kS%w0C?mjhJl9TZp8RS;N~y3(EXEz13oPhOSE4WaTljGkVXWd~|#)<uV3j}5Te
+zkV*EdY9egzhtn*nao`21CzD^I)5+{Z18Rw4lVU`8%2$p*UCl1`TX(>vsG6_76I)Kb
+z8ro?;{j^lxNsaxE-cfP;g(e;mhh3)&ba}li?woV2#7ByioiD>s%L_D;?#;C#z;a(N
+z-_WY<=SH42m9bFQ>Nb<j)a&Ob18H&7^vzH?H5JL2Of;-n4as~D=@sj@(xGD?Q&6)o
+zNw<auASS+8#i*1R!&uI-tFKh%KIr6NC(#SxD@3iP2k4DgV7OG2_i^y2M9g#zlD(U-
+z$!Uj{C~~=*h*XIwivlGPRURp*;)QB+YqgJIj&37B54@$-sI~y;X3Dihu4r?k)$3U*
+zk9uj6ma79_U1P?O&-Dm+nDF-X=2Qho8(&-!Lg<We!MbaT@J&@W=LLZ<CT{ON!^Ca>
+z@4K$@4l8pD7AKxCR>t0%`Qoy9=hA?<<^Vcj8;-E+oBe3ReW1`el8np8E$k{LgFQ}2
+z2t8a`wOXFdJ9!5$&mEfD1CnJ)TB+R<n2vZS8t~mtTC`K4pZCx&&(3zcvRA9eh$H8M
+z_(FD=Q{%@E%kevl^P8LEUHNViR|?_s&XalEIk_ZMI{}%7`W~XTC3|-uNW*qO<~QBb
+z3zP=yM9fq3N?>Jih88-Zos9@<!L<$JX|GawFX(o*O6o}Qi}@c~jn=uep}m0v`a|BB
+z2yR(9di0m0I`Pal?D2-w8ORi_pAzH`yiiE8$#II4Ocmx12(HsCbIF+K0-=4+5>HZ#
+zL#{qfbF0ARTXkR@G{lwlOH~nnL)1jcyu!qv2`57S&%oKz0}r{~l9U_UHaJ5!8#nrs
+z<AG(3w&=4UE7yD|>?2FrL`mxnzu&{bweD&62)ilz*?pYIvt`T!XFVVA78})p1YEy7
+z8fK#s?b~Yo$n7&_a?E<s;#As-2YXI2Zgj?Y;b*tIcNMs31ValY{ovhcp0H0&QM5o$
+z4!co%1r!(fx$se``<7Cmbm7?ejQIjV2y;U|x^!0Vm*%Fy)fu&$Qx*Oc;-S!FsjbE@
+zLB~r9R-1QTmStt90_5Z$9#S2eFR((hQF{$xVA=D1=6|LvHNnwH@y;m(oAc$*ViI6Z
+zEx94E7BZJ-uSdFn?oC)Uou8kJ2oUZF*FO-jg9CC19{3y;-I@2Jr?+Cmtid${#WLE7
+z>BdXH-_W)Z44?!;DFx6pZ?~RArtBI*Qm4~6nX6Z_T*i$bQPE;Qz?DAPstpGSqr-AJ
+zo%m9cA`oDDm?&dTaoh_>@F>a?!y4qt_;NGN9Z<%SS;fX-cSu|>+Pba22`CRb#|HZa
+z;{)yHE>M-pc1C0mrnT~80!u&dvVTYFV8xTQ#g;6{c<9d!FDqU%TK5T6h*w*p980D~
+zUyCb`y3{-?(mJFP)0*-Nt;mI$-gc4VQumh|rs&j_^R{sgTPF`1Xja2YWstsKFuQ(d
+zmZMxV$p$|qQUXchu&8%J(9|)B?`~rIx&)LqDS>ob5%gTeTP#Sbny#y*rnJ&?(l=!(
+zoV~}LJ1DPLnF8oyM(2ScrQ0{Q4m4-BWnS4wilgCW-~~;}pw=&<+HggRD_3c@3RQIr
+z9+-%!%}u_{`YS=&>h%kPO3ce}>y!d-zqiniNR-b5r97u;+K6HA2tS>Z#cV{+eFI`*
+zd8RMGAUtX1KWfPV;q<-5JAykS+2sY$2~UX+4461a(%{P#{rwFPu0xpIuYlbgD{C7C
+z=U{FUarVTYX6ZUq3wE@G^QT4H2Re;n$Fz9cJ>hABl)9T8pozqbA1)H-%1=WKm^QMu
+zjnUZ&Pu>q+X&6Co*y#@pxc-4waKMInEPGmE_>3@Ym3S*dedSradmc5mlJn`i0vMW6
+zhBnGQD^Z;&S0lnS0curqDO@({J7kTtRE+Ra?nl^HP9<)W&C>~`!258f$XDbyQOQXG
+zP8hhy<b(LFnif-XZwyRLGhe;etnjh`>SnarOpgu8xv8@WlXnm(Uk~)_3$Sg0vTbU3
+z{W!5B(L3{Yy3K5PN<@jEarAtja`}@KYva&<mg(_$O@VX5`i${0FdG$4{}rEJ0`R&Z
+zZs#begZtjukzdS}v}xrs@_Gxo!#!cy(lp$QA>zFRF*s+_%jI<i@$eKN=@#NPOmQlJ
+z=7^e*>Xh$T(S=an8?=Ry3H*NRqWgsM`<yWowt)b~MiHh~U(61jVh*wRB$%EpguObr
+z{C3K9^9C*d4~t4O^w;Si@@(EOQBj0^AR@&Z$?J2;l@0mka+vG&V0u~tGhp2HcU9Vc
+z(3Q+dYiLv8D}k6It5K+SSFp1a{3+y+@59Qw$=A%>&!#|@kf1>=4q%bFw7^Rhz!z5I
+z<ebaYnWhT}|MWO3GSGz>yI^zU8_R1WN9`88Z=n>pIZQ`Ixr~_9G%Q}@A7rd#*%y7G
+zXl^Id=^ZL?Rx}}gWXCqzj9C6;x(~mAH|$JteXa1MH<6UQig@!Hf~t}B%tP0I|H&;y
+zO6N0}svOa1a^PyP9N5?4W6VF%=Bj{qHUgc8@siw4bafT=UPFSoQqKgyUX>sXTBZ=x
+zOh^Ad!{kOM9v{%5y}`-8u*T&C7Vq6mD%GR}UeU(*epO&qgC-CkD;%=l)ZuinSzHM`
+z{@`j&_vC6dDe{Yb9k@1zeV_K6!l(@=6ucoI=R^cH=6{i71%4W3$J-?<8Qn#$-DMtA
+z6Qqi)t?4ifrt%3jSA#6ji#{f(($KBL-iQh-xrC||3U3lq`9>r)>X%oLvtimuHW-)}
+zy}>9~|M>w4eES`g7;iBM%Se5-OP%1U6gNWp3AZqT8C6OlFFfQ$|7LL;tBV)(qlp4K
+z<dPx#CSC1=4n%oyXOigA4XSj3{aKc{){yJp5b`oNF2J2BrG6uS^Wrd-BJ{m_yWEZS
+zk$9>ruar^K8FnJN3@_}B;G`a~H`t|3+6d>q3#`ctTkE-D^1#d9NalQ04lH*qUW2!V
+zhk7#z8OwHhSl8w14;KctfO8ubZJ4$dEdpXE78wABz<AT^6SV|+Ync#@d!bkI5#JQU
+z3b`Q?>=n5*=q9ex3S}`e7x~~V-jmHOhtX2*n+pBslo3uosdE7xABK=V#-t{1Hd~?i
+z{i~%Bw6NYF+F$aK$M`r#xe=NxhA5=p%i7!$);sd>Q}#`G<UXGdHa#qs#Rtzk+he;v
+z4Ks`bftVt<iTnIwWOp`bWnAf#a4QJhA<;EY5}#bKSqFZX;m+%6+z%P;2Yl?&Agk1r
+z-FB=A3bmYe`>?Q~fygrMXmZw?0#5#17W}6Tj+&kFexG{!mYl5FoA99}3G9l;3lVQ^
+z48^~gsVppE*x91WheqI(A%F0Z#$#1UJP1R12Mj9r)y(A?a+iquX+d8WD4WAQJ_!oq
+z9rTISr7bPd(GTP57xm$}C}&kjMivi;zi^Y9g3&<wLZq73hQe~~EfZyl=aX?g0t?D2
+zuuy~aVnthj6OZffoHY=Ney162uSvLAYB#m|BM1I?^kCc74K{CyWT=18^#bi7yWdqK
+z!tys-h@#h{nW16VYPjpSZ)_p2X!N3=_}w$e7u=7yM8();wZR{HMXtR9?DA?=-1gS@
+zV{;f*zEJNvVC-`tLihb~EGUE~uzf@bO1mi5Vws1@4E@|vc=oz}2Hi}mt-rzkrwa@c
+zTP3Pj(}xZE?_Uu*D~crlZ$|NVYVkj-I4D{I<idgn>X0A;ovdJ?{%_wHgt%%9P&N4H
+z^<Cu!JQ@8%Oe0#*=_(Uo!{omudXfnuD0~$Q^uY=X?SIduxBllBv?2xNtuX=k96+2-
+zBp~RTFo4VXFEWAD)|mjYULe19RluniXnb88!0Qd7*$@O+dV|b1i~twDe>XzV(uNA4
+zAP`hgP6BEN5`YXh|DF~6Pud?~gWfhUKoP<JH*Q+UKj+gXFJLY5FH(cvB9K5vTTFnV
+zsDH9@OA6o+_YdP@aX|FjOaPO_f6`-H8qk>X4>z|}0aocC&K+AoV%|SX*N!wGq3|y<
+zg4lP(04XIPmt6}$N!dTk+pZv>u;MTB{L4hp9uXk7>aS!6jqM2lVr%{)H3$O127TSZ
+z0x9hi0k-P?nWFdQ0K`pykqUIT&jD~B0tHP{ffS(}fZ(aW$oBWTSfHO!A^><6v<S5V
+R_{@Vu|29OF7ypyz{{qB}Ob!45
+
+delta 8722
+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
+
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 669386b87..8fad3f5a9 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.3.3-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.5.1-all.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+diff --git a/RnDiffApp/android/settings.gradle b/RnDiffApp/android/settings.gradle
+index f935eee62..67adcdce4 100644
+--- a/RnDiffApp/android/settings.gradle
++++ b/RnDiffApp/android/settings.gradle
+@@ -2,8 +2,3 @@ rootProject.name = 'RnDiffApp'
+ apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+ include ':app'
+ includeBuild('../node_modules/react-native-gradle-plugin')
+-
+-if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true") {
+-    include(":ReactAndroid")
+-    project(":ReactAndroid").projectDir = file('../node_modules/react-native/ReactAndroid')
+-}
+diff --git a/RnDiffApp/ios/.xcode.env b/RnDiffApp/ios/.xcode.env
+new file mode 100644
+index 000000000..3d5782c71
+--- /dev/null
++++ b/RnDiffApp/ios/.xcode.env
+@@ -0,0 +1,11 @@
++# This `.xcode.env` file is versioned and is used to source the environment
++# used when running script phases inside Xcode.
++# To customize your local environment, you can create an `.xcode.env.local`
++# file that is not versioned.
++
++# NODE_BINARY variable contains the PATH to the node executable.
++#
++# Customize the NODE_BINARY variable here.
++# For example, to use nvm with brew, add the following line
++# . "$(brew --prefix nvm)/nvm.sh" --no-use
++export NODE_BINARY=$(command -v node)
+diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
+index 32b2e6ac7..4e7f7a8c1 100644
+--- a/RnDiffApp/ios/Podfile
++++ b/RnDiffApp/ios/Podfile
+@@ -1,8 +1,25 @@
+ require_relative '../node_modules/react-native/scripts/react_native_pods'
+ require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ 
+-platform :ios, '11.0'
+-install! 'cocoapods', :deterministic_uuids => false
++platform :ios, min_ios_version_supported
++prepare_react_native_project!
++
++# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
++# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
++#
++# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
++# ```js
++# module.exports = {
++#   dependencies: {
++#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
++# ```
++flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
++
++linkage = ENV['USE_FRAMEWORKS']
++if linkage != nil
++  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
++  use_frameworks! :linkage => linkage.to_sym
++end
+ 
+ target 'RnDiffApp' do
+   config = use_native_modules!
+@@ -12,11 +29,18 @@ target 'RnDiffApp' do
+ 
+   use_react_native!(
+     :path => config[:reactNativePath],
+-    # to enable hermes on iOS, change `false` to `true` and then install pods
++    # Hermes is now enabled by default. Disable by setting this flag to false.
++    # Upcoming versions of React Native may rely on get_default_flags(), but
++    # we make it explicit here to aid in the React Native upgrade process.
+     :hermes_enabled => flags[:hermes_enabled],
+     :fabric_enabled => flags[:fabric_enabled],
+-    # An abosolute path to your application root.
+-    :app_path => "#{Dir.pwd}/.."
++    # Enables Flipper.
++    #
++    # Note that if you have use_frameworks! enabled, Flipper will not work and
++    # you should disable the next line.
++    :flipper_configuration => flipper_config,
++    # An absolute path to your application root.
++    :app_path => "#{Pod::Config.instance.installation_root}/.."
+   )
+ 
+   target 'RnDiffAppTests' do
+@@ -24,14 +48,13 @@ target 'RnDiffApp' do
+     # Pods for testing
+   end
+ 
+-  # Enables Flipper.
+-  #
+-  # Note that if you have use_frameworks! enabled, Flipper will not work and
+-  # you should disable the next line.
+-  use_flipper!()
+-
+   post_install do |installer|
+-    react_native_post_install(installer)
++    react_native_post_install(
++      installer,
++      # Set `mac_catalyst_enabled` to `true` in order to apply patches
++      # necessary for Mac Catalyst builds
++      :mac_catalyst_enabled => false
++    )
+     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+   end
+ end
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 487408657..6417a272b 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -256,13 +256,15 @@
+ 			files = (
+ 			);
+ 			inputPaths = (
++				"$(SRCROOT)/.xcode.env.local",
++				"$(SRCROOT)/.xcode.env",
+ 			);
+ 			name = "Bundle React Native code and images";
+ 			outputPaths = (
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
++			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+ 		};
+ 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+ 			isa = PBXShellScriptBuildPhase;
+@@ -436,7 +438,7 @@
+ 					"$(inherited)",
+ 				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+@@ -460,7 +462,7 @@
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+@@ -490,6 +492,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
++				MARKETING_VERSION = 1.0;
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-ObjC",
+@@ -515,6 +518,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
++				MARKETING_VERSION = 1.0;
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-ObjC",
+@@ -576,7 +580,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					/usr/lib/swift,
+ 					"$(inherited)",
+@@ -640,7 +644,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					/usr/lib/swift,
+ 					"$(inherited)",
+diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+deleted file mode 100644
+index 0afd6876a..000000000
+--- a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
++++ /dev/null
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<Workspace
+-   version = "1.0">
+-   <FileRef
+-      location = "group:RnDiffApp.xcodeproj">
+-   </FileRef>
+-   <FileRef
+-      location = "group:Pods/Pods.xcodeproj">
+-   </FileRef>
+-</Workspace>
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+index ef1de86a2..5d2808256 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+@@ -1,8 +1,6 @@
+-#import <React/RCTBridgeDelegate.h>
++#import <RCTAppDelegate.h>
+ #import <UIKit/UIKit.h>
+ 
+-@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+-
+-@property (nonatomic, strong) UIWindow *window;
++@interface AppDelegate : RCTAppDelegate
+ 
+ @end
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index 2ce420e8e..fe439f402 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -1,60 +1,17 @@
+ #import "AppDelegate.h"
+ 
+-#import <React/RCTBridge.h>
+ #import <React/RCTBundleURLProvider.h>
+-#import <React/RCTRootView.h>
+-
+-#import <React/RCTAppSetupUtils.h>
+-
+-#if RCT_NEW_ARCH_ENABLED
+-#import <React/CoreModulesPlugins.h>
+-#import <React/RCTCxxBridgeDelegate.h>
+-#import <React/RCTFabricSurfaceHostingProxyRootView.h>
+-#import <React/RCTSurfacePresenter.h>
+-#import <React/RCTSurfacePresenterBridgeAdapter.h>
+-#import <ReactCommon/RCTTurboModuleManager.h>
+-
+-#import <react/config/ReactNativeConfig.h>
+-
+-@interface AppDelegate () <RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate> {
+-  RCTTurboModuleManager *_turboModuleManager;
+-  RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
+-  std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
+-  facebook::react::ContextContainer::Shared _contextContainer;
+-}
+-@end
+-#endif
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+-  RCTAppSetupPrepareApp(application);
+-
+-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
++  self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
+ 
+-#if RCT_NEW_ARCH_ENABLED
+-  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
+-  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
+-  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
+-  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
+-  bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
+-#endif
+-
+-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"RnDiffApp", nil);
+-
+-  if (@available(iOS 13.0, *)) {
+-    rootView.backgroundColor = [UIColor systemBackgroundColor];
+-  } else {
+-    rootView.backgroundColor = [UIColor whiteColor];
+-  }
+-
+-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+-  UIViewController *rootViewController = [UIViewController new];
+-  rootViewController.view = rootView;
+-  self.window.rootViewController = rootViewController;
+-  [self.window makeKeyAndVisible];
+-  return YES;
++  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+ }
+ 
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+@@ -66,43 +23,14 @@
+ #endif
+ }
+ 
+-#if RCT_NEW_ARCH_ENABLED
+-
+-#pragma mark - RCTCxxBridgeDelegate
+-
+-- (std::unique_ptr<facebook::react::JSExecutorFactory>)jsExecutorFactoryForBridge:(RCTBridge *)bridge
++/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
++///
++/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
++/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
++/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
++- (BOOL)concurrentRootEnabled
+ {
+-  _turboModuleManager = [[RCTTurboModuleManager alloc] initWithBridge:bridge
+-                                                             delegate:self
+-                                                            jsInvoker:bridge.jsCallInvoker];
+-  return RCTAppSetupDefaultJsExecutorFactory(bridge, _turboModuleManager);
++  return true;
+ }
+ 
+-#pragma mark RCTTurboModuleManagerDelegate
+-
+-- (Class)getModuleClassFromName:(const char *)name
+-{
+-  return RCTCoreModulesClassProvider(name);
+-}
+-
+-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
+-                                                      jsInvoker:(std::shared_ptr<facebook::react::CallInvoker>)jsInvoker
+-{
+-  return nullptr;
+-}
+-
+-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
+-                                                     initParams:
+-                                                         (const facebook::react::ObjCTurboModule::InitParams &)params
+-{
+-  return nullptr;
+-}
+-
+-- (id<RCTTurboModule>)getModuleInstanceFromClass:(Class)moduleClass
+-{
+-  return RCTAppSetupDefaultModuleFromClass(moduleClass);
+-}
+-
+-#endif
+-
+ @end
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index 903b7921c..91e8626f3 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -17,11 +17,11 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>APPL</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>1.0</string>
++	<string>$(MARKETING_VERSION)</string>
+ 	<key>CFBundleSignature</key>
+ 	<string>????</string>
+ 	<key>CFBundleVersion</key>
+-	<string>1</string>
++	<string>$(CURRENT_PROJECT_VERSION)</string>
+ 	<key>LSRequiresIPhoneOS</key>
+ 	<true/>
+ 	<key>NSAppTransportSecurity</key>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index a16f1f2a2..1b6d513f6 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -1,33 +1,36 @@
+ {
+-  "name": "rndiffapp",
++  "name": "RnDiffApp",
+   "version": "0.0.1",
+   "private": true,
+   "scripts": {
+     "android": "react-native run-android",
+     "ios": "react-native run-ios",
++    "lint": "eslint .",
+     "start": "react-native start",
+-    "test": "jest",
+-    "lint": "eslint ."
++    "test": "jest"
+   },
+   "dependencies": {
+-    "react": "17.0.2",
+-    "react-native": "0.68.0-rc.0"
++    "react": "18.2.0",
++    "react-native": "0.71.2"
+   },
+   "devDependencies": {
+-    "@babel/core": "^7.12.9",
+-    "@babel/runtime": "^7.12.5",
+-    "@react-native-community/eslint-config": "^2.0.0",
+-    "babel-jest": "^26.6.3",
+-    "eslint": "^7.32.0",
+-    "jest": "^26.6.3",
+-    "metro-react-native-babel-preset": "^0.67.0",
+-    "react-native-gradle-plugin": "^0.0.4",
+-    "react-test-renderer": "17.0.2"
++    "@babel/core": "^7.20.0",
++    "@babel/preset-env": "^7.20.0",
++    "@babel/runtime": "^7.20.0",
++    "@react-native-community/eslint-config": "^3.2.0",
++    "@tsconfig/react-native": "^2.0.2",
++    "@types/jest": "^29.2.1",
++    "@types/react": "^18.0.24",
++    "@types/react-test-renderer": "^18.0.0",
++    "babel-jest": "^29.2.1",
++    "eslint": "^8.19.0",
++    "jest": "^29.2.1",
++    "metro-react-native-babel-preset": "0.73.7",
++    "prettier": "^2.4.1",
++    "react-test-renderer": "18.2.0",
++    "typescript": "4.8.4"
+   },
+   "jest": {
+     "preset": "react-native"
+-  },
+-  "codegenConfig": {
+-    "libraries": []
+   }
+ }
+diff --git a/RnDiffApp/tsconfig.json b/RnDiffApp/tsconfig.json
+new file mode 100644
+index 000000000..45a6c7072
+--- /dev/null
++++ b/RnDiffApp/tsconfig.json
+@@ -0,0 +1,3 @@
++{
++  "extends": "@tsconfig/react-native/tsconfig.json"
++}
