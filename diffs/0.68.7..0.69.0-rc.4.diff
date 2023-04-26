@@ -1,0 +1,418 @@
+diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
+index 975227dab..74f3a75e7 100644
+--- a/RnDiffApp/.flowconfig
++++ b/RnDiffApp/.flowconfig
+@@ -52,7 +52,6 @@ nonstrict-import=warn
+ deprecated-type=warn
+ unsafe-getters-setters=warn
+ unnecessary-invariant=warn
+-signature-verification-failure=warn
+ 
+ [strict]
+ deprecated-type
+@@ -64,4 +63,4 @@ untyped-import
+ untyped-type-import
+ 
+ [version]
+-^0.170.0
++^0.176.3
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 81570d991..344481b21 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -20,6 +20,7 @@ DerivedData
+ *.hmap
+ *.ipa
+ *.xcuserstate
++ios/.xcode.env.local
+ 
+ # Android/IntelliJ
+ #
+@@ -49,9 +50,10 @@ buck-out/
+ # For more information about the recommended setup visit:
+ # https://docs.fastlane.tools/best-practices/source-control/
+ 
+-*/fastlane/report.xml
+-*/fastlane/Preview.html
+-*/fastlane/screenshots
++**/fastlane/report.xml
++**/fastlane/Preview.html
++**/fastlane/screenshots
++**/fastlane/test_output
+ 
+ # Bundle artifact
+ *.jsbundle
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+index a4dd9dba4..a603bb50a 100644
+--- a/RnDiffApp/.ruby-version
++++ b/RnDiffApp/.ruby-version
+@@ -1 +1 @@
+-2.7.4
++2.7.5
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 2c3edcf4b..5efda89f4 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -1,6 +1,6 @@
+ source 'https://rubygems.org'
+ 
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby '2.7.4'
++ruby '2.7.5'
+ 
+ gem 'cocoapods', '~> 1.11', '>= 1.11.2'
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 7460d7f41..6be24a247 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -1,7 +1,6 @@
+ apply plugin: "com.android.application"
+ 
+ import com.android.build.OutputFile
+-import org.apache.tools.ant.taskdefs.condition.Os
+ 
+ /**
+  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
+@@ -152,16 +151,13 @@ android {
+                         "GENERATED_SRC_DIR=$buildDir/generated/source",
+                         "PROJECT_BUILD_DIR=$buildDir",
+                         "REACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
+-                        "REACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build"
++                        "REACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
++                        "NODE_MODULES_DIR=$rootDir/../node_modules"
+                     cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
+                     cppFlags "-std=c++17"
+                     // Make sure this target name is the same you specify inside the
+                     // src/main/jni/Android.mk file for the `LOCAL_MODULE` variable.
+                     targets "rndiffapp_appmodules"
+-                    // Fix for windows limit on number of character in file paths and in command lines
+-                    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+-                        arguments "NDK_APP_SHORT_COMMANDS=true"
+-                    }
+                 }
+             }
+             if (!enableSeparateBuildPerCPUArchitecture) {
+@@ -281,9 +277,10 @@ dependencies {
+     }
+ 
+     if (enableHermes) {
+-        def hermesPath = "../../node_modules/hermes-engine/android/";
+-        debugImplementation files(hermesPath + "hermes-debug.aar")
+-        releaseImplementation files(hermesPath + "hermes-release.aar")
++        //noinspection GradleDynamicVersion
++        implementation("com.facebook.react:hermes-engine:+") { // From node_modules
++            exclude group:'com.facebook.fbjni'
++        }
+     } else {
+         implementation jscFlavor
+     }
+@@ -296,7 +293,11 @@ if (isNewArchitectureEnabled()) {
+     configurations.all {
+         resolutionStrategy.dependencySubstitution {
+             substitute(module("com.facebook.react:react-native"))
+-                    .using(project(":ReactAndroid")).because("On New Architecture we're building React Native from source")
++                    .using(project(":ReactAndroid"))
++                    .because("On New Architecture we're building React Native from source")
++            substitute(module("com.facebook.react:hermes-engine"))
++                    .using(project(":ReactAndroid:hermes-engine"))
++                    .because("On New Architecture we're building Hermes from source")
+         }
+     }
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+index 615951b73..31ae98f7f 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+@@ -17,7 +17,8 @@ public class MainActivity extends ReactActivity {
+ 
+   /**
+    * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
+-   * you can specify the rendered you wish to use (Fabric or the older renderer).
++   * you can specify the renderer you wish to use - the new renderer (Fabric) or the old renderer
++   * (Paper).
+    */
+   @Override
+   protected ReactActivityDelegate createReactActivityDelegate() {
+@@ -36,5 +37,12 @@ public class MainActivity extends ReactActivity {
+       reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+       return reactRootView;
+     }
++
++    @Override
++    protected boolean isConcurrentRootEnabled() {
++      // If you opted-in for the New Architecture, we enable Concurrent Root (i.e. React 18).
++      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
++      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
++    }
+   }
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
+index 434b9421a..4f8302218 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/newarchitecture/MainApplicationReactNativeHost.java
+@@ -16,8 +16,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
+ import com.facebook.react.bridge.UIManager;
+ import com.facebook.react.fabric.ComponentFactory;
+ import com.facebook.react.fabric.CoreComponentsRegistry;
+-import com.facebook.react.fabric.EmptyReactNativeConfig;
+ import com.facebook.react.fabric.FabricJSIModuleProvider;
++import com.facebook.react.fabric.ReactNativeConfig;
+ import com.facebook.react.uimanager.ViewManagerRegistry;
+ import com.rndiffapp.BuildConfig;
+ import com.rndiffapp.newarchitecture.components.MainComponentsRegistry;
+@@ -105,7 +105,7 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
+                 return new FabricJSIModuleProvider(
+                     reactApplicationContext,
+                     componentFactory,
+-                    new EmptyReactNativeConfig(),
++                    ReactNativeConfig.DEFAULT_CONFIG,
+                     viewManagerRegistry);
+               }
+             });
+diff --git a/RnDiffApp/android/app/src/main/jni/Android.mk b/RnDiffApp/android/app/src/main/jni/Android.mk
+index 22303eea4..842579d5e 100644
+--- a/RnDiffApp/android/app/src/main/jni/Android.mk
++++ b/RnDiffApp/android/app/src/main/jni/Android.mk
+@@ -17,7 +17,7 @@ LOCAL_SRC_FILES := $(wildcard $(LOCAL_PATH)/*.cpp)
+ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
+ 
+ # If you wish to add a custom TurboModule or Fabric component in your app you
+-# will have to uncomment those lines to include the generated source 
++# will have to uncomment those lines to include the generated source
+ # files from the codegen (placed in $(GENERATED_SRC_DIR)/codegen/jni)
+ #
+ # LOCAL_C_INCLUDES += $(GENERATED_SRC_DIR)/codegen/jni
+@@ -28,8 +28,7 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
+ LOCAL_SHARED_LIBRARIES := \
+   libfabricjni \
+   libfbjni \
+-  libfolly_futures \
+-  libfolly_json \
++  libfolly_runtime \
+   libglog \
+   libjsi \
+   libreact_codegen_rncore \
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 5dfc68a63..c9bc539de 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -22,9 +22,9 @@ buildscript {
+         mavenCentral()
+     }
+     dependencies {
+-        classpath("com.android.tools.build:gradle:7.0.4")
++        classpath("com.android.tools.build:gradle:7.1.1")
+         classpath("com.facebook.react:react-native-gradle-plugin")
+-        classpath("de.undercouch:gradle-download-task:4.1.2")
++        classpath("de.undercouch:gradle-download-task:5.0.1")
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+     }
+diff --git a/RnDiffApp/android/settings.gradle b/RnDiffApp/android/settings.gradle
+index f935eee62..2c19646a3 100644
+--- a/RnDiffApp/android/settings.gradle
++++ b/RnDiffApp/android/settings.gradle
+@@ -6,4 +6,6 @@ includeBuild('../node_modules/react-native-gradle-plugin')
+ if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true") {
+     include(":ReactAndroid")
+     project(":ReactAndroid").projectDir = file('../node_modules/react-native/ReactAndroid')
++    include(":ReactAndroid:hermes-engine")
++    project(":ReactAndroid:hermes-engine").projectDir = file('../node_modules/react-native/ReactAndroid/hermes-engine')
+ }
+diff --git a/RnDiffApp/ios/.xcode.env b/RnDiffApp/ios/.xcode.env
+new file mode 100644
+index 000000000..3d5782c71
+--- /dev/null
++++ b/RnDiffApp/ios/.xcode.env
+@@ -0,0 +1,11 @@
++# This `.xcode.env` file is versioned and is used to source the environment
++# used when running script phases inside Xcode.
++# To customize your local environment, you can create an `.xcode.env.local`
++# file that is not versioned.
++
++# NODE_BINARY variable contains the PATH to the node executable.
++#
++# Customize the NODE_BINARY variable here.
++# For example, to use nvm with brew, add the following line
++# . "$(brew --prefix nvm)/nvm.sh" --no-use
++export NODE_BINARY=$(command -v node)
+diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
+index fb0ba7f74..9c3ef42b7 100644
+--- a/RnDiffApp/ios/Podfile
++++ b/RnDiffApp/ios/Podfile
+@@ -1,7 +1,7 @@
+ require_relative '../node_modules/react-native/scripts/react_native_pods'
+ require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ 
+-platform :ios, '11.0'
++platform :ios, '12.4'
+ install! 'cocoapods', :deterministic_uuids => false
+ 
+ target 'RnDiffApp' do
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 487408657..7c765ad67 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -256,13 +256,15 @@
+ 			files = (
+ 			);
+ 			inputPaths = (
++				"$(SRCROOT)/.xcode.env.local",
++				"$(SRCROOT)/.xcode.env",
+ 			);
+ 			name = "Bundle React Native code and images";
+ 			outputPaths = (
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
++			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+ 		};
+ 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+ 			isa = PBXShellScriptBuildPhase;
+@@ -436,7 +438,7 @@
+ 					"$(inherited)",
+ 				);
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+@@ -460,7 +462,7 @@
+ 				BUNDLE_LOADER = "$(TEST_HOST)";
+ 				COPY_PHASE_STRIP = NO;
+ 				INFOPLIST_FILE = RnDiffAppTests/Info.plist;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+@@ -576,7 +578,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					/usr/lib/swift,
+ 					"$(inherited)",
+@@ -594,6 +596,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
++				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 			};
+ 			name = Debug;
+@@ -640,7 +643,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
++				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+ 				LD_RUNPATH_SEARCH_PATHS = (
+ 					/usr/lib/swift,
+ 					"$(inherited)",
+@@ -657,6 +660,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
++				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+ 			};
+diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+new file mode 100644
+index 000000000..0afd6876a
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Workspace
++   version = "1.0">
++   <FileRef
++      location = "group:RnDiffApp.xcodeproj">
++   </FileRef>
++   <FileRef
++      location = "group:Pods/Pods.xcodeproj">
++   </FileRef>
++</Workspace>
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index 2ce420e8e..e3debc9fd 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -16,6 +16,8 @@
+ 
+ #import <react/config/ReactNativeConfig.h>
+ 
++static NSString *const kRNConcurrentRoot = @"concurrentRoot";
++
+ @interface AppDelegate () <RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate> {
+   RCTTurboModuleManager *_turboModuleManager;
+   RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
+@@ -41,7 +43,8 @@
+   bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
+ #endif
+ 
+-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"RnDiffApp", nil);
++  NSDictionary *initProps = [self prepareInitialProps];
++  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"RnDiffApp", initProps);
+ 
+   if (@available(iOS 13.0, *)) {
+     rootView.backgroundColor = [UIColor systemBackgroundColor];
+@@ -57,6 +60,28 @@
+   return YES;
+ }
+ 
++/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
++///
++/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
++/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
++/// @return: `true` if the `concurrentRoot` feture is enabled. Otherwise, it returns `false`.
++- (BOOL)concurrentRootEnabled
++{
++  // Switch this bool to turn on and off the concurrent root
++  return true;
++}
++
++- (NSDictionary *)prepareInitialProps
++{
++  NSMutableDictionary *initProps = [NSMutableDictionary new];
++
++#ifdef RCT_NEW_ARCH_ENABLED
++  initProps[kRNConcurrentRoot] = @([self concurrentRootEnabled]);
++#endif
++
++  return initProps;
++}
++
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index e1c8bd9af..a49283a5a 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,8 +10,8 @@
+     "lint": "eslint ."
+   },
+   "dependencies": {
+-    "react": "17.0.2",
+-    "react-native": "0.68.7"
++    "react": "18.0.0",
++    "react-native": "0.69.0-rc.4"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.12.9",
+@@ -20,8 +20,8 @@
+     "babel-jest": "^26.6.3",
+     "eslint": "^7.32.0",
+     "jest": "^26.6.3",
+-    "metro-react-native-babel-preset": "^0.67.0",
+-    "react-test-renderer": "17.0.2"
++    "metro-react-native-babel-preset": "^0.70.3",
++    "react-test-renderer": "18.0.0"
+   },
+   "jest": {
+     "preset": "react-native"
