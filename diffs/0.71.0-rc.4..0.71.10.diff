@@ -1,0 +1,149 @@
+diff --git a/RnDiffApp/.eslintrc.js b/RnDiffApp/.eslintrc.js
+index 187894b6a..40c6dcd05 100644
+--- a/RnDiffApp/.eslintrc.js
++++ b/RnDiffApp/.eslintrc.js
+@@ -1,4 +1,4 @@
+ module.exports = {
+   root: true,
+-  extends: '@react-native',
++  extends: '@react-native-community',
+ };
+diff --git a/RnDiffApp/.node-version b/RnDiffApp/.node-version
+index b6a7d89c6..3c032078a 100644
+--- a/RnDiffApp/.node-version
++++ b/RnDiffApp/.node-version
+@@ -1 +1 @@
+-16
++18
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+deleted file mode 100644
+index 49cdd668e..000000000
+--- a/RnDiffApp/.ruby-version
++++ /dev/null
+@@ -1 +0,0 @@
+-2.7.6
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 567e59805..1142b1b20 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -1,6 +1,6 @@
+ source 'https://rubygems.org'
+ 
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby File.read(File.join(__dir__, '.ruby-version')).strip
++ruby '>= 2.6.10'
+ 
+-gem 'cocoapods', '~> 1.11', '>= 1.11.3'
++gem 'cocoapods', '>= 1.11.3'
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 04d6cfaf0..fccf99f93 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -12,9 +12,9 @@ react {
+     //   The root of your project, i.e. where "package.json" lives. Default is '..'
+     // root = file("../")
+     //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
+-    // reactNativeDir = file("../node-modules/react-native")
++    // reactNativeDir = file("../node_modules/react-native")
+     //   The folder where the react-native Codegen package is. Default is ../node_modules/react-native-codegen
+-    // codegenDir = file("../node-modules/react-native-codegen")
++    // codegenDir = file("../node_modules/react-native-codegen")
+     //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
+     // cliFile = file("../node_modules/react-native/cli.js")
+ 
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index baa44e144..67d887b03 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -15,23 +15,7 @@ buildscript {
+         mavenCentral()
+     }
+     dependencies {
+-        classpath("com.android.tools.build:gradle:7.4.0-beta05")
++        classpath("com.android.tools.build:gradle:7.3.1")
+         classpath("com.facebook.react:react-native-gradle-plugin")
+     }
+ }
+-
+-allprojects {
+-    repositories {
+-        maven {
+-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+-            url("$rootDir/../node_modules/react-native/android")
+-        }
+-        maven {
+-            // Android JSC is installed from npm
+-            url("$rootDir/../node_modules/jsc-android/dist")
+-        }
+-        mavenCentral()
+-        google()
+-        maven { url 'https://www.jitpack.io' }
+-    }
+-}
+diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
+index b993eae8c..4e7f7a8c1 100644
+--- a/RnDiffApp/ios/Podfile
++++ b/RnDiffApp/ios/Podfile
+@@ -4,6 +4,15 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
+ platform :ios, min_ios_version_supported
+ prepare_react_native_project!
+ 
++# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
++# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
++#
++# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
++# ```js
++# module.exports = {
++#   dependencies: {
++#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
++# ```
+ flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+ 
+ linkage = ENV['USE_FRAMEWORKS']
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index e14c4b418..fe439f402 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -7,6 +7,10 @@
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+   self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
++
+   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+ }
+ 
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 87ca76d41..dc87063ca 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,13 +11,13 @@
+   },
+   "dependencies": {
+     "react": "18.2.0",
+-    "react-native": "0.71.0-rc.4"
++    "react-native": "0.71.10"
+   },
+   "devDependencies": {
+-    "@babel/core": "^7.12.9",
+-    "@babel/preset-env": "^7.14.0",
+-    "@babel/runtime": "^7.12.5",
+-    "@react-native-community/eslint-config": "^3.0.0",
++    "@babel/core": "^7.20.0",
++    "@babel/preset-env": "^7.20.0",
++    "@babel/runtime": "^7.20.0",
++    "@react-native-community/eslint-config": "^3.2.0",
+     "@tsconfig/react-native": "^2.0.2",
+     "@types/jest": "^29.2.1",
+     "@types/react": "^18.0.24",
+@@ -25,7 +25,7 @@
+     "babel-jest": "^29.2.1",
+     "eslint": "^8.19.0",
+     "jest": "^29.2.1",
+-    "metro-react-native-babel-preset": "0.73.5",
++    "metro-react-native-babel-preset": "0.73.9",
+     "prettier": "^2.4.1",
+     "react-test-renderer": "18.2.0",
+     "typescript": "4.8.4"
