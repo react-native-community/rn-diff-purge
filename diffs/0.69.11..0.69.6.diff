@@ -1,0 +1,69 @@
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+new file mode 100644
+index 000000000..a603bb50a
+--- /dev/null
++++ b/RnDiffApp/.ruby-version
+@@ -0,0 +1 @@
++2.7.5
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 7922c9a5f..5efda89f4 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -1,6 +1,6 @@
+ source 'https://rubygems.org'
+ 
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby '>= 2.6.10'
++ruby '2.7.5'
+ 
+-gem 'cocoapods', '>= 1.11.2'
++gem 'cocoapods', '~> 1.11', '>= 1.11.2'
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index c8d8644e3..7c765ad67 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -596,6 +596,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
++				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 			};
+ 			name = Debug;
+@@ -659,6 +660,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
++				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+ 			};
+diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+new file mode 100644
+index 000000000..0afd6876a
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Workspace
++   version = "1.0">
++   <FileRef
++      location = "group:RnDiffApp.xcodeproj">
++   </FileRef>
++   <FileRef
++      location = "group:Pods/Pods.xcodeproj">
++   </FileRef>
++</Workspace>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index a5ff0b90c..5be9fa182 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.0.0",
+-    "react-native": "0.69.11"
++    "react-native": "0.69.6"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.12.9",
