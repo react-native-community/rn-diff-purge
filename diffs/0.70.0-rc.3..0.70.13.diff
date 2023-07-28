@@ -1,0 +1,125 @@
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 344481b21..2423126f7 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -30,6 +30,7 @@ build/
+ local.properties
+ *.iml
+ *.hprof
++.cxx/
+ 
+ # node.js
+ #
+diff --git a/RnDiffApp/_node-version b/RnDiffApp/.node-version
+similarity index 100%
+rename from RnDiffApp/_node-version
+rename to RnDiffApp/.node-version
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+deleted file mode 100644
+index a603bb50a..000000000
+--- a/RnDiffApp/.ruby-version
++++ /dev/null
+@@ -1 +0,0 @@
+-2.7.5
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 5efda89f4..1142b1b20 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -1,6 +1,6 @@
+ source 'https://rubygems.org'
+ 
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby '2.7.5'
++ruby '>= 2.6.10'
+ 
+-gem 'cocoapods', '~> 1.11', '>= 1.11.2'
++gem 'cocoapods', '>= 1.11.3'
+diff --git a/RnDiffApp/android/app/src/main/jni/CMakeLists.txt b/RnDiffApp/android/app/src/main/jni/CMakeLists.txt
+index dd2f51589..6e63f482b 100644
+--- a/RnDiffApp/android/app/src/main/jni/CMakeLists.txt
++++ b/RnDiffApp/android/app/src/main/jni/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.13)
+ 
+ # Define the library name here.
+-project(rntester_appmodules)
++project(rndiffapp_appmodules)
+ 
+ # This file includes all the necessary to let you build your application with the New Architecture.
+ include(${REACT_ANDROID_DIR}/cmake-utils/ReactNative-application.cmake)
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index ce9114fec..c8d8644e3 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -562,7 +562,7 @@
+ 				COPY_PHASE_STRIP = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				ENABLE_TESTABILITY = YES;
+-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
++				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+ 				GCC_C_LANGUAGE_STANDARD = gnu99;
+ 				GCC_DYNAMIC_NO_PIC = NO;
+ 				GCC_NO_COMMON_BLOCKS = YES;
+@@ -596,7 +596,6 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
+-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 			};
+ 			name = Debug;
+@@ -634,7 +633,7 @@
+ 				COPY_PHASE_STRIP = YES;
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
++				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+ 				GCC_C_LANGUAGE_STANDARD = gnu99;
+ 				GCC_NO_COMMON_BLOCKS = YES;
+ 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+@@ -660,7 +659,6 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 				);
+-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+ 			};
+diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
+deleted file mode 100644
+index 0afd6876a..000000000
+--- a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
++++ /dev/null
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<Workspace
+-   version = "1.0">
+-   <FileRef
+-      location = "group:RnDiffApp.xcodeproj">
+-   </FileRef>
+-   <FileRef
+-      location = "group:Pods/Pods.xcodeproj">
+-   </FileRef>
+-</Workspace>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 0db584f50..528b2baea 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.1.0",
+-    "react-native": "0.70.0-rc.3"
++    "react-native": "0.70.13"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.12.9",
+@@ -20,7 +20,7 @@
+     "babel-jest": "^26.6.3",
+     "eslint": "^7.32.0",
+     "jest": "^26.6.3",
+-    "metro-react-native-babel-preset": "^0.72.0",
++    "metro-react-native-babel-preset": "0.72.4",
+     "react-test-renderer": "18.1.0"
+   },
+   "jest": {
