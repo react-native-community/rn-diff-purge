@@ -1,0 +1,42 @@
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 6a7d5c7a49..1fa2c2e1ab 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -3,5 +3,4 @@ source 'https://rubygems.org'
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+ ruby ">= 2.6.10"
+ 
+-gem 'cocoapods', '~> 1.13'
+-gem 'activesupport', '>= 6.1.7.3', '< 7.1.0'
++gem 'cocoapods', '~> 1.12'
+diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
+index a850d031de..cd33b74bb3 100644
+--- a/RnDiffApp/index.js
++++ b/RnDiffApp/index.js
+@@ -6,4 +6,13 @@ import {AppRegistry} from 'react-native';
+ import App from './App';
+ import {name as appName} from './app.json';
+ 
++if (global.RN$Bridgeless) {
++  require('react-native/Libraries/NativeComponent/NativeComponentRegistry').setRuntimeConfigProvider(
++    name => {
++      // In bridgeless mode, never load native ViewConfig.
++      return {native: false, strict: false, verify: false};
++    },
++  );
++}
++
+ AppRegistry.registerComponent(appName, () => App);
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index db475055ee..53c421f200 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.2.0",
+-    "react-native": "0.73.0-rc.2"
++    "react-native": "0.73.0-rc.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
