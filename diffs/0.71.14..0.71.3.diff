@@ -1,0 +1,43 @@
+diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
+new file mode 100644
+index 0000000000..49cdd668e1
+--- /dev/null
++++ b/RnDiffApp/.ruby-version
+@@ -0,0 +1 @@
++2.7.6
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 3eaad0d74c..567e59805c 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -1,7 +1,6 @@
+ source 'https://rubygems.org'
+ 
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+-ruby '>= 2.6.10'
++ruby File.read(File.join(__dir__, '.ruby-version')).strip
+ 
+-gem 'cocoapods', '>= 1.11.3'
+-gem 'activesupport', '>= 6.1.7.3', '< 7.1.0'
++gem 'cocoapods', '~> 1.11', '>= 1.11.3'
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 3966701060..7fe040ec06 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.2.0",
+-    "react-native": "0.71.14"
++    "react-native": "0.71.3"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
+@@ -25,7 +25,7 @@
+     "babel-jest": "^29.2.1",
+     "eslint": "^8.19.0",
+     "jest": "^29.2.1",
+-    "metro-react-native-babel-preset": "0.73.10",
++    "metro-react-native-babel-preset": "0.73.7",
+     "prettier": "^2.4.1",
+     "react-test-renderer": "18.2.0",
+     "typescript": "4.8.4"
