@@ -1,0 +1,102 @@
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 6a7d5c7a49..1fa2c2e1ab 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -3,5 +3,4 @@ source 'https://rubygems.org'
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+ ruby ">= 2.6.10"
+ 
+-gem 'cocoapods', '~> 1.13'
+-gem 'activesupport', '>= 6.1.7.3', '< 7.1.0'
++gem 'cocoapods', '~> 1.12'
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index ecea3ea6c3..d4670439cf 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -71,7 +71,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
+ 
+ android {
+     ndkVersion rootProject.ext.ndkVersion
+-    buildToolsVersion rootProject.ext.buildToolsVersion
++
+     compileSdk rootProject.ext.compileSdkVersion
+ 
+     namespace "com.rndiffapp"
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+index a2cb223c28..51205894d1 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+@@ -3,15 +3,17 @@ package com.rndiffapp
+ import android.app.Application
+ import com.facebook.react.PackageList
+ import com.facebook.react.ReactApplication
+-import com.facebook.react.ReactHost
+ import com.facebook.react.ReactNativeHost
+ import com.facebook.react.ReactPackage
++import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+-import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
++import com.facebook.react.defaults.DefaultReactHost
+ import com.facebook.react.defaults.DefaultReactNativeHost
+ import com.facebook.react.flipper.ReactNativeFlipper
++import com.facebook.react.interfaces.ReactHost
+ import com.facebook.soloader.SoLoader
+ 
++@UnstableReactNativeAPI
+ class MainApplication : Application(), ReactApplication {
+ 
+   override val reactNativeHost: ReactNativeHost =
+@@ -31,7 +33,12 @@ class MainApplication : Application(), ReactApplication {
+       }
+ 
+   override val reactHost: ReactHost
+-    get() = getDefaultReactHost(this.applicationContext, reactNativeHost)
++    get() =
++        DefaultReactHost.getDefaultReactHost(
++            context = this,
++            packageList = PackageList(this).packages,
++            jsMainModulePath = "index",
++            isHermesEnabled = BuildConfig.IS_HERMES_ENABLED)
+ 
+   override fun onCreate() {
+     super.onCreate()
+diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
+index a850d031de..cd33b74bb3 100644
+--- a/RnDiffApp/index.js
++++ b/RnDiffApp/index.js
+@@ -6,4 +6,13 @@ import {AppRegistry} from 'react-native';
+ import App from './App';
+ import {name as appName} from './app.json';
+ 
++if (global.RN$Bridgeless) {
++  require('react-native/Libraries/NativeComponent/NativeComponentRegistry').setRuntimeConfigProvider(
++    name => {
++      // In bridgeless mode, never load native ViewConfig.
++      return {native: false, strict: false, verify: false};
++    },
++  );
++}
++
+ AppRegistry.registerComponent(appName, () => App);
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 388475144d..53c421f200 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.2.0",
+-    "react-native": "0.73.0-rc.4"
++    "react-native": "0.73.0-rc.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
+@@ -19,7 +19,7 @@
+     "@babel/runtime": "^7.20.0",
+     "@react-native/babel-preset": "^0.73.18",
+     "@react-native/eslint-config": "^0.73.1",
+-    "@react-native/metro-config": "^0.73.2",
++    "@react-native/metro-config": "^0.73.1",
+     "@react-native/typescript-config": "^0.73.1",
+     "@types/react": "^18.2.6",
+     "@types/react-test-renderer": "^18.0.0",
