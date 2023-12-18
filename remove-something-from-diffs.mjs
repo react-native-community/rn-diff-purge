@@ -18,7 +18,7 @@ const removeSomething = async () => {
 
 			// check on https://regex101.com
 			const toBeReplaced =
-				/diff --git a\/RnDiffApp\/vendor\/bundle\/ruby.*?diff/s
+				/diff --git a\/RnDiffApp\/react-native.config.js.*diff/s
 
 			replace.sync({
 				files: fullpath,
