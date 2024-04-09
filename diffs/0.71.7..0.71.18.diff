@@ -1,0 +1,35 @@
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 1142b1b209..68f1b2ad55 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -3,4 +3,7 @@ source 'https://rubygems.org'
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+ ruby '>= 2.6.10'
+ 
+-gem 'cocoapods', '>= 1.11.3'
++# Cocoapods 1.15 introduced a bug which break the build. We will remove the upper
++# bound in the template on Cocoapods with next React Native release.
++gem 'cocoapods', '>= 1.13', '< 1.15'
++gem 'activesupport', '>= 6.1.7.3', '< 7.1.0'
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 54b27bc68d..1a84ed5a68 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.2.0",
+-    "react-native": "0.71.7"
++    "react-native": "0.71.18"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
+@@ -25,7 +25,7 @@
+     "babel-jest": "^29.2.1",
+     "eslint": "^8.19.0",
+     "jest": "^29.2.1",
+-    "metro-react-native-babel-preset": "0.73.9",
++    "metro-react-native-babel-preset": "0.73.10",
+     "prettier": "^2.4.1",
+     "react-test-renderer": "18.2.0",
+     "typescript": "4.8.4"
