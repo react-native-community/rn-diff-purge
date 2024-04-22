@@ -152,21 +152,21 @@ function cleanUp () {
 }
 
 
-# guardMissingArg $*
+guardMissingArg $*
 newRelease=$1
 
-# guardExisting
+guardExisting
 
 prepare
-# generateNewReleaseBranch
-# addReleaseToList
+generateNewReleaseBranch
+addReleaseToList
 generateDiffs
 
-# generateTable
-# generateReadme
+generateTable
+generateReadme
 
-# generateBigTable
-# generateGHPages
+generateBigTable
+generateGHPages
 
 cleanUp
 pushMaster

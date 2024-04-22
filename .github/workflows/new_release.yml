@@ -3,7 +3,6 @@ name: Run new-release script
 on:
   repository_dispatch:
     types: [publish]
-  workflow_dispatch:
 
 jobs:
   generate_diffs:
@@ -31,4 +30,4 @@ jobs:
         run: yarn install
 
       - name: Run new-release script
-        run: ./new-release.sh 0.74.0
+        run: ./new-release.sh ${{ github.event.client_payload.version }}
