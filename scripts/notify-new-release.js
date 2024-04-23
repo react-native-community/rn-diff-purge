@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Octokit, App } from "octokit"
+import { Octokit } from "octokit"
 
 const repositoryData = {
 	owner: "react-native-community",
@@ -36,11 +36,11 @@ const releasesFileName = "RELEASES"
 				`Release file changed on commit ${commitRef}, sending notification`
 			)
 
-			// 	await octokit.rest.repos.createDispatchEvent({
-			// 		...repositoryData,
-			// 		repo: "upgrade-support",
-			// 		event_type: "NEW_RELEASE",
-			// 	})
+			await octokit.rest.repos.createDispatchEvent({
+				...repositoryData,
+				repo: "upgrade-support",
+				event_type: "NEW_RELEASE",
+			})
 		})
 	)
 })()
