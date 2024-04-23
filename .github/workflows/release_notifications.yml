@@ -7,7 +7,7 @@ on:
 
 jobs:
   release_notifications:
-    runs-on: ubuntu-latest
+    runs-on: node20
     steps:
       - name: Checkout
         run: git clone --single-branch --branch master --depth 1 https://${{secrets.GITHUB_TOKEN}}@github.com/${{ github.repository }}.git .
