@@ -16,6 +16,4 @@ jobs:
           cache: "yarn"
       - run: yarn install
       - name: Notify upgrade-support of a new release
-        uses: ./actions/notifyNewRelease
-        with:
-          github-token: ${{ secrets.SPECIAL_GITHUB_TOKEN }}
+        run: ./scripts/notify-new-release.js ${{ secrets.SPECIAL_GITHUB_TOKEN }}
