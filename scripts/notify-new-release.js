@@ -13,8 +13,8 @@ const releasesFileName = "RELEASES"
 	const octokit = new Octokit({ auth: process.env.SPECIAL_GITHUB_TOKEN })
 
 	// await Promise.all(
-	const commits = await octokit.rest.repos.listCommits(repositoryData)
-	console.log(commits)
+	const commits = (await octokit.rest.repos.listCommits(repositoryData)).data
+	console.log(JSON.stringify(commits))
 	// octokit.context.payload.commits.map(async ({ id: commitRef }) => {
 	// 	const {
 	// 		data: { files },
