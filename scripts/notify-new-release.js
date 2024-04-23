@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import github from "@actions/github"
+import { Octokit, App } from "octokit"
 
 const repositoryData = {
 	owner: "react-native-community",
@@ -10,37 +10,38 @@ const repositoryData = {
 const releasesFileName = "RELEASES"
 
 ;(async () => {
-	console.log(process.argv[1])
-	const client = new github.GitHub(process.argv[1])
+	const octokit = new Octokit({ auth: process.env.SPECIAL_GITHUB_TOKEN })
 
-	await Promise.all(
-		github.context.payload.commits.map(async ({ id: commitRef }) => {
-			const {
-				data: { files },
-			} = await client.repos.getCommit({
-				...repositoryData,
-				ref: commitRef,
-			})
+	// const client = new github.GitHub(process.env.SPECIAL_GITHUB_TOKEN)
 
-			const [releaseFile] = files.filter(
-				({ filename }) => filename === releasesFileName
-			)
+	// await Promise.all(
+	// octokit.context.payload.commits.map(async ({ id: commitRef }) => {
+	// 	const {
+	// 		data: { files },
+	// 	} = await octokit.rest.repos.getCommit({
+	// 		...repositoryData,
+	// 		ref: commitRef,
+	// 	})
 
-			if (!releaseFile) {
-				console.log(`No release file changed on commit ${commitRef}, moving on`)
+	// 	const [releaseFile] = files.filter(
+	// 		({ filename }) => filename === releasesFileName
+	// 	)
 
-				return
-			}
+	// 	if (!releaseFile) {
+	// 		console.log(`No release file changed on commit ${commitRef}, moving on`)
 
-			console.log(
-				`Release file changed on commit ${commitRef}, sending notification`
-			)
+	// 		return
+	// 	}
 
-			await client.repos.createDispatchEvent({
-				...repositoryData,
-				repo: "upgrade-support",
-				event_type: "NEW_RELEASE",
-			})
-		})
-	)
+	// 	console.log(
+	// 		`Release file changed on commit ${commitRef}, sending notification`
+	// 	)
+
+	await octokit.rest.repos.createDispatchEvent({
+		...repositoryData,
+		repo: "upgrade-support",
+		event_type: "NEW_RELEASE",
+	})
+	// })
+	// )
 })()

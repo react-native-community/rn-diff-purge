@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+env:
+  SPECIAL_GITHUB_TOKEN: ${{ secrets.SPECIAL_GITHUB_TOKEN }}
+
 jobs:
   release_notifications:
     runs-on: ubuntu-latest
@@ -16,4 +19,4 @@ jobs:
           cache: "yarn"
       - run: yarn install
       - name: Notify upgrade-support of a new release
-        run: ./scripts/notify-new-release.js ${{ secrets.SPECIAL_GITHUB_TOKEN }}
+        run: ./scripts/notify-new-release.js
