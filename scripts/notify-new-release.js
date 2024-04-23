@@ -11,7 +11,7 @@ const repositoryData = {
 const releasesFileName = "RELEASES"
 
 ;(async () => {
-	const client = process.argv[1]
+	const client = new github.GitHub(process.argv[1])
 
 	await Promise.all(
 		github.context.payload.commits.map(async ({ id: commitRef }) => {
