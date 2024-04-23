@@ -9,8 +9,12 @@ jobs:
   release_notifications:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        run: git clone --single-branch --branch master --depth 1 https://${{secrets.GITHUB_TOKEN}}@github.com/${{ github.repository }}.git .
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+      - run: yarn install
       - name: Notify upgrade-support of a new release
         uses: ./actions/notifyNewRelease
         with:
