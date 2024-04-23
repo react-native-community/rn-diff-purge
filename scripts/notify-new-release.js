@@ -12,9 +12,9 @@ const releasesFileName = "RELEASES"
 ;(async () => {
 	const octokit = new Octokit({ auth: process.env.SPECIAL_GITHUB_TOKEN })
 
-	// const client = new github.GitHub(process.env.SPECIAL_GITHUB_TOKEN)
-
 	// await Promise.all(
+	const commits = await octokit.rest.repos.listCommits(repositoryData)
+	console.log(commits)
 	// octokit.context.payload.commits.map(async ({ id: commitRef }) => {
 	// 	const {
 	// 		data: { files },
@@ -37,11 +37,11 @@ const releasesFileName = "RELEASES"
 	// 		`Release file changed on commit ${commitRef}, sending notification`
 	// 	)
 
-	await octokit.rest.repos.createDispatchEvent({
-		...repositoryData,
-		repo: "upgrade-support",
-		event_type: "NEW_RELEASE",
-	})
+	// 	await octokit.rest.repos.createDispatchEvent({
+	// 		...repositoryData,
+	// 		repo: "upgrade-support",
+	// 		event_type: "NEW_RELEASE",
+	// 	})
 	// })
 	// )
 })()
