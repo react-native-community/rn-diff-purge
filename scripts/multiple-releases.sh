@@ -16,5 +16,5 @@ releases=(
 for v in "${releases[@]}"
 do
     echo $v
-    ./new-release.sh $v
+    ./scripts/new-release.sh $v
 done
