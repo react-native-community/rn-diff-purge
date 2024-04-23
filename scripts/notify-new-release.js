@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import core from "@actions/core"
 import github from "@actions/github"
 
 const repositoryData = {
@@ -11,6 +10,7 @@ const repositoryData = {
 const releasesFileName = "RELEASES"
 
 ;(async () => {
+	console.log(process.argv[1])
 	const client = new github.GitHub(process.argv[1])
 
 	await Promise.all(
@@ -27,12 +27,12 @@ const releasesFileName = "RELEASES"
 			)
 
 			if (!releaseFile) {
-				core.debug(`No release file changed on commit ${commitRef}, moving on`)
+				console.log(`No release file changed on commit ${commitRef}, moving on`)
 
 				return
 			}
 
-			core.debug(
+			console.log(
 				`Release file changed on commit ${commitRef}, sending notification`
 			)
 
