@@ -12,36 +12,35 @@ const releasesFileName = "RELEASES"
 ;(async () => {
 	const octokit = new Octokit({ auth: process.env.SPECIAL_GITHUB_TOKEN })
 
-	// await Promise.all(
-	const commits = (await octokit.rest.repos.listCommits(repositoryData)).data
-	console.log(JSON.stringify(commits))
-	// octokit.context.payload.commits.map(async ({ id: commitRef }) => {
-	// 	const {
-	// 		data: { files },
-	// 	} = await octokit.rest.repos.getCommit({
-	// 		...repositoryData,
-	// 		ref: commitRef,
-	// 	})
+	await Promise.all(
+		(
+			await octokit.rest.repos.listCommits(repositoryData)
+		).data.map(async ({ sha: commitRef }) => {
+			const { files } = (
+				await octokit.rest.repos.getCommit({
+					...repositoryData,
+					ref: commitRef,
+				})
+			).data
 
-	// 	const [releaseFile] = files.filter(
-	// 		({ filename }) => filename === releasesFileName
-	// 	)
+			const [releaseFile] = files.filter(
+				({ filename }) => filename === releasesFileName
+			)
 
-	// 	if (!releaseFile) {
-	// 		console.log(`No release file changed on commit ${commitRef}, moving on`)
+			if (!releaseFile) {
+				console.log(`No release file changed on commit ${commitRef}, moving on`)
+				return
+			}
 
-	// 		return
-	// 	}
+			console.log(
+				`Release file changed on commit ${commitRef}, sending notification`
+			)
 
-	// 	console.log(
-	// 		`Release file changed on commit ${commitRef}, sending notification`
-	// 	)
-
-	// 	await octokit.rest.repos.createDispatchEvent({
-	// 		...repositoryData,
-	// 		repo: "upgrade-support",
-	// 		event_type: "NEW_RELEASE",
-	// 	})
-	// })
-	// )
+			// 	await octokit.rest.repos.createDispatchEvent({
+			// 		...repositoryData,
+			// 		repo: "upgrade-support",
+			// 		event_type: "NEW_RELEASE",
+			// 	})
+		})
+	)
 })()
