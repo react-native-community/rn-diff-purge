@@ -75,13 +75,8 @@ function generateNewReleaseBranch () {
 function addReleaseToList () {
     echo "$newRelease" >> "$ReleasesFile"
 
-    if command -v tac; then
-        #   take each line ->dedup->    sort them              -> reverse them -> save them
-        cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tac           > tmpfile
-    else
-        #   take each line ->dedup->    sort them              -> reverse them -> save them
-        cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
-    fi
+    #   take each line ->dedup->    sort them              -> reverse them -> save them
+    cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
 
     mv tmpfile "$ReleasesFile"
 }
