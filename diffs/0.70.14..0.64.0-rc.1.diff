@@ -2801,86 +2801,17 @@ index 0000000000..0afd6876ab
 +      location = "group:Pods/Pods.xcodeproj">
 +   </FileRef>
 +</Workspace>
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-new file mode 100644
-index 0000000000..c3420dada6
---- /dev/null
-+++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-@@ -0,0 +1,62 @@
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBridge.h>
-+#import <React/RCTBundleURLProvider.h>
-+#import <React/RCTRootView.h>
-+
-+#ifdef FB_SONARKIT_ENABLED
-+#import <FlipperKit/FlipperClient.h>
-+#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
-+#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
-+#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
-+#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
-+#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-+
-+static void InitializeFlipper(UIApplication *application) {
-+  FlipperClient *client = [FlipperClient sharedClient];
-+  SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
-+  [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];
-+  [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
-+  [client addPlugin:[FlipperKitReactPlugin new]];
-+  [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
-+  [client start];
-+}
-+#endif
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
-+#ifdef FB_SONARKIT_ENABLED
-+  InitializeFlipper(application);
-+#endif
-+
-+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-+                                                   moduleName:@"RnDiffApp"
-+                                            initialProperties:nil];
-+
-+  if (@available(iOS 13.0, *)) {
-+      rootView.backgroundColor = [UIColor systemBackgroundColor];
-+  } else {
-+      rootView.backgroundColor = [UIColor whiteColor];
-+  }
-+
-+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-+  UIViewController *rootViewController = [UIViewController new];
-+  rootViewController.view = rootView;
-+  self.window.rootViewController = rootViewController;
-+  [self.window makeKeyAndVisible];
-+  return YES;
-+}
-+
-+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-+{
-+#if DEBUG
-+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-+#else
-+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-+#endif
-+}
-+
-+@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-deleted file mode 100644
-index e3debc9fd6..0000000000
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+similarity index 21%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index e3debc9fd6..c3420dada6 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-+++ /dev/null
-@@ -1,133 +0,0 @@
--#import "AppDelegate.h"
--
--#import <React/RCTBridge.h>
--#import <React/RCTBundleURLProvider.h>
--#import <React/RCTRootView.h>
--
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+@@ -4,52 +4,42 @@
+ #import <React/RCTBundleURLProvider.h>
+ #import <React/RCTRootView.h>
+ 
 -#import <React/RCTAppSetupUtils.h>
 -
 -#if RCT_NEW_ARCH_ENABLED
@@ -2900,14 +2831,30 @@ index e3debc9fd6..0000000000
 -  RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
 -  std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
 -  facebook::react::ContextContainer::Shared _contextContainer;
--}
++#ifdef FB_SONARKIT_ENABLED
++#import <FlipperKit/FlipperClient.h>
++#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
++#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
++#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
++#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
++#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
++
++static void InitializeFlipper(UIApplication *application) {
++  FlipperClient *client = [FlipperClient sharedClient];
++  SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
++  [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];
++  [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
++  [client addPlugin:[FlipperKitReactPlugin new]];
++  [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
++  [client start];
+ }
 -@end
--#endif
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
+ #endif
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
 -  RCTAppSetupPrepareApp(application);
 -
 -  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
@@ -2918,25 +2865,30 @@ index e3debc9fd6..0000000000
 -  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
 -  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
 -  bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
--#endif
--
++#ifdef FB_SONARKIT_ENABLED
++  InitializeFlipper(application);
+ #endif
+ 
 -  NSDictionary *initProps = [self prepareInitialProps];
 -  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"RnDiffApp", initProps);
--
--  if (@available(iOS 13.0, *)) {
++  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
++  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
++                                                   moduleName:@"RnDiffApp"
++                                            initialProperties:nil];
+ 
+   if (@available(iOS 13.0, *)) {
 -    rootView.backgroundColor = [UIColor systemBackgroundColor];
--  } else {
++      rootView.backgroundColor = [UIColor systemBackgroundColor];
+   } else {
 -    rootView.backgroundColor = [UIColor whiteColor];
--  }
--
--  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
--  UIViewController *rootViewController = [UIViewController new];
--  rootViewController.view = rootView;
--  self.window.rootViewController = rootViewController;
--  [self.window makeKeyAndVisible];
--  return YES;
--}
--
++      rootView.backgroundColor = [UIColor whiteColor];
+   }
+ 
+   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+@@ -60,74 +50,13 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
+   return YES;
+ }
+ 
 -/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
 -///
 -/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
@@ -2959,15 +2911,16 @@ index e3debc9fd6..0000000000
 -  return initProps;
 -}
 -
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--#if DEBUG
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
 -  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
--#else
--  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
--#endif
--}
--
++  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
+ }
+ 
 -#if RCT_NEW_ARCH_ENABLED
 -
 -#pragma mark - RCTCxxBridgeDelegate
@@ -3007,7 +2960,7 @@ index e3debc9fd6..0000000000
 -
 -#endif
 -
--@end
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
 index 81213230de..118c98f746 100644
 --- a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json

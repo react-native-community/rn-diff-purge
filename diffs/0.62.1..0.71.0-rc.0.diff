@@ -1,6 +1,6 @@
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
-index 934256cb2..000000000
+index 934256cb29..0000000000
 --- a/RnDiffApp/.buckconfig
 +++ /dev/null
 @@ -1,6 +0,0 @@
@@ -12,14 +12,14 @@ index 934256cb2..000000000
 -  central = https://repo1.maven.org/maven2
 diff --git a/RnDiffApp/.bundle/config b/RnDiffApp/.bundle/config
 new file mode 100644
-index 000000000..848943bb5
+index 0000000000..848943bb52
 --- /dev/null
 +++ b/RnDiffApp/.bundle/config
 @@ -0,0 +1,2 @@
 +BUNDLE_PATH: "vendor/bundle"
 +BUNDLE_FORCE_RUBY_PLATFORM: 1
 diff --git a/RnDiffApp/.eslintrc.js b/RnDiffApp/.eslintrc.js
-index 40c6dcd05..189699723 100644
+index 40c6dcd05f..189699723f 100644
 --- a/RnDiffApp/.eslintrc.js
 +++ b/RnDiffApp/.eslintrc.js
 @@ -1,4 +1,6 @@
@@ -31,7 +31,7 @@ index 40c6dcd05..189699723 100644
  };
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
 deleted file mode 100644
-index 786366c4f..000000000
+index 786366c4f3..0000000000
 --- a/RnDiffApp/.flowconfig
 +++ /dev/null
 @@ -1,74 +0,0 @@
@@ -111,13 +111,13 @@ index 786366c4f..000000000
 -^0.113.0
 diff --git a/RnDiffApp/.gitattributes b/RnDiffApp/.gitattributes
 deleted file mode 100644
-index d42ff1835..000000000
+index d42ff18354..0000000000
 --- a/RnDiffApp/.gitattributes
 +++ /dev/null
 @@ -1 +0,0 @@
 -*.pbxproj -text
 diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
-index ad572e632..16f8c3077 100644
+index ad572e632b..16f8c30773 100644
 --- a/RnDiffApp/.gitignore
 +++ b/RnDiffApp/.gitignore
 @@ -20,6 +20,7 @@ DerivedData
@@ -176,13 +176,13 @@ index ad572e632..16f8c3077 100644
 +.metro-health-check*
 diff --git a/RnDiffApp/.node-version b/RnDiffApp/.node-version
 new file mode 100644
-index 000000000..b6a7d89c6
+index 0000000000..b6a7d89c68
 --- /dev/null
 +++ b/RnDiffApp/.node-version
 @@ -0,0 +1 @@
 +16
 diff --git a/RnDiffApp/.prettierrc.js b/RnDiffApp/.prettierrc.js
-index 5c4de1a4f..2b540746a 100644
+index 5c4de1a4f6..2b540746a7 100644
 --- a/RnDiffApp/.prettierrc.js
 +++ b/RnDiffApp/.prettierrc.js
 @@ -1,6 +1,7 @@
@@ -196,45 +196,58 @@ index 5c4de1a4f..2b540746a 100644
  };
 diff --git a/RnDiffApp/.ruby-version b/RnDiffApp/.ruby-version
 new file mode 100644
-index 000000000..49cdd668e
+index 0000000000..49cdd668e1
 --- /dev/null
 +++ b/RnDiffApp/.ruby-version
 @@ -0,0 +1 @@
 +2.7.6
-diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
-deleted file mode 100644
-index 23cd158d8..000000000
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.tsx
+similarity index 25%
+rename from RnDiffApp/App.js
+rename to RnDiffApp/App.tsx
+index 23cd158d89..71991406fe 100644
 --- a/RnDiffApp/App.js
-+++ /dev/null
-@@ -1,114 +0,0 @@
--/**
-- * Sample React Native App
-- * https://github.com/facebook/react-native
-- *
-- * @format
++++ b/RnDiffApp/App.tsx
+@@ -3,86 +3,100 @@
+  * https://github.com/facebook/react-native
+  *
+  * @format
 - * @flow strict-local
-- */
--
--import React from 'react';
--import {
--  SafeAreaView,
+  */
+ 
+ import React from 'react';
++import type {PropsWithChildren} from 'react';
+ import {
+   SafeAreaView,
 -  StyleSheet,
--  ScrollView,
+   ScrollView,
 -  View,
 -  Text,
--  StatusBar,
--} from 'react-native';
--
--import {
+   StatusBar,
++  StyleSheet,
++  Text,
++  useColorScheme,
++  View,
+ } from 'react-native';
+ 
+ import {
 -  Header,
 -  LearnMoreLinks,
--  Colors,
--  DebugInstructions,
--  ReloadInstructions,
--} from 'react-native/Libraries/NewAppScreen';
--
+   Colors,
+   DebugInstructions,
++  Header,
++  LearnMoreLinks,
+   ReloadInstructions,
+ } from 'react-native/Libraries/NewAppScreen';
+ 
 -const App: () => React$Node = () => {
--  return (
++type SectionProps = PropsWithChildren<{
++  title: string;
++}>;
++
++function Section({children, title}: SectionProps): JSX.Element {
++  const isDarkMode = useColorScheme() === 'dark';
+   return (
 -    <>
 -      <StatusBar barStyle="dark-content" />
 -      <SafeAreaView>
@@ -278,89 +291,6 @@ index 23cd158d8..000000000
 -        </ScrollView>
 -      </SafeAreaView>
 -    </>
--  );
--};
--
--const styles = StyleSheet.create({
--  scrollView: {
--    backgroundColor: Colors.lighter,
--  },
--  engine: {
--    position: 'absolute',
--    right: 0,
--  },
--  body: {
--    backgroundColor: Colors.white,
--  },
--  sectionContainer: {
--    marginTop: 32,
--    paddingHorizontal: 24,
--  },
--  sectionTitle: {
--    fontSize: 24,
--    fontWeight: '600',
--    color: Colors.black,
--  },
--  sectionDescription: {
--    marginTop: 8,
--    fontSize: 18,
--    fontWeight: '400',
--    color: Colors.dark,
--  },
--  highlight: {
--    fontWeight: '700',
--  },
--  footer: {
--    color: Colors.dark,
--    fontSize: 12,
--    fontWeight: '600',
--    padding: 4,
--    paddingRight: 12,
--    textAlign: 'right',
--  },
--});
--
--export default App;
-diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
-new file mode 100644
-index 000000000..71991406f
---- /dev/null
-+++ b/RnDiffApp/App.tsx
-@@ -0,0 +1,118 @@
-+/**
-+ * Sample React Native App
-+ * https://github.com/facebook/react-native
-+ *
-+ * @format
-+ */
-+
-+import React from 'react';
-+import type {PropsWithChildren} from 'react';
-+import {
-+  SafeAreaView,
-+  ScrollView,
-+  StatusBar,
-+  StyleSheet,
-+  Text,
-+  useColorScheme,
-+  View,
-+} from 'react-native';
-+
-+import {
-+  Colors,
-+  DebugInstructions,
-+  Header,
-+  LearnMoreLinks,
-+  ReloadInstructions,
-+} from 'react-native/Libraries/NewAppScreen';
-+
-+type SectionProps = PropsWithChildren<{
-+  title: string;
-+}>;
-+
-+function Section({children, title}: SectionProps): JSX.Element {
-+  const isDarkMode = useColorScheme() === 'dark';
-+  return (
 +    <View style={styles.sectionContainer}>
 +      <Text
 +        style={[
@@ -381,7 +311,8 @@ index 000000000..71991406f
 +        {children}
 +      </Text>
 +    </View>
-+  );
+   );
+-};
 +}
 +
 +function App(): JSX.Element {
@@ -424,30 +355,50 @@ index 000000000..71991406f
 +    </SafeAreaView>
 +  );
 +}
-+
-+const styles = StyleSheet.create({
-+  sectionContainer: {
-+    marginTop: 32,
-+    paddingHorizontal: 24,
-+  },
-+  sectionTitle: {
-+    fontSize: 24,
-+    fontWeight: '600',
-+  },
-+  sectionDescription: {
-+    marginTop: 8,
-+    fontSize: 18,
-+    fontWeight: '400',
-+  },
-+  highlight: {
-+    fontWeight: '700',
-+  },
-+});
-+
-+export default App;
+ 
+ const styles = StyleSheet.create({
+-  scrollView: {
+-    backgroundColor: Colors.lighter,
+-  },
+-  engine: {
+-    position: 'absolute',
+-    right: 0,
+-  },
+-  body: {
+-    backgroundColor: Colors.white,
+-  },
+   sectionContainer: {
+     marginTop: 32,
+     paddingHorizontal: 24,
+@@ -90,25 +104,15 @@ const styles = StyleSheet.create({
+   sectionTitle: {
+     fontSize: 24,
+     fontWeight: '600',
+-    color: Colors.black,
+   },
+   sectionDescription: {
+     marginTop: 8,
+     fontSize: 18,
+     fontWeight: '400',
+-    color: Colors.dark,
+   },
+   highlight: {
+     fontWeight: '700',
+   },
+-  footer: {
+-    color: Colors.dark,
+-    fontSize: 12,
+-    fontWeight: '600',
+-    padding: 4,
+-    paddingRight: 12,
+-    textAlign: 'right',
+-  },
+ });
+ 
+ export default App;
 diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
 new file mode 100644
-index 000000000..b15113b7e
+index 0000000000..b15113b7e0
 --- /dev/null
 +++ b/RnDiffApp/Gemfile
 @@ -0,0 +1,6 @@
@@ -463,7 +414,7 @@ rename from RnDiffApp/__tests__/App-test.js
 rename to RnDiffApp/__tests__/App-test.tsx
 diff --git a/RnDiffApp/android/app/_BUCK b/RnDiffApp/android/app/_BUCK
 deleted file mode 100644
-index 70a29f41b..000000000
+index 70a29f41b3..0000000000
 --- a/RnDiffApp/android/app/_BUCK
 +++ /dev/null
 @@ -1,55 +0,0 @@
@@ -523,7 +474,7 @@ index 70a29f41b..000000000
 -    ],
 -)
 diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
-index ae67f6005..11cbb718a 100644
+index ae67f6005e..11cbb718a7 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
 @@ -1,133 +1,99 @@
@@ -822,7 +773,7 @@ index ae67f6005..11cbb718a 100644
  apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 diff --git a/RnDiffApp/android/app/build_defs.bzl b/RnDiffApp/android/app/build_defs.bzl
 deleted file mode 100644
-index fff270f8d..000000000
+index fff270f8d1..0000000000
 --- a/RnDiffApp/android/app/build_defs.bzl
 +++ /dev/null
 @@ -1,19 +0,0 @@
@@ -846,7 +797,7 @@ index fff270f8d..000000000
 -            binary_jar = jarfile,
 -        )
 diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
-index fa26aa56e..4b185bc15 100644
+index fa26aa56e1..4b185bc159 100644
 --- a/RnDiffApp/android/app/src/debug/AndroidManifest.xml
 +++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
 @@ -4,5 +4,10 @@
@@ -862,7 +813,7 @@ index fa26aa56e..4b185bc15 100644
 +    </application>
  </manifest>
 diff --git a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
-index 5c106db4b..7b39146ca 100644
+index 5c106db4b3..7b39146caa 100644
 --- a/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
 +++ b/RnDiffApp/android/app/src/debug/java/com/rndiffapp/ReactNativeFlipper.java
 @@ -1,5 +1,5 @@
@@ -908,7 +859,7 @@ index 5c106db4b..7b39146ca 100644
                public void onReactContextInitialized(ReactContext reactContext) {
                  reactInstanceManager.removeReactInstanceEventListener(this);
 diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
-index 3e43f2621..4122f36a5 100644
+index 3e43f26210..4122f36a59 100644
 --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
 +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
 @@ -1,5 +1,4 @@
@@ -938,7 +889,7 @@ index 3e43f2621..4122f36a5 100644
 -
  </manifest>
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
-index e325e8cf9..98eb1cdea 100644
+index e325e8cf9c..98eb1cdead 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
 @@ -1,6 +1,9 @@
@@ -974,7 +925,7 @@ index e325e8cf9..98eb1cdea 100644
 +  }
  }
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
-index 04df56cf6..8687dc632 100644
+index 04df56cf60..8687dc632f 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 @@ -1,20 +1,19 @@
@@ -1062,7 +1013,7 @@ index 04df56cf6..8687dc632 100644
  }
 diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
 new file mode 100644
-index 000000000..f35d99620
+index 0000000000..f35d996202
 --- /dev/null
 +++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
 @@ -0,0 +1,36 @@
@@ -1103,7 +1054,7 @@ index 000000000..f35d99620
 +
 +</inset>
 diff --git a/RnDiffApp/android/app/src/main/res/values/styles.xml b/RnDiffApp/android/app/src/main/res/values/styles.xml
-index 62fe59fa4..7ba83a2ad 100644
+index 62fe59fa48..7ba83a2ad5 100644
 --- a/RnDiffApp/android/app/src/main/res/values/styles.xml
 +++ b/RnDiffApp/android/app/src/main/res/values/styles.xml
 @@ -1,9 +1,9 @@
@@ -1120,7 +1071,7 @@ index 62fe59fa4..7ba83a2ad 100644
  </resources>
 diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 new file mode 100644
-index 000000000..b755b303c
+index 0000000000..b755b303ce
 --- /dev/null
 +++ b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 @@ -0,0 +1,20 @@
@@ -1145,7 +1096,7 @@ index 000000000..b755b303c
 +  }
 +}
 diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
-index 5d5d188b3..c9a672214 100644
+index 5d5d188b35..c9a6722148 100644
 --- a/RnDiffApp/android/build.gradle
 +++ b/RnDiffApp/android/build.gradle
 @@ -2,26 +2,26 @@
@@ -1197,7 +1148,7 @@ index 5d5d188b3..c9a672214 100644
      }
  }
 diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
-index 1bbc8cc20..e4af465e8 100644
+index 1bbc8cc20f..e4af465e8a 100644
 --- a/RnDiffApp/android/gradle.properties
 +++ b/RnDiffApp/android/gradle.properties
 @@ -9,8 +9,8 @@
@@ -2178,7 +2129,7 @@ zj@vL0#s`$h0DKtxPsh$|LqKdjz{$21=&Bbm+>rn{X7O47|Cs*AZy{o=|Bn&=ZiyHA
 i*O30_C`2#}`~jRVQIld|{?*KnI(tyPXN>~T(Ebm|$u)5R
 
 diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
-index 1ba7206f8..8fad3f5a9 100644
+index 1ba7206f88..8fad3f5a98 100644
 --- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
 +++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
 @@ -1,5 +1,5 @@
@@ -2189,7 +2140,7 @@ index 1ba7206f8..8fad3f5a9 100644
  zipStoreBase=GRADLE_USER_HOME
  zipStorePath=wrapper/dists
 diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
-index 83f2acfdc..1b6c78733 100755
+index 83f2acfdc3..1b6c787337 100755
 --- a/RnDiffApp/android/gradlew
 +++ b/RnDiffApp/android/gradlew
 @@ -1,7 +1,7 @@
@@ -2526,7 +2477,7 @@ index 83f2acfdc..1b6c78733 100755
  
  exec "$JAVACMD" "$@"
 diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
-index 9618d8d96..107acd32c 100644
+index 9618d8d960..107acd32c4 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
 @@ -29,6 +29,9 @@ if "%DIRNAME%" == "" set DIRNAME=.
@@ -2589,7 +2540,7 @@ index 9618d8d96..107acd32c 100644
  :end
  @rem End local scope for the variables with windows NT shell
 diff --git a/RnDiffApp/android/settings.gradle b/RnDiffApp/android/settings.gradle
-index 73a47b2ed..67adcdce4 100644
+index 73a47b2eda..67adcdce46 100644
 --- a/RnDiffApp/android/settings.gradle
 +++ b/RnDiffApp/android/settings.gradle
 @@ -1,3 +1,4 @@
@@ -2599,7 +2550,7 @@ index 73a47b2ed..67adcdce4 100644
 +includeBuild('../node_modules/react-native-gradle-plugin')
 diff --git a/RnDiffApp/ios/.xcode.env b/RnDiffApp/ios/.xcode.env
 new file mode 100644
-index 000000000..3d5782c71
+index 0000000000..3d5782c715
 --- /dev/null
 +++ b/RnDiffApp/ios/.xcode.env
 @@ -0,0 +1,11 @@
@@ -2615,7 +2566,7 @@ index 000000000..3d5782c71
 +# . "$(brew --prefix nvm)/nvm.sh" --no-use
 +export NODE_BINARY=$(command -v node)
 diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
-index 162d524ac..3888a68c3 100644
+index 162d524aca..3888a68c37 100644
 --- a/RnDiffApp/ios/Podfile
 +++ b/RnDiffApp/ios/Podfile
 @@ -1,81 +1,45 @@
@@ -2734,7 +2685,7 @@ index 162d524ac..3888a68c3 100644
  end
 diff --git a/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist b/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
 deleted file mode 100644
-index ecbd496be..000000000
+index ecbd496be7..0000000000
 --- a/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
 +++ /dev/null
 @@ -1,53 +0,0 @@
@@ -2793,7 +2744,7 @@ index ecbd496be..000000000
 -</plist>
 diff --git a/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist b/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist
 deleted file mode 100644
-index 886825ccc..000000000
+index 886825ccc9..0000000000
 --- a/RnDiffApp/ios/RnDiffApp-tvOSTests/Info.plist
 +++ /dev/null
 @@ -1,24 +0,0 @@
@@ -2822,7 +2773,7 @@ index 886825ccc..000000000
 -</dict>
 -</plist>
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
-index 4d705a23c..6417a272b 100644
+index 4d705a23ce..6417a272b9 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 @@ -3,23 +3,17 @@
@@ -3703,7 +3654,7 @@ index 4d705a23c..6417a272b 100644
  			buildConfigurations = (
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
 deleted file mode 100644
-index 39ea48eb9..000000000
+index 39ea48eb9c..0000000000
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
 +++ /dev/null
 @@ -1,88 +0,0 @@
@@ -3796,7 +3747,7 @@ index 39ea48eb9..000000000
 -   </ArchiveAction>
 -</Scheme>
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
-index d7445abc1..e1d631ba5 100644
+index d7445abc12..e1d631ba5e 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
 @@ -1,6 +1,6 @@
@@ -3809,7 +3760,7 @@ index d7445abc1..e1d631ba5 100644
        parallelizeBuildables = "YES"
 diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
 deleted file mode 100644
-index 0afd6876a..000000000
+index 0afd6876ab..0000000000
 --- a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
 +++ /dev/null
 @@ -1,10 +0,0 @@
@@ -3824,7 +3775,7 @@ index 0afd6876a..000000000
 -   </FileRef>
 -</Workspace>
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
-index ef1de86a2..d04640c7a 100644
+index ef1de86a2a..d04640c7a3 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
 @@ -1,8 +1,6 @@
@@ -3838,16 +3789,18 @@ index ef1de86a2..d04640c7a 100644
 +@interface AppDelegate : RCTAppDelegate
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-deleted file mode 100644
-index c7db8b55d..000000000
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+similarity index 19%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.m
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index c7db8b55d3..e14c4b4182 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-+++ /dev/null
-@@ -1,58 +0,0 @@
--#import "AppDelegate.h"
--
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -1,58 +1,32 @@
+ #import "AppDelegate.h"
+ 
 -#import <React/RCTBridge.h>
--#import <React/RCTBundleURLProvider.h>
+ #import <React/RCTBundleURLProvider.h>
 -#import <React/RCTRootView.h>
 -
 -#if DEBUG
@@ -3868,11 +3821,11 @@ index c7db8b55d..000000000
 -  [client start];
 -}
 -#endif
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
 -#if DEBUG
 -  InitializeFlipper(application);
 -#endif
@@ -3890,45 +3843,20 @@ index c7db8b55d..000000000
 -  self.window.rootViewController = rootViewController;
 -  [self.window makeKeyAndVisible];
 -  return YES;
--}
--
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--#if DEBUG
--  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
--#else
--  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
--#endif
--}
--
--@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-new file mode 100644
-index 000000000..e14c4b418
---- /dev/null
-+++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-@@ -0,0 +1,32 @@
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBundleURLProvider.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
 +  self.moduleName = @"RnDiffApp";
 +  return [super application:application didFinishLaunchingWithOptions:launchOptions];
-+}
-+
-+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-+{
-+#if DEBUG
+ }
+ 
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
+-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 +  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-+#else
-+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-+#endif
-+}
-+
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
+ }
+ 
 +/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
 +///
 +/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
@@ -3939,10 +3867,10 @@ index 000000000..e14c4b418
 +  return true;
 +}
 +
-+@end
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib b/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 deleted file mode 100644
-index 6888d1cba..000000000
+index 6888d1cba1..0000000000
 --- a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 +++ /dev/null
 @@ -1,42 +0,0 @@
@@ -3989,7 +3917,7 @@ index 6888d1cba..000000000
 -    </objects>
 -</document>
 diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
-index 118c98f74..81213230d 100644
+index 118c98f746..81213230de 100644
 --- a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
 +++ b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
 @@ -2,37 +2,52 @@
@@ -4062,7 +3990,7 @@ index 118c98f74..81213230d 100644
 \ No newline at end of file
 +}
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
-index 1e7814116..91e8626f3 100644
+index 1e78141166..91e8626f36 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
 @@ -17,17 +17,15 @@
@@ -4087,7 +4015,7 @@ index 1e7814116..91e8626f3 100644
  			<key>localhost</key>
 diff --git a/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard b/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
 new file mode 100644
-index 000000000..8f74d3c92
+index 0000000000..8f74d3c92a
 --- /dev/null
 +++ b/RnDiffApp/ios/RnDiffApp/LaunchScreen.storyboard
 @@ -0,0 +1,47 @@
@@ -4139,7 +4067,7 @@ index 000000000..8f74d3c92
 +    </scenes>
 +</document>
 diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
-index b1df44b95..d645c7246 100644
+index b1df44b953..d645c7246c 100644
 --- a/RnDiffApp/ios/RnDiffApp/main.m
 +++ b/RnDiffApp/ios/RnDiffApp/main.m
 @@ -2,7 +2,8 @@
@@ -4153,7 +4081,7 @@ index b1df44b95..d645c7246 100644
      return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
    }
 diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-index fe83ad244..fae48110a 100644
+index fe83ad2442..fae48110ab 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 @@ -13,7 +13,7 @@
@@ -4209,7 +4137,7 @@ index fe83ad244..fae48110a 100644
 -
  @end
 diff --git a/RnDiffApp/metro.config.js b/RnDiffApp/metro.config.js
-index 13a964217..e91aba937 100644
+index 13a964217f..e91aba937c 100644
 --- a/RnDiffApp/metro.config.js
 +++ b/RnDiffApp/metro.config.js
 @@ -10,7 +10,7 @@ module.exports = {
@@ -4222,7 +4150,7 @@ index 13a964217..e91aba937 100644
      }),
    },
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index f8b7f71b9..8be748b96 100644
+index f8b7f71b99..8be748b961 100644
 --- a/RnDiffApp/package.json
 +++ b/RnDiffApp/package.json
 @@ -5,23 +5,30 @@
@@ -4270,7 +4198,7 @@ index f8b7f71b9..8be748b96 100644
      "preset": "react-native"
 diff --git a/RnDiffApp/tsconfig.json b/RnDiffApp/tsconfig.json
 new file mode 100644
-index 000000000..45a6c7072
+index 0000000000..45a6c70722
 --- /dev/null
 +++ b/RnDiffApp/tsconfig.json
 @@ -0,0 +1,3 @@

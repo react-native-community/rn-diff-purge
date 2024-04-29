@@ -5912,12 +5912,14 @@ index 5d2808256c..4b5644f21d 100644
 +@property (nonatomic, strong) UIWindow *window;
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-new file mode 100644
-index 0000000000..3a9c978fc1
---- /dev/null
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+similarity index 17%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index fe439f4026..3a9c978fc1 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-@@ -0,0 +1,35 @@
+@@ -1,36 +1,35 @@
 +/**
 + * Copyright (c) Facebook, Inc. and its affiliates.
 + *
@@ -5925,56 +5927,25 @@ index 0000000000..3a9c978fc1
 + * LICENSE file in the root directory of this source tree.
 + */
 +
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBundleURLProvider.h>
+ #import "AppDelegate.h"
+ 
+ #import <React/RCTBundleURLProvider.h>
 +#import <React/RCTRootView.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
-+  NSURL *jsCodeLocation;
-+
-+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-+
-+  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-+                                                      moduleName:@"RnDiffApp"
-+                                               initialProperties:nil
-+                                                   launchOptions:launchOptions];
-+  rootView.backgroundColor = [UIColor blackColor];
-+
-+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-+  UIViewController *rootViewController = [UIViewController new];
-+  rootViewController.view = rootView;
-+  self.window.rootViewController = rootViewController;
-+  [self.window makeKeyAndVisible];
-+  return YES;
-+}
-+
-+@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-deleted file mode 100644
-index fe439f4026..0000000000
---- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-+++ /dev/null
-@@ -1,36 +0,0 @@
--#import "AppDelegate.h"
--
--#import <React/RCTBundleURLProvider.h>
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
 -  self.moduleName = @"RnDiffApp";
 -  // You can add your custom initial props in the dictionary below.
 -  // They will be passed down to the ViewController used by React Native.
 -  self.initialProps = @{};
--
++  NSURL *jsCodeLocation;
+ 
 -  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 -}
--
++  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+ 
 -- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 -{
 -#if DEBUG
@@ -5983,7 +5954,12 @@ index fe439f4026..0000000000
 -  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 -#endif
 -}
--
++  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
++                                                      moduleName:@"RnDiffApp"
++                                               initialProperties:nil
++                                                   launchOptions:launchOptions];
++  rootView.backgroundColor = [UIColor blackColor];
+ 
 -/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
 -///
 -/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
@@ -5992,9 +5968,15 @@ index fe439f4026..0000000000
 -- (BOOL)concurrentRootEnabled
 -{
 -  return true;
--}
--
--@end
++  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
++  UIViewController *rootViewController = [UIViewController new];
++  rootViewController.view = rootView;
++  self.window.rootViewController = rootViewController;
++  [self.window makeKeyAndVisible];
++  return YES;
+ }
+ 
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib b/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 new file mode 100644
 index 0000000000..6888d1cba1

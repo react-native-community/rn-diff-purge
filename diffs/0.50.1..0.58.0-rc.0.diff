@@ -1,5 +1,5 @@
 diff --git a/RnDiffApp/.babelrc b/RnDiffApp/.babelrc
-index a9ce1369e..d4b74b5be 100644
+index a9ce1369e6..d4b74b5be7 100644
 --- a/RnDiffApp/.babelrc
 +++ b/RnDiffApp/.babelrc
 @@ -1,3 +1,3 @@
@@ -8,7 +8,7 @@ index a9ce1369e..d4b74b5be 100644
 +  "presets": ["module:metro-react-native-babel-preset"]
  }
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
-index 1ac2a7be5..f3eb74de6 100644
+index 1ac2a7be59..f3eb74de67 100644
 --- a/RnDiffApp/.flowconfig
 +++ b/RnDiffApp/.flowconfig
 @@ -16,33 +16,55 @@
@@ -74,7 +74,7 @@ index 1ac2a7be5..f3eb74de6 100644
 -^0.56.0
 +^0.85.0
 diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
-index 0826423b7..5d647565f 100644
+index 0826423b78..5d647565fa 100644
 --- a/RnDiffApp/.gitignore
 +++ b/RnDiffApp/.gitignore
 @@ -51,3 +51,6 @@ buck-out/
@@ -85,7 +85,7 @@ index 0826423b7..5d647565f 100644
 +# Bundle artifact
 +*.jsbundle
 diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
-index d4ae45c19..bb4823295 100644
+index d4ae45c199..bb48232958 100644
 --- a/RnDiffApp/App.js
 +++ b/RnDiffApp/App.js
 @@ -1,37 +1,30 @@
@@ -141,7 +141,7 @@ index d4ae45c19..bb4823295 100644
    }
 diff --git a/RnDiffApp/__tests__/App.js b/RnDiffApp/__tests__/App.js
 deleted file mode 100644
-index d0b9ee316..000000000
+index d0b9ee3165..0000000000
 --- a/RnDiffApp/__tests__/App.js
 +++ /dev/null
 @@ -1,12 +0,0 @@
@@ -158,7 +158,7 @@ index d0b9ee316..000000000
 -  );
 -});
 diff --git a/RnDiffApp/android/app/BUCK b/RnDiffApp/android/app/BUCK
-index df60bffd7..70a29f41b 100644
+index df60bffd7d..70a29f41b3 100644
 --- a/RnDiffApp/android/app/BUCK
 +++ b/RnDiffApp/android/app/BUCK
 @@ -8,23 +8,13 @@
@@ -190,7 +190,7 @@ index df60bffd7..70a29f41b 100644
  android_library(
      name = "all-libs",
 diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
-index c8ea1af3f..5dad4f71b 100644
+index c8ea1af3fe..5dad4f71bc 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
 @@ -94,25 +94,22 @@ def enableSeparateBuildPerCPUArchitecture = false
@@ -248,7 +248,7 @@ index c8ea1af3f..5dad4f71b 100644
  // Run this once to be able to run the application with BUCK
 diff --git a/RnDiffApp/android/app/build_defs.bzl b/RnDiffApp/android/app/build_defs.bzl
 new file mode 100644
-index 000000000..fff270f8d
+index 0000000000..fff270f8d1
 --- /dev/null
 +++ b/RnDiffApp/android/app/build_defs.bzl
 @@ -0,0 +1,19 @@
@@ -272,7 +272,7 @@ index 000000000..fff270f8d
 +            binary_jar = jarfile,
 +        )
 diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
-index 6e8516c8d..a92fa177e 100644
+index 6e8516c8d6..a92fa177ee 100644
 --- a/RnDiffApp/android/app/proguard-rules.pro
 +++ b/RnDiffApp/android/app/proguard-rules.pro
 @@ -15,56 +15,3 @@
@@ -333,7 +333,7 @@ index 6e8516c8d..a92fa177e 100644
 --dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 --dontwarn okio.**
 diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
-index 31a894a96..bc3a93103 100644
+index 31a894a96d..bc3a931033 100644
 --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
 +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
 @@ -1,20 +1,15 @@
@@ -2074,7 +2074,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
-index eed9972b5..7fde4f576 100644
+index eed9972b5c..7fde4f576b 100644
 --- a/RnDiffApp/android/build.gradle
 +++ b/RnDiffApp/android/build.gradle
 @@ -1,11 +1,19 @@
@@ -2117,7 +2117,7 @@ index eed9972b5..7fde4f576 100644
 +    distributionUrl = distributionUrl.replace("bin", "all")
 +}
 diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
-index 1fd964e90..89e0d99e2 100644
+index 1fd964e90b..89e0d99e21 100644
 --- a/RnDiffApp/android/gradle.properties
 +++ b/RnDiffApp/android/gradle.properties
 @@ -16,5 +16,3 @@
@@ -3659,7 +3659,7 @@ z+<|&P9SKnDr$0{rcXo5qlq=Oo^k03k2ZBT2`t!I3FvcF%?$je22hY&r19m%X+!8pH
 MR6yud!{M+00Sm=Wj{pDw
 
 diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
-index dbdc05d27..b6517bb1d 100644
+index dbdc05d274..b6517bb1d1 100644
 --- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
 +++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
 @@ -2,4 +2,4 @@ distributionBase=GRADLE_USER_HOME
@@ -3669,7 +3669,7 @@ index dbdc05d27..b6517bb1d 100644
 -distributionUrl=https\://services.gradle.org/distributions/gradle-2.14.1-all.zip
 +distributionUrl=https\://services.gradle.org/distributions/gradle-4.4-all.zip
 diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
-index 91a7e269e..cccdd3d51 100755
+index 91a7e269e1..cccdd3d517 100755
 --- a/RnDiffApp/android/gradlew
 +++ b/RnDiffApp/android/gradlew
 @@ -1,4 +1,4 @@
@@ -3808,7 +3808,7 @@ index 91a7e269e..cccdd3d51 100755
 -exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
 +exec "$JAVACMD" "$@"
 diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
-index aec99730b..e95643d6a 100644
+index aec99730b4..e95643d6a2 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
 @@ -8,14 +8,14 @@
@@ -3854,7 +3854,7 @@ index aec99730b..e95643d6a 100644
  :execute
  @rem Setup the command line
 diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
-index 39283d1e1..3ac66525d 100644
+index 39283d1e17..3ac66525d8 100644
 --- a/RnDiffApp/index.js
 +++ b/RnDiffApp/index.js
 @@ -1,4 +1,10 @@
@@ -3871,7 +3871,7 @@ index 39283d1e1..3ac66525d 100644
 -AppRegistry.registerComponent('RnDiffApp', () => App);
 +AppRegistry.registerComponent(appName, () => App);
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
-index 93a87368f..58ec8159d 100644
+index 93a87368f6..58ec8159d5 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 @@ -13,6 +13,7 @@
@@ -4368,7 +4368,7 @@ index 93a87368f..58ec8159d 100644
  				SDKROOT = iphoneos;
  				VALIDATE_PRODUCT = YES;
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
-index 9023fff46..c02632f91 100644
+index 9023fff467..c02632f914 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
 @@ -1,6 +1,6 @@
@@ -4380,7 +4380,7 @@ index 9023fff46..c02632f91 100644
     <BuildAction
        parallelizeBuildables = "NO"
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
-index 886c05686..1b922ea25 100644
+index 886c056868..1b922ea254 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
 @@ -1,6 +1,6 @@
@@ -4392,7 +4392,7 @@ index 886c05686..1b922ea25 100644
     <BuildAction
        parallelizeBuildables = "NO"
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
-index a9654d5e0..4b5644f21 100644
+index a9654d5e01..4b5644f21d 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
 @@ -1,10 +1,8 @@
@@ -4410,7 +4410,7 @@ index a9654d5e0..4b5644f21 100644
  
  #import <UIKit/UIKit.h>
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-index 82f99f283..3a9c978fc 100644
+index 82f99f283e..3a9c978fc1 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 @@ -1,10 +1,8 @@
@@ -4437,7 +4437,7 @@ index 82f99f283..3a9c978fc 100644
    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
    UIViewController *rootViewController = [UIViewController new];
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
-index 10258dd6b..e11e5b4a1 100644
+index 10258dd6b5..e11e5b4a1f 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
 @@ -9,7 +9,7 @@
@@ -4468,7 +4468,7 @@ index 10258dd6b..e11e5b4a1 100644
  		<dict>
  			<key>localhost</key>
 diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
-index 3d767fcbb..c316cf816 100644
+index 3d767fcbb9..c316cf816e 100644
 --- a/RnDiffApp/ios/RnDiffApp/main.m
 +++ b/RnDiffApp/ios/RnDiffApp/main.m
 @@ -1,10 +1,8 @@
@@ -4486,7 +4486,7 @@ index 3d767fcbb..c316cf816 100644
  
  #import <UIKit/UIKit.h>
 diff --git a/RnDiffApp/ios/RnDiffAppTests/Info.plist b/RnDiffApp/ios/RnDiffAppTests/Info.plist
-index 886825ccc..ba72822e8 100644
+index 886825ccc9..ba72822e87 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/Info.plist
 +++ b/RnDiffApp/ios/RnDiffAppTests/Info.plist
 @@ -7,7 +7,7 @@
@@ -4499,7 +4499,7 @@ index 886825ccc..ba72822e8 100644
  	<string>6.0</string>
  	<key>CFBundleName</key>
 diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-index 716333120..62b126ce3 100644
+index 716333120b..62b126ce3e 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 @@ -1,10 +1,8 @@
@@ -4517,7 +4517,7 @@ index 716333120..62b126ce3 100644
  
  #import <UIKit/UIKit.h>
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index 38d216769..4082cf13d 100644
+index 38d2167693..4082cf13d3 100644
 --- a/RnDiffApp/package.json
 +++ b/RnDiffApp/package.json
 @@ -1,22 +1,22 @@

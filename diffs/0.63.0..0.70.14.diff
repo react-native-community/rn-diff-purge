@@ -3737,18 +3737,17 @@ index 0afd6876ab..0000000000
 -      location = "group:Pods/Pods.xcodeproj">
 -   </FileRef>
 -</Workspace>
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-deleted file mode 100644
-index 8a7cfe81ac..0000000000
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+similarity index 20%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.m
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index 8a7cfe81ac..e3debc9fd6 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-+++ /dev/null
-@@ -1,58 +0,0 @@
--#import "AppDelegate.h"
--
--#import <React/RCTBridge.h>
--#import <React/RCTBundleURLProvider.h>
--#import <React/RCTRootView.h>
--
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -4,39 +4,53 @@
+ #import <React/RCTBundleURLProvider.h>
+ #import <React/RCTRootView.h>
+ 
 -#ifdef FB_SONARKIT_ENABLED
 -#import <FlipperKit/FlipperClient.h>
 -#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -3765,54 +3764,6 @@ index 8a7cfe81ac..0000000000
 -  [client addPlugin:[FlipperKitReactPlugin new]];
 -  [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
 -  [client start];
--}
--#endif
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
--#ifdef FB_SONARKIT_ENABLED
--  InitializeFlipper(application);
--#endif
--
--  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
--  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
--                                                   moduleName:@"RnDiffApp"
--                                            initialProperties:nil];
--
--  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
--
--  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
--  UIViewController *rootViewController = [UIViewController new];
--  rootViewController.view = rootView;
--  self.window.rootViewController = rootViewController;
--  [self.window makeKeyAndVisible];
--  return YES;
--}
--
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--#if DEBUG
--  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
--#else
--  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
--#endif
--}
--
--@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-new file mode 100644
-index 0000000000..e3debc9fd6
---- /dev/null
-+++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-@@ -0,0 +1,133 @@
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBridge.h>
-+#import <React/RCTBundleURLProvider.h>
-+#import <React/RCTRootView.h>
-+
 +#import <React/RCTAppSetupUtils.h>
 +
 +#if RCT_NEW_ARCH_ENABLED
@@ -3832,18 +3783,25 @@ index 0000000000..e3debc9fd6
 +  RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
 +  std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
 +  facebook::react::ContextContainer::Shared _contextContainer;
-+}
+ }
 +@end
-+#endif
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
+ #endif
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+-#ifdef FB_SONARKIT_ENABLED
+-  InitializeFlipper(application);
+-#endif
 +  RCTAppSetupPrepareApp(application);
-+
-+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-+
+ 
+   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                                   moduleName:@"RnDiffApp"
+-                                            initialProperties:nil];
+ 
+-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 +#if RCT_NEW_ARCH_ENABLED
 +  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
 +  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
@@ -3860,15 +3818,13 @@ index 0000000000..e3debc9fd6
 +  } else {
 +    rootView.backgroundColor = [UIColor whiteColor];
 +  }
-+
-+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-+  UIViewController *rootViewController = [UIViewController new];
-+  rootViewController.view = rootView;
-+  self.window.rootViewController = rootViewController;
-+  [self.window makeKeyAndVisible];
-+  return YES;
-+}
-+
+ 
+   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+   UIViewController *rootViewController = [UIViewController new];
+@@ -46,13 +60,74 @@ static void InitializeFlipper(UIApplication *application) {
+   return YES;
+ }
+ 
 +/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
 +///
 +/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
@@ -3891,15 +3847,16 @@ index 0000000000..e3debc9fd6
 +  return initProps;
 +}
 +
-+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-+{
-+#if DEBUG
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
+-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 +  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-+#else
-+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-+#endif
-+}
-+
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
+ }
+ 
 +#if RCT_NEW_ARCH_ENABLED
 +
 +#pragma mark - RCTCxxBridgeDelegate
@@ -3939,7 +3896,7 @@ index 0000000000..e3debc9fd6
 +
 +#endif
 +
-+@end
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
 index 118c98f746..81213230de 100644
 --- a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json

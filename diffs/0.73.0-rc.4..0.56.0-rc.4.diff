@@ -5943,12 +5943,14 @@ index 5d2808256c..d4f2580b1e 100644
 +@property (nonatomic, strong) UIWindow *window;
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-new file mode 100644
-index 0000000000..81bd9f50ab
---- /dev/null
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+similarity index 17%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index cc2e8bacb4..81bd9f50ab 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-@@ -0,0 +1,35 @@
+@@ -1,31 +1,35 @@
 +/**
 + * Copyright (c) 2015-present, Facebook, Inc.
 + *
@@ -5956,61 +5958,35 @@ index 0000000000..81bd9f50ab
 + * LICENSE file in the root directory of this source tree.
 + */
 +
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBundleURLProvider.h>
+ #import "AppDelegate.h"
+ 
+ #import <React/RCTBundleURLProvider.h>
 +#import <React/RCTRootView.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+-  self.moduleName = @"RnDiffApp";
+-  // You can add your custom initial props in the dictionary below.
+-  // They will be passed down to the ViewController used by React Native.
+-  self.initialProps = @{};
 +  NSURL *jsCodeLocation;
-+
+ 
+-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+-}
 +  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-+
+ 
+-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+-{
+-  return [self getBundleURL];
+-}
 +  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 +                                                      moduleName:@"RnDiffApp"
 +                                               initialProperties:nil
 +                                                   launchOptions:launchOptions];
 +  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-+
-+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-+  UIViewController *rootViewController = [UIViewController new];
-+  rootViewController.view = rootView;
-+  self.window.rootViewController = rootViewController;
-+  [self.window makeKeyAndVisible];
-+  return YES;
-+}
-+
-+@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-deleted file mode 100644
-index cc2e8bacb4..0000000000
---- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-+++ /dev/null
-@@ -1,31 +0,0 @@
--#import "AppDelegate.h"
--
--#import <React/RCTBundleURLProvider.h>
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
--  self.moduleName = @"RnDiffApp";
--  // You can add your custom initial props in the dictionary below.
--  // They will be passed down to the ViewController used by React Native.
--  self.initialProps = @{};
--
--  return [super application:application didFinishLaunchingWithOptions:launchOptions];
--}
--
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--  return [self getBundleURL];
--}
--
+ 
 -- (NSURL *)getBundleURL
 -{
 -#if DEBUG
@@ -6018,9 +5994,15 @@ index cc2e8bacb4..0000000000
 -#else
 -  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 -#endif
--}
--
--@end
++  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
++  UIViewController *rootViewController = [UIViewController new];
++  rootViewController.view = rootView;
++  self.window.rootViewController = rootViewController;
++  [self.window makeKeyAndVisible];
++  return YES;
+ }
+ 
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib b/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 new file mode 100644
 index 0000000000..6888d1cba1

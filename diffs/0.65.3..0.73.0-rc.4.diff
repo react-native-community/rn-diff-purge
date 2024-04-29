@@ -862,46 +862,34 @@ index ad4899cc39..4122f36a59 100644
          <intent-filter>
              <action android:name="android.intent.action.MAIN" />
              <category android:name="android.intent.category.LAUNCHER" />
-diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
-deleted file mode 100644
-index e325e8cf9c..0000000000
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
+similarity index 17%
+rename from RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+rename to RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
+index e325e8cf9c..5f3267210c 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
-+++ /dev/null
-@@ -1,15 +0,0 @@
--package com.rndiffapp;
--
--import com.facebook.react.ReactActivity;
--
--public class MainActivity extends ReactActivity {
--
--  /**
--   * Returns the name of the main component registered from JavaScript. This is used to schedule
--   * rendering of the component.
--   */
--  @Override
--  protected String getMainComponentName() {
--    return "RnDiffApp";
--  }
--}
-diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
-new file mode 100644
-index 0000000000..5f3267210c
---- /dev/null
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
-@@ -0,0 +1,22 @@
+@@ -1,15 +1,22 @@
+-package com.rndiffapp;
 +package com.rndiffapp
-+
+ 
+-import com.facebook.react.ReactActivity;
 +import com.facebook.react.ReactActivity
 +import com.facebook.react.ReactActivityDelegate
 +import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 +import com.facebook.react.defaults.DefaultReactActivityDelegate
-+
+ 
+-public class MainActivity extends ReactActivity {
 +class MainActivity : ReactActivity() {
-+
-+  /**
-+   * Returns the name of the main component registered from JavaScript. This is used to schedule
-+   * rendering of the component.
-+   */
+ 
+   /**
+    * Returns the name of the main component registered from JavaScript. This is used to schedule
+    * rendering of the component.
+    */
+-  @Override
+-  protected String getMainComponentName() {
+-    return "RnDiffApp";
+-  }
 +  override fun getMainComponentName(): String = "RnDiffApp"
 +
 +  /**
@@ -910,7 +898,7 @@ index 0000000000..5f3267210c
 +   */
 +  override fun createReactActivityDelegate(): ReactActivityDelegate =
 +      DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
-+}
+ }
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 deleted file mode 100644
 index 04df56cf60..0000000000
@@ -3750,16 +3738,18 @@ index ef1de86a2a..5d2808256c 100644
 +@interface AppDelegate : RCTAppDelegate
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-deleted file mode 100644
-index c3420dada6..0000000000
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+similarity index 19%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.m
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index c3420dada6..cc2e8bacb4 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-+++ /dev/null
-@@ -1,62 +0,0 @@
--#import "AppDelegate.h"
--
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -1,59 +1,28 @@
+ #import "AppDelegate.h"
+ 
 -#import <React/RCTBridge.h>
--#import <React/RCTBundleURLProvider.h>
+ #import <React/RCTBundleURLProvider.h>
 -#import <React/RCTRootView.h>
 -
 -#ifdef FB_SONARKIT_ENABLED
@@ -3780,15 +3770,19 @@ index c3420dada6..0000000000
 -  [client start];
 -}
 -#endif
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
 -#ifdef FB_SONARKIT_ENABLED
 -  InitializeFlipper(application);
 -#endif
--
++  self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
+ 
 -  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 -  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
 -                                                   moduleName:@"RnDiffApp"
@@ -3806,55 +3800,22 @@ index c3420dada6..0000000000
 -  self.window.rootViewController = rootViewController;
 -  [self.window makeKeyAndVisible];
 -  return YES;
--}
--
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--#if DEBUG
--  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
--#else
--  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
--#endif
--}
--
--@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-new file mode 100644
-index 0000000000..cc2e8bacb4
---- /dev/null
-+++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-@@ -0,0 +1,31 @@
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBundleURLProvider.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
-+  self.moduleName = @"RnDiffApp";
-+  // You can add your custom initial props in the dictionary below.
-+  // They will be passed down to the ViewController used by React Native.
-+  self.initialProps = @{};
-+
 +  return [super application:application didFinishLaunchingWithOptions:launchOptions];
-+}
-+
-+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ }
+ 
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 +{
 +  return [self getBundleURL];
 +}
 +
 +- (NSURL *)getBundleURL
-+{
-+#if DEBUG
+ {
+ #if DEBUG
+-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 +  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-+#else
-+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-+#endif
-+}
-+
-+@end
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
 diff --git a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json b/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json
 index 118c98f746..81213230de 100644
 --- a/RnDiffApp/ios/RnDiffApp/Images.xcassets/AppIcon.appiconset/Contents.json

@@ -1,6 +1,6 @@
 diff --git a/RnDiffApp/.babelrc b/RnDiffApp/.babelrc
 deleted file mode 100644
-index a9ce1369e..000000000
+index a9ce1369e6..0000000000
 --- a/RnDiffApp/.babelrc
 +++ /dev/null
 @@ -1,3 +0,0 @@
@@ -9,7 +9,7 @@ index a9ce1369e..000000000
 -}
 diff --git a/RnDiffApp/.eslintrc.js b/RnDiffApp/.eslintrc.js
 new file mode 100644
-index 000000000..40c6dcd05
+index 0000000000..40c6dcd05f
 --- /dev/null
 +++ b/RnDiffApp/.eslintrc.js
 @@ -0,0 +1,4 @@
@@ -18,7 +18,7 @@ index 000000000..40c6dcd05
 +  extends: '@react-native-community',
 +};
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
-index 3c0adb566..1319ea127 100644
+index 3c0adb5663..1319ea1278 100644
 --- a/RnDiffApp/.flowconfig
 +++ b/RnDiffApp/.flowconfig
 @@ -11,24 +11,37 @@
@@ -122,7 +122,7 @@ index 3c0adb566..1319ea127 100644
 -^0.75.0
 +^0.98.0
 diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
-index 5d647565f..828cc8846 100644
+index 5d647565fa..828cc88460 100644
 --- a/RnDiffApp/.gitignore
 +++ b/RnDiffApp/.gitignore
 @@ -54,3 +54,6 @@ buck-out/
@@ -133,7 +133,7 @@ index 5d647565f..828cc8846 100644
 +# CocoaPods
 +/ios/Pods/
 diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
-index 171d0f0f4..fee529a8f 100644
+index 171d0f0f4a..fee529a8f2 100644
 --- a/RnDiffApp/App.js
 +++ b/RnDiffApp/App.js
 @@ -6,44 +6,92 @@
@@ -264,7 +264,7 @@ index 171d0f0f4..fee529a8f 100644
 +export default App;
 diff --git a/RnDiffApp/__tests__/App-test.js b/RnDiffApp/__tests__/App-test.js
 new file mode 100644
-index 000000000..178476699
+index 0000000000..178476699b
 --- /dev/null
 +++ b/RnDiffApp/__tests__/App-test.js
 @@ -0,0 +1,14 @@
@@ -283,7 +283,7 @@ index 000000000..178476699
 +  renderer.create(<App />);
 +});
 diff --git a/RnDiffApp/android/app/BUCK b/RnDiffApp/android/app/BUCK
-index df60bffd7..70a29f41b 100644
+index df60bffd7d..70a29f41b3 100644
 --- a/RnDiffApp/android/app/BUCK
 +++ b/RnDiffApp/android/app/BUCK
 @@ -8,23 +8,13 @@
@@ -315,7 +315,7 @@ index df60bffd7..70a29f41b 100644
  android_library(
      name = "all-libs",
 diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
-index 115f1e3d4..d8c59af1a 100644
+index 115f1e3d4d..d8c59af1a6 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
 @@ -18,6 +18,9 @@ import com.android.build.OutputFile
@@ -426,7 +426,7 @@ index 115f1e3d4..d8c59af1a 100644
 +apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 diff --git a/RnDiffApp/android/app/build_defs.bzl b/RnDiffApp/android/app/build_defs.bzl
 new file mode 100644
-index 000000000..fff270f8d
+index 0000000000..fff270f8d1
 --- /dev/null
 +++ b/RnDiffApp/android/app/build_defs.bzl
 @@ -0,0 +1,19 @@
@@ -450,7 +450,7 @@ index 000000000..fff270f8d
 +            binary_jar = jarfile,
 +        )
 diff --git a/RnDiffApp/android/app/proguard-rules.pro b/RnDiffApp/android/app/proguard-rules.pro
-index a92fa177e..11b025724 100644
+index a92fa177ee..11b025724a 100644
 --- a/RnDiffApp/android/app/proguard-rules.pro
 +++ b/RnDiffApp/android/app/proguard-rules.pro
 @@ -8,10 +8,3 @@
@@ -466,7 +466,7 @@ index a92fa177e..11b025724 100644
 -#}
 diff --git a/RnDiffApp/android/app/src/debug/AndroidManifest.xml b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
 new file mode 100644
-index 000000000..fa26aa56e
+index 0000000000..fa26aa56e1
 --- /dev/null
 +++ b/RnDiffApp/android/app/src/debug/AndroidManifest.xml
 @@ -0,0 +1,8 @@
@@ -479,7 +479,7 @@ index 000000000..fa26aa56e
 +    <application android:usesCleartextTraffic="true" tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" />
 +</manifest>
 diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
-index 9c67097db..f3e0d1555 100644
+index 9c67097db6..f3e0d15559 100644
 --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
 +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
 @@ -1,13 +1,13 @@
@@ -499,7 +499,7 @@ index 9c67097db..f3e0d1555 100644
        android:theme="@style/AppTheme">
        <activity
 diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
-index efd809f1d..913152cce 100644
+index efd809f1d2..913152ccee 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 @@ -2,13 +2,12 @@ package com.rndiffapp;
@@ -533,7 +533,7 @@ index efd809f1d..913152cce 100644
  
      @Override
 diff --git a/RnDiffApp/android/app/src/main/res/values/styles.xml b/RnDiffApp/android/app/src/main/res/values/styles.xml
-index 319eb0ca1..62fe59fa4 100644
+index 319eb0ca10..62fe59fa48 100644
 --- a/RnDiffApp/android/app/src/main/res/values/styles.xml
 +++ b/RnDiffApp/android/app/src/main/res/values/styles.xml
 @@ -3,6 +3,7 @@
@@ -545,7 +545,7 @@ index 319eb0ca1..62fe59fa4 100644
  
  </resources>
 diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
-index 49569e4db..e7732fe0d 100644
+index 49569e4db5..e7732fe0d7 100644
 --- a/RnDiffApp/android/build.gradle
 +++ b/RnDiffApp/android/build.gradle
 @@ -1,15 +1,19 @@
@@ -603,7 +603,7 @@ index 49569e4db..e7732fe0d 100644
 +    }
  }
 diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
-index 1fd964e90..027ef9db8 100644
+index 1fd964e90b..027ef9db8a 100644
 --- a/RnDiffApp/android/gradle.properties
 +++ b/RnDiffApp/android/gradle.properties
 @@ -17,4 +17,5 @@
@@ -2496,7 +2496,7 @@ z{l@h8`{8eW_kT3#v8(wfO+w9YG=GEr-k`rO|6uzb`y7AbAJ+W~{QvENeB57;-6%ha
 i{G0y!V)(zDD$ivhfM0>%lFKlIAOn@>z?;AQ_5T2l2V_kE
 
 diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
-index 81a86e213..ee69dd68d 100644
+index 81a86e2134..ee69dd68d1 100644
 --- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
 +++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
 @@ -1,5 +1,5 @@
@@ -2507,7 +2507,7 @@ index 81a86e213..ee69dd68d 100644
  zipStorePath=wrapper/dists
 -distributionUrl=https\://services.gradle.org/distributions/gradle-3.5.1-all.zip
 diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
-index 91a7e269e..b0d6d0ab5 100755
+index 91a7e269e1..b0d6d0ab5d 100755
 --- a/RnDiffApp/android/gradlew
 +++ b/RnDiffApp/android/gradlew
 @@ -1,4 +1,20 @@
@@ -2662,7 +2662,7 @@ index 91a7e269e..b0d6d0ab5 100755
 -exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
 +exec "$JAVACMD" "$@"
 diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
-index aec99730b..15e1ee37a 100644
+index aec99730b4..15e1ee37a7 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
 @@ -1,3 +1,19 @@
@@ -2729,7 +2729,7 @@ index aec99730b..15e1ee37a 100644
  @rem Setup the command line
 diff --git a/RnDiffApp/android/keystores/BUCK b/RnDiffApp/android/keystores/BUCK
 deleted file mode 100644
-index 88e4c31b2..000000000
+index 88e4c31b28..0000000000
 --- a/RnDiffApp/android/keystores/BUCK
 +++ /dev/null
 @@ -1,8 +0,0 @@
@@ -2743,7 +2743,7 @@ index 88e4c31b2..000000000
 -)
 diff --git a/RnDiffApp/android/keystores/debug.keystore.properties b/RnDiffApp/android/keystores/debug.keystore.properties
 deleted file mode 100644
-index 121bfb49f..000000000
+index 121bfb49f0..0000000000
 --- a/RnDiffApp/android/keystores/debug.keystore.properties
 +++ /dev/null
 @@ -1,4 +0,0 @@
@@ -2752,7 +2752,7 @@ index 121bfb49f..000000000
 -key.store.password=android
 -key.alias.password=android
 diff --git a/RnDiffApp/android/settings.gradle b/RnDiffApp/android/settings.gradle
-index e06f8b32c..73a47b2ed 100644
+index e06f8b32ce..73a47b2eda 100644
 --- a/RnDiffApp/android/settings.gradle
 +++ b/RnDiffApp/android/settings.gradle
 @@ -1,3 +1,3 @@
@@ -2762,7 +2762,7 @@ index e06f8b32c..73a47b2ed 100644
  include ':app'
 diff --git a/RnDiffApp/babel.config.js b/RnDiffApp/babel.config.js
 new file mode 100644
-index 000000000..f842b77fc
+index 0000000000..f842b77fcf
 --- /dev/null
 +++ b/RnDiffApp/babel.config.js
 @@ -0,0 +1,3 @@
@@ -2770,7 +2770,7 @@ index 000000000..f842b77fc
 +  presets: ['module:metro-react-native-babel-preset'],
 +};
 diff --git a/RnDiffApp/index.js b/RnDiffApp/index.js
-index 802b4350d..a850d031d 100644
+index 802b4350d6..a850d031de 100644
 --- a/RnDiffApp/index.js
 +++ b/RnDiffApp/index.js
 @@ -1,4 +1,6 @@
@@ -2783,7 +2783,7 @@ index 802b4350d..a850d031d 100644
  import App from './App';
 diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
 new file mode 100644
-index 000000000..895fbfad8
+index 0000000000..895fbfad85
 --- /dev/null
 +++ b/RnDiffApp/ios/Podfile
 @@ -0,0 +1,45 @@
@@ -2833,7 +2833,7 @@ index 000000000..895fbfad8
 +
 +end
 diff --git a/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist b/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
-index 2fb6a11c2..ecbd496be 100644
+index 2fb6a11c2c..ecbd496be7 100644
 --- a/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp-tvOS/Info.plist
 @@ -7,7 +7,7 @@
@@ -2886,7 +2886,7 @@ index 2fb6a11c2..ecbd496be 100644
  </dict>
  </plist>
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
-index a9649b489..96364b595 100644
+index a9649b489f..96364b5959 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
 @@ -7,75 +7,22 @@
@@ -4222,7 +4222,7 @@ index a9649b489..96364b595 100644
  				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
  				GCC_WARN_UNDECLARED_SELECTOR = YES;
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
-index 9023fff46..c02632f91 100644
+index 9023fff467..c02632f914 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp-tvOS.xcscheme
 @@ -1,6 +1,6 @@
@@ -4234,7 +4234,7 @@ index 9023fff46..c02632f91 100644
     <BuildAction
        parallelizeBuildables = "NO"
 diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
-index 886c05686..1b922ea25 100644
+index 886c056868..1b922ea254 100644
 --- a/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
 +++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/xcshareddata/xcschemes/RnDiffApp.xcscheme
 @@ -1,6 +1,6 @@
@@ -4247,7 +4247,7 @@ index 886c05686..1b922ea25 100644
        parallelizeBuildables = "NO"
 diff --git a/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
 new file mode 100644
-index 000000000..0afd6876a
+index 0000000000..0afd6876ab
 --- /dev/null
 +++ b/RnDiffApp/ios/RnDiffApp.xcworkspace/contents.xcworkspacedata
 @@ -0,0 +1,10 @@
@@ -4262,7 +4262,7 @@ index 000000000..0afd6876a
 +   </FileRef>
 +</Workspace>
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
-index d4f2580b1..2726d5e13 100644
+index d4f2580b1e..2726d5e13c 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
 @@ -1,13 +1,14 @@
@@ -4283,7 +4283,7 @@ index d4f2580b1..2726d5e13 100644
  @property (nonatomic, strong) UIWindow *window;
  
 diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-index 81bd9f50a..4c12ae4bb 100644
+index 81bd9f50ab..4c12ae4bba 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 @@ -1,5 +1,5 @@
@@ -4335,7 +4335,7 @@ index 81bd9f50a..4c12ae4bb 100644
 +
  @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
-index 10258dd6b..1e7814116 100644
+index 10258dd6b5..1e78141166 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
 @@ -9,7 +9,7 @@
@@ -4390,7 +4390,7 @@ index 10258dd6b..1e7814116 100644
  </dict>
  </plist>
 diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
-index c73e00625..c316cf816 100644
+index c73e006253..c316cf816e 100644
 --- a/RnDiffApp/ios/RnDiffApp/main.m
 +++ b/RnDiffApp/ios/RnDiffApp/main.m
 @@ -1,5 +1,5 @@
@@ -4401,7 +4401,7 @@ index c73e00625..c316cf816 100644
   * This source code is licensed under the MIT license found in the
   * LICENSE file in the root directory of this source tree.
 diff --git a/RnDiffApp/ios/RnDiffAppTests/Info.plist b/RnDiffApp/ios/RnDiffAppTests/Info.plist
-index 886825ccc..ba72822e8 100644
+index 886825ccc9..ba72822e87 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/Info.plist
 +++ b/RnDiffApp/ios/RnDiffAppTests/Info.plist
 @@ -7,7 +7,7 @@
@@ -4414,7 +4414,7 @@ index 886825ccc..ba72822e8 100644
  	<string>6.0</string>
  	<key>CFBundleName</key>
 diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-index f1d140e37..62b126ce3 100644
+index f1d140e372..62b126ce3e 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 @@ -1,5 +1,5 @@
@@ -4426,7 +4426,7 @@ index f1d140e37..62b126ce3 100644
   * LICENSE file in the root directory of this source tree.
 diff --git a/RnDiffApp/metro.config.js b/RnDiffApp/metro.config.js
 new file mode 100644
-index 000000000..13a964217
+index 0000000000..13a964217f
 --- /dev/null
 +++ b/RnDiffApp/metro.config.js
 @@ -0,0 +1,17 @@
@@ -4448,7 +4448,7 @@ index 000000000..13a964217
 +  },
 +};
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index cac5616f0..f9c7fad8b 100644
+index cac5616f04..f9c7fad8b5 100644
 --- a/RnDiffApp/package.json
 +++ b/RnDiffApp/package.json
 @@ -3,20 +3,25 @@

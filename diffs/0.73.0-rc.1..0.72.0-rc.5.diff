@@ -251,35 +251,48 @@ index 0000000000..7b39146caa
 +    }
 +  }
 +}
-diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
-new file mode 100644
-index 0000000000..720c374709
---- /dev/null
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+similarity index 20%
+rename from RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
+rename to RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
+index 5f3267210c..720c374709 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.java
-@@ -0,0 +1,32 @@
+@@ -1,22 +1,32 @@
+-package com.rndiffapp
 +package com.rndiffapp;
-+
+ 
+-import com.facebook.react.ReactActivity
+-import com.facebook.react.ReactActivityDelegate
+-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
+-import com.facebook.react.defaults.DefaultReactActivityDelegate
 +import com.facebook.react.ReactActivity;
 +import com.facebook.react.ReactActivityDelegate;
 +import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 +import com.facebook.react.defaults.DefaultReactActivityDelegate;
-+
+ 
+-class MainActivity : ReactActivity() {
 +public class MainActivity extends ReactActivity {
-+
-+  /**
-+   * Returns the name of the main component registered from JavaScript. This is used to schedule
-+   * rendering of the component.
-+   */
+ 
+   /**
+    * Returns the name of the main component registered from JavaScript. This is used to schedule
+    * rendering of the component.
+    */
+-  override fun getMainComponentName(): String = "RnDiffApp"
 +  @Override
 +  protected String getMainComponentName() {
 +    return "RnDiffApp";
 +  }
-+
-+  /**
+ 
+   /**
+-   * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
+-   * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
 +   * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
 +   * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
 +   * (aka React 18) with two boolean flags.
-+   */
+    */
+-  override fun createReactActivityDelegate(): ReactActivityDelegate =
+-      DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
 +  @Override
 +  protected ReactActivityDelegate createReactActivityDelegate() {
 +    return new DefaultReactActivityDelegate(
@@ -288,41 +301,36 @@ index 0000000000..720c374709
 +        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
 +        DefaultNewArchitectureEntryPoint.getFabricEnabled());
 +  }
-+}
-diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
-deleted file mode 100644
-index 5f3267210c..0000000000
---- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainActivity.kt
-+++ /dev/null
-@@ -1,22 +0,0 @@
+ }
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+similarity index 19%
+rename from RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+rename to RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index 51205894d1..8687dc632f 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+@@ -1,52 +1,62 @@
 -package com.rndiffapp
 -
--import com.facebook.react.ReactActivity
--import com.facebook.react.ReactActivityDelegate
--import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
--import com.facebook.react.defaults.DefaultReactActivityDelegate
+-import android.app.Application
+-import com.facebook.react.PackageList
+-import com.facebook.react.ReactApplication
+-import com.facebook.react.ReactNativeHost
+-import com.facebook.react.ReactPackage
+-import com.facebook.react.common.annotations.UnstableReactNativeAPI
+-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+-import com.facebook.react.defaults.DefaultReactHost
+-import com.facebook.react.defaults.DefaultReactNativeHost
+-import com.facebook.react.flipper.ReactNativeFlipper
+-import com.facebook.react.interfaces.ReactHost
+-import com.facebook.soloader.SoLoader
 -
--class MainActivity : ReactActivity() {
+-@UnstableReactNativeAPI
+-class MainApplication : Application(), ReactApplication {
 -
--  /**
--   * Returns the name of the main component registered from JavaScript. This is used to schedule
--   * rendering of the component.
--   */
--  override fun getMainComponentName(): String = "RnDiffApp"
--
--  /**
--   * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
--   * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
--   */
--  override fun createReactActivityDelegate(): ReactActivityDelegate =
--      DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
--}
-diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
-new file mode 100644
-index 0000000000..8687dc632f
---- /dev/null
-+++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
-@@ -0,0 +1,62 @@
+-  override val reactNativeHost: ReactNativeHost =
+-      object : DefaultReactNativeHost(this) {
+-        override fun getPackages(): List<ReactPackage> {
 +package com.rndiffapp;
 +
 +import android.app.Application;
@@ -348,83 +356,33 @@ index 0000000000..8687dc632f
 +        protected List<ReactPackage> getPackages() {
 +          @SuppressWarnings("UnnecessaryLocalVariable")
 +          List<ReactPackage> packages = new PackageList(this).getPackages();
-+          // Packages that cannot be autolinked yet can be added manually here, for example:
-+          // packages.add(new MyReactNativePackage());
+           // Packages that cannot be autolinked yet can be added manually here, for example:
+           // packages.add(new MyReactNativePackage());
+-          return PackageList(this).packages
 +          return packages;
-+        }
-+
+         }
+ 
+-        override fun getJSMainModuleName(): String = "index"
 +        @Override
 +        protected String getJSMainModuleName() {
 +          return "index";
 +        }
-+
+ 
+-        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 +        @Override
 +        protected boolean isNewArchEnabled() {
 +          return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
 +        }
-+
+ 
+-        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+-      }
 +        @Override
 +        protected Boolean isHermesEnabled() {
 +          return BuildConfig.IS_HERMES_ENABLED;
 +        }
 +      };
-+
-+  @Override
-+  public ReactNativeHost getReactNativeHost() {
-+    return mReactNativeHost;
-+  }
-+
-+  @Override
-+  public void onCreate() {
-+    super.onCreate();
-+    SoLoader.init(this, /* native exopackage */ false);
-+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-+      // If you opted-in for the New Architecture, we load the native entry point for this app.
-+      DefaultNewArchitectureEntryPoint.load();
-+    }
-+    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-+  }
-+}
-diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
-deleted file mode 100644
-index 51205894d1..0000000000
---- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
-+++ /dev/null
-@@ -1,52 +0,0 @@
--package com.rndiffapp
--
--import android.app.Application
--import com.facebook.react.PackageList
--import com.facebook.react.ReactApplication
--import com.facebook.react.ReactNativeHost
--import com.facebook.react.ReactPackage
--import com.facebook.react.common.annotations.UnstableReactNativeAPI
--import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
--import com.facebook.react.defaults.DefaultReactHost
--import com.facebook.react.defaults.DefaultReactNativeHost
--import com.facebook.react.flipper.ReactNativeFlipper
--import com.facebook.react.interfaces.ReactHost
--import com.facebook.soloader.SoLoader
--
--@UnstableReactNativeAPI
--class MainApplication : Application(), ReactApplication {
--
--  override val reactNativeHost: ReactNativeHost =
--      object : DefaultReactNativeHost(this) {
--        override fun getPackages(): List<ReactPackage> {
--          // Packages that cannot be autolinked yet can be added manually here, for example:
--          // packages.add(new MyReactNativePackage());
--          return PackageList(this).packages
--        }
--
--        override fun getJSMainModuleName(): String = "index"
--
--        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
--
--        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
--        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
--      }
--
+ 
 -  override val reactHost: ReactHost
 -    get() =
 -        DefaultReactHost.getDefaultReactHost(
@@ -432,17 +390,27 @@ index 51205894d1..0000000000
 -            packageList = PackageList(this).packages,
 -            jsMainModulePath = "index",
 -            isHermesEnabled = BuildConfig.IS_HERMES_ENABLED)
--
++  @Override
++  public ReactNativeHost getReactNativeHost() {
++    return mReactNativeHost;
++  }
+ 
 -  override fun onCreate() {
 -    super.onCreate()
 -    SoLoader.init(this, false)
--    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
--      // If you opted-in for the New Architecture, we load the native entry point for this app.
++  @Override
++  public void onCreate() {
++    super.onCreate();
++    SoLoader.init(this, /* native exopackage */ false);
+     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+       // If you opted-in for the New Architecture, we load the native entry point for this app.
 -      load()
--    }
++      DefaultNewArchitectureEntryPoint.load();
+     }
 -    ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
--  }
--}
++    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   }
+ }
 diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 new file mode 100644
 index 0000000000..b755b303ce

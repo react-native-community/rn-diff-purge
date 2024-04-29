@@ -5966,12 +5966,14 @@ index 5d2808256c..2726d5e13c 100644
 +@property (nonatomic, strong) UIWindow *window;
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-new file mode 100644
-index 0000000000..4c12ae4bba
---- /dev/null
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
+similarity index 31%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.m
+index cc2e8bacb4..4c12ae4bba 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-@@ -0,0 +1,42 @@
+@@ -1,28 +1,39 @@
 +/**
 + * Copyright (c) Facebook, Inc. and its affiliates.
 + *
@@ -5979,78 +5981,49 @@ index 0000000000..4c12ae4bba
 + * LICENSE file in the root directory of this source tree.
 + */
 +
-+#import "AppDelegate.h"
-+
+ #import "AppDelegate.h"
+ 
 +#import <React/RCTBridge.h>
-+#import <React/RCTBundleURLProvider.h>
+ #import <React/RCTBundleURLProvider.h>
 +#import <React/RCTRootView.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+-  self.moduleName = @"RnDiffApp";
+-  // You can add your custom initial props in the dictionary below.
+-  // They will be passed down to the ViewController used by React Native.
+-  self.initialProps = @{};
 +  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 +  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
 +                                                   moduleName:@"RnDiffApp"
 +                                            initialProperties:nil];
-+
+ 
+-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+-}
 +  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-+
+ 
+-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+-{
+-  return [self getBundleURL];
 +  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 +  UIViewController *rootViewController = [UIViewController new];
 +  rootViewController.view = rootView;
 +  self.window.rootViewController = rootViewController;
 +  [self.window makeKeyAndVisible];
 +  return YES;
-+}
-+
-+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-+{
-+#if DEBUG
-+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-+#else
-+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-+#endif
-+}
-+
-+@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-deleted file mode 100644
-index cc2e8bacb4..0000000000
---- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-+++ /dev/null
-@@ -1,31 +0,0 @@
--#import "AppDelegate.h"
--
--#import <React/RCTBundleURLProvider.h>
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
--  self.moduleName = @"RnDiffApp";
--  // You can add your custom initial props in the dictionary below.
--  // They will be passed down to the ViewController used by React Native.
--  self.initialProps = @{};
--
--  return [super application:application didFinishLaunchingWithOptions:launchOptions];
--}
--
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--  return [self getBundleURL];
--}
--
+ }
+ 
 -- (NSURL *)getBundleURL
--{
--#if DEBUG
++- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
 -  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
--#else
--  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
--#endif
--}
--
--@end
++  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
 diff --git a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib b/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 new file mode 100644
 index 0000000000..6888d1cba1

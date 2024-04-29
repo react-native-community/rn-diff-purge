@@ -6017,12 +6017,14 @@ index d4f2580b1e..5d2808256c 100644
 +@interface AppDelegate : RCTAppDelegate
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-deleted file mode 100644
-index a698075b58..0000000000
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+similarity index 15%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.m
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index a698075b58..09b0b7a0cf 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-+++ /dev/null
-@@ -1,39 +0,0 @@
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -1,39 +1,26 @@
 -/**
 - * Copyright (c) 2015-present, Facebook, Inc.
 - *
@@ -6030,15 +6032,15 @@ index a698075b58..0000000000
 - * LICENSE file in the root directory of this source tree.
 - */
 -
--#import "AppDelegate.h"
--
--#import <React/RCTBundleURLProvider.h>
+ #import "AppDelegate.h"
+ 
+ #import <React/RCTBundleURLProvider.h>
 -#import <React/RCTRootView.h>
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
 -  NSURL *jsCodeLocation;
 -
 -  #ifdef DEBUG
@@ -6046,44 +6048,25 @@ index a698075b58..0000000000
 -  #else
 -    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 -  #endif
--
++  self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
+ 
 -  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 -                                                      moduleName:@"RnDiffApp"
 -                                               initialProperties:nil
 -                                                   launchOptions:launchOptions];
 -  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
--
++  return [super application:application didFinishLaunchingWithOptions:launchOptions];
++}
+ 
 -  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 -  UIViewController *rootViewController = [UIViewController new];
 -  rootViewController.view = rootView;
 -  self.window.rootViewController = rootViewController;
 -  [self.window makeKeyAndVisible];
 -  return YES;
--}
--
--@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-new file mode 100644
-index 0000000000..09b0b7a0cf
---- /dev/null
-+++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-@@ -0,0 +1,26 @@
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBundleURLProvider.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
-+  self.moduleName = @"RnDiffApp";
-+  // You can add your custom initial props in the dictionary below.
-+  // They will be passed down to the ViewController used by React Native.
-+  self.initialProps = @{};
-+
-+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
-+}
-+
 +- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 +{
 +#if DEBUG
@@ -6091,9 +6074,9 @@ index 0000000000..09b0b7a0cf
 +#else
 +  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 +#endif
-+}
-+
-+@end
+ }
+ 
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib b/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 deleted file mode 100644
 index 6888d1cba1..0000000000

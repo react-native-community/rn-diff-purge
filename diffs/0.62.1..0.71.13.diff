@@ -183,40 +183,53 @@ index 5c4de1a4f6..2b540746a7 100644
    singleQuote: true,
    trailingComma: 'all',
  };
-diff --git a/RnDiffApp/App.js b/RnDiffApp/App.js
-deleted file mode 100644
-index 23cd158d89..0000000000
+diff --git a/RnDiffApp/App.js b/RnDiffApp/App.tsx
+similarity index 25%
+rename from RnDiffApp/App.js
+rename to RnDiffApp/App.tsx
+index 23cd158d89..bf24c33164 100644
 --- a/RnDiffApp/App.js
-+++ /dev/null
-@@ -1,114 +0,0 @@
--/**
-- * Sample React Native App
-- * https://github.com/facebook/react-native
-- *
-- * @format
++++ b/RnDiffApp/App.tsx
+@@ -3,86 +3,100 @@
+  * https://github.com/facebook/react-native
+  *
+  * @format
 - * @flow strict-local
-- */
--
--import React from 'react';
--import {
--  SafeAreaView,
+  */
+ 
+ import React from 'react';
++import type {PropsWithChildren} from 'react';
+ import {
+   SafeAreaView,
 -  StyleSheet,
--  ScrollView,
+   ScrollView,
 -  View,
 -  Text,
--  StatusBar,
--} from 'react-native';
--
--import {
+   StatusBar,
++  StyleSheet,
++  Text,
++  useColorScheme,
++  View,
+ } from 'react-native';
+ 
+ import {
 -  Header,
 -  LearnMoreLinks,
--  Colors,
--  DebugInstructions,
--  ReloadInstructions,
--} from 'react-native/Libraries/NewAppScreen';
--
+   Colors,
+   DebugInstructions,
++  Header,
++  LearnMoreLinks,
+   ReloadInstructions,
+ } from 'react-native/Libraries/NewAppScreen';
+ 
 -const App: () => React$Node = () => {
--  return (
++type SectionProps = PropsWithChildren<{
++  title: string;
++}>;
++
++function Section({children, title}: SectionProps): JSX.Element {
++  const isDarkMode = useColorScheme() === 'dark';
+   return (
 -    <>
 -      <StatusBar barStyle="dark-content" />
 -      <SafeAreaView>
@@ -260,89 +273,6 @@ index 23cd158d89..0000000000
 -        </ScrollView>
 -      </SafeAreaView>
 -    </>
--  );
--};
--
--const styles = StyleSheet.create({
--  scrollView: {
--    backgroundColor: Colors.lighter,
--  },
--  engine: {
--    position: 'absolute',
--    right: 0,
--  },
--  body: {
--    backgroundColor: Colors.white,
--  },
--  sectionContainer: {
--    marginTop: 32,
--    paddingHorizontal: 24,
--  },
--  sectionTitle: {
--    fontSize: 24,
--    fontWeight: '600',
--    color: Colors.black,
--  },
--  sectionDescription: {
--    marginTop: 8,
--    fontSize: 18,
--    fontWeight: '400',
--    color: Colors.dark,
--  },
--  highlight: {
--    fontWeight: '700',
--  },
--  footer: {
--    color: Colors.dark,
--    fontSize: 12,
--    fontWeight: '600',
--    padding: 4,
--    paddingRight: 12,
--    textAlign: 'right',
--  },
--});
--
--export default App;
-diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
-new file mode 100644
-index 0000000000..bf24c33164
---- /dev/null
-+++ b/RnDiffApp/App.tsx
-@@ -0,0 +1,118 @@
-+/**
-+ * Sample React Native App
-+ * https://github.com/facebook/react-native
-+ *
-+ * @format
-+ */
-+
-+import React from 'react';
-+import type {PropsWithChildren} from 'react';
-+import {
-+  SafeAreaView,
-+  ScrollView,
-+  StatusBar,
-+  StyleSheet,
-+  Text,
-+  useColorScheme,
-+  View,
-+} from 'react-native';
-+
-+import {
-+  Colors,
-+  DebugInstructions,
-+  Header,
-+  LearnMoreLinks,
-+  ReloadInstructions,
-+} from 'react-native/Libraries/NewAppScreen';
-+
-+type SectionProps = PropsWithChildren<{
-+  title: string;
-+}>;
-+
-+function Section({children, title}: SectionProps): JSX.Element {
-+  const isDarkMode = useColorScheme() === 'dark';
-+  return (
 +    <View style={styles.sectionContainer}>
 +      <Text
 +        style={[
@@ -363,7 +293,8 @@ index 0000000000..bf24c33164
 +        {children}
 +      </Text>
 +    </View>
-+  );
+   );
+-};
 +}
 +
 +function App(): JSX.Element {
@@ -406,27 +337,47 @@ index 0000000000..bf24c33164
 +    </SafeAreaView>
 +  );
 +}
-+
-+const styles = StyleSheet.create({
-+  sectionContainer: {
-+    marginTop: 32,
-+    paddingHorizontal: 24,
-+  },
-+  sectionTitle: {
-+    fontSize: 24,
-+    fontWeight: '600',
-+  },
-+  sectionDescription: {
-+    marginTop: 8,
-+    fontSize: 18,
-+    fontWeight: '400',
-+  },
-+  highlight: {
-+    fontWeight: '700',
-+  },
-+});
-+
-+export default App;
+ 
+ const styles = StyleSheet.create({
+-  scrollView: {
+-    backgroundColor: Colors.lighter,
+-  },
+-  engine: {
+-    position: 'absolute',
+-    right: 0,
+-  },
+-  body: {
+-    backgroundColor: Colors.white,
+-  },
+   sectionContainer: {
+     marginTop: 32,
+     paddingHorizontal: 24,
+@@ -90,25 +104,15 @@ const styles = StyleSheet.create({
+   sectionTitle: {
+     fontSize: 24,
+     fontWeight: '600',
+-    color: Colors.black,
+   },
+   sectionDescription: {
+     marginTop: 8,
+     fontSize: 18,
+     fontWeight: '400',
+-    color: Colors.dark,
+   },
+   highlight: {
+     fontWeight: '700',
+   },
+-  footer: {
+-    color: Colors.dark,
+-    fontSize: 12,
+-    fontWeight: '600',
+-    padding: 4,
+-    paddingRight: 12,
+-    textAlign: 'right',
+-  },
+ });
+ 
+ export default App;
 diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
 new file mode 100644
 index 0000000000..1142b1b209
@@ -3834,16 +3785,18 @@ index ef1de86a2a..5d2808256c 100644
 +@interface AppDelegate : RCTAppDelegate
  
  @end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-deleted file mode 100644
-index c7db8b55d3..0000000000
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.m b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+similarity index 20%
+rename from RnDiffApp/ios/RnDiffApp/AppDelegate.m
+rename to RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index c7db8b55d3..fe439f4026 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
-+++ /dev/null
-@@ -1,58 +0,0 @@
--#import "AppDelegate.h"
--
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -1,58 +1,36 @@
+ #import "AppDelegate.h"
+ 
 -#import <React/RCTBridge.h>
--#import <React/RCTBundleURLProvider.h>
+ #import <React/RCTBundleURLProvider.h>
 -#import <React/RCTRootView.h>
 -
 -#if DEBUG
@@ -3864,11 +3817,11 @@ index c7db8b55d3..0000000000
 -  [client start];
 -}
 -#endif
--
--@implementation AppDelegate
--
--- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
--{
+ 
+ @implementation AppDelegate
+ 
+ - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
 -#if DEBUG
 -  InitializeFlipper(application);
 -#endif
@@ -3879,56 +3832,30 @@ index c7db8b55d3..0000000000
 -                                            initialProperties:nil];
 -
 -  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
--
++  self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
+ 
 -  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 -  UIViewController *rootViewController = [UIViewController new];
 -  rootViewController.view = rootView;
 -  self.window.rootViewController = rootViewController;
 -  [self.window makeKeyAndVisible];
 -  return YES;
--}
--
--- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
--{
--#if DEBUG
--  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
--#else
--  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
--#endif
--}
--
--@end
-diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-new file mode 100644
-index 0000000000..fe439f4026
---- /dev/null
-+++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-@@ -0,0 +1,36 @@
-+#import "AppDelegate.h"
-+
-+#import <React/RCTBundleURLProvider.h>
-+
-+@implementation AppDelegate
-+
-+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-+{
-+  self.moduleName = @"RnDiffApp";
-+  // You can add your custom initial props in the dictionary below.
-+  // They will be passed down to the ViewController used by React Native.
-+  self.initialProps = @{};
-+
 +  return [super application:application didFinishLaunchingWithOptions:launchOptions];
-+}
-+
-+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-+{
-+#if DEBUG
+ }
+ 
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
+-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 +  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-+#else
-+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-+#endif
-+}
-+
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
+ }
+ 
 +/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
 +///
 +/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
@@ -3939,7 +3866,7 @@ index 0000000000..fe439f4026
 +  return true;
 +}
 +
-+@end
+ @end
 diff --git a/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib b/RnDiffApp/ios/RnDiffApp/Base.lproj/LaunchScreen.xib
 deleted file mode 100644
 index 6888d1cba1..0000000000
