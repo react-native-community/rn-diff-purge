@@ -16,9 +16,12 @@ const removeSomething = async () => {
 			// const fullpath = `wt-diffs/diffs/0.43.1..0.67.5.diff`
 			console.log(fullpath)
 
+			if (!fullpath.includes("..0.71.19.diff")) {
+				return
+			}
+
 			// check on https://regex101.com
-			const toBeReplaced =
-				/diff --git a\/RnDiffApp\/react-native.config.js.*diff/s
+			const toBeReplaced = /diff --git a\/RnDiffApp\/.yarnrc.yml .*?diff/s
 
 			replace.sync({
 				files: fullpath,
