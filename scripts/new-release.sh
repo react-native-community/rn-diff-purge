@@ -56,7 +56,7 @@ function generateNewReleaseBranch () {
     git checkout -b "$branchName"
 
     # generate app and remove generated git repo
-    npx react-native init "$AppName" --version "$newRelease" --skip-install
+    npx react-native@"${newRelease}" init "$AppName" --version "$newRelease" --skip-install
     rm -rf "$AppName"/.git
 
     # commit and push branch
