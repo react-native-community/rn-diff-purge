@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(tail -r RELEASES))'
+IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(tac RELEASES))'
 
 for vfrom in "${releases[@]}"
 do
