@@ -57,7 +57,16 @@ function generateNewReleaseBranch () {
 
     # generate app and remove generated git repo
     npx react-native@"${newRelease}" init "$AppName" --version "$newRelease" --skip-install
+
+    # clean up before committing for diffing
     rm -rf "$AppName"/.git
+    rm -rf "$AppName"/.yarn
+    rm -rf "$AppName"/.yarnrc
+    echo "nodeLinker: node-modules" > "$AppName"/.yarnrc.yml
+    echo "" >> "$AppName"/.yarnrc.yml
+    echo "yarnPath: .yarn/releases/yarn-3.6.4.cjs" >> "$AppName"/.yarnrc.yml
+    npx node-jq '. + {"packageManager": "yarn@3.6.4"}' "$AppName"/package.json > newpackage.json
+    mv newpackage.json "$AppName"/package.json
 
     # commit and push branch
     git add "$AppName"
