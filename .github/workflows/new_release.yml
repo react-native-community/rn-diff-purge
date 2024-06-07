@@ -11,22 +11,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup asdf
-        uses: asdf-vm/actions/setup@6844d09b13209e7d2ce3b63d2b089a2acef581ec
+      - uses: jdx/mise-action@v2
 
-      - name: Cache asdf
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.asdf
-          key: ${{ runner.os }}-asdf-${{ '**/.tool-versions' }}
-          restore-keys: |
-            ${{ runner.os }}-asdf-
-
-      - name: asdf install
-        uses: asdf-vm/actions/install@6844d09b13209e7d2ce3b63d2b089a2acef581ec
-
-      - name: yarn install
+      - name: yarn deps install
         run: yarn install
 
       - name: Run new-release script
