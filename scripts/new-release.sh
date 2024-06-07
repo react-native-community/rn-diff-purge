@@ -86,10 +86,10 @@ function addReleaseToList () {
 
     if command -v tac; then
         #   take each line ->dedup->    sort them              -> reverse them -> save them
-        cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tac           > tmpfile
+        cat "$ReleasesFile" | uniq | xargs npx --silent semver | tac           > tmpfile
     else
         #   take each line ->dedup->    sort them              -> reverse them -> save them
-        cat "$ReleasesFile" | uniq | xargs yarn --silent semver | tail -r       > tmpfile
+        cat "$ReleasesFile" | uniq | xargs npx --silent semver | tail -r       > tmpfile
     fi
 
     mv tmpfile "$ReleasesFile"
