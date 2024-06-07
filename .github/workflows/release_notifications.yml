@@ -14,10 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "yarn"
       - run: yarn install
+
       - name: Notify upgrade-support of a new release
         run: ./scripts/notify-new-release.js
