@@ -77,6 +77,7 @@ function generateNewReleaseBranch () {
 
     # go back to master
     cd ..
+    git clean -df # cleanup because rn init creates some yarn stuff but on the main directory
     rm -rf wt-app
     git worktree prune
 }
