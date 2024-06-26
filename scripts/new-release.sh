@@ -55,8 +55,13 @@ function generateNewReleaseBranch () {
     git branch -D "$branchName" || true
     git checkout -b "$branchName"
 
-    # generate app and remove generated git repo
-    npx @react-native-community/cli@latest init "$AppName" --version "$newRelease" --skip-install
+    # cenerate app and remove generated git repo
+    # if we're generating the template for an -rc release, let's grab cli@next
+    if [[ $newRelease == *-rc* ]]; then
+      npx @react-native-community/cli@next init "$AppName" --version "$newRelease" --skip-install
+    else
+      npx @react-native-community/cli@latest init "$AppName" --version "$newRelease" --skip-install
+    fi
 
     # clean up before committing for diffing
     rm -rf "$AppName"/.git
