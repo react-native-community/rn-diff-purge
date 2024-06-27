@@ -65,8 +65,7 @@ function generateNewReleaseBranch () {
     echo "nodeLinker: node-modules" > "$AppName"/.yarnrc.yml
     echo "" >> "$AppName"/.yarnrc.yml
     echo "yarnPath: .yarn/releases/yarn-3.6.4.cjs" >> "$AppName"/.yarnrc.yml
-    npx node-jq '. + {"packageManager": "yarn@3.6.4"}' "$AppName"/package.json > newpackage.json
-    mv newpackage.json "$AppName"/package.json
+    npx node-jq '. + {"packageManager": "yarn@3.6.4"}' "$AppName"/package.json | npx sponge "$AppName"/package.json
 
     # commit and push branch
     git add "$AppName"
