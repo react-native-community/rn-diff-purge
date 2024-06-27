@@ -56,7 +56,12 @@ function generateNewReleaseBranch () {
     git checkout -b "$branchName"
 
     # generate app and remove generated git repo
-    npx @react-native-community/cli@latest init "$AppName" --version "$newRelease" --skip-install
+    # if we're generating the template for an -rc release, let's grab cli@next
+    if [[ $newRelease == *-rc* ]]; then
+      npx @react-native-community/cli@next init "$AppName" --version "$newRelease" --skip-install
+    else
+      npx @react-native-community/cli@latest init "$AppName" --version "$newRelease" --skip-install
+    fi
 
     # clean up before committing for diffing
     rm -rf "$AppName"/.git
@@ -107,8 +112,8 @@ function generateDiffs () {
     IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
     for existingRelease in "${releases[@]}"
     do
-        git diff --binary -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
-        git diff --binary -M15% origin/release/"$newRelease"..origin/release/"$existingRelease" > wt-diffs/diffs/"$newRelease".."$existingRelease".diff
+        git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
+        git diff --binary -w -M15% origin/release/"$newRelease"..origin/release/"$existingRelease" > wt-diffs/diffs/"$newRelease".."$existingRelease".diff
     done
 
     cd wt-diffs
