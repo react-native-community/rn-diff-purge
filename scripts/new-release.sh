@@ -115,6 +115,13 @@ function generateDiffs () {
         if [ "$existingRelease" == "$newRelease" ]; then
             continue
         fi
+
+        echo "comparing $existingRelease to $newRelease"
+        if ./scripts/compare-releases.js "$existingRelease" "$newRelease"; then
+            echo "comparing $existingRelease to $newRelease IN"
+            continue
+        fi
+
         git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
     done
 
@@ -126,7 +133,6 @@ function generateDiffs () {
 }
 
 function pushMaster () {
-    # commit and push
     git add .
     git commit -m "Add release $newRelease"
     git push
