@@ -28,6 +28,14 @@ do
   echo "from $vfrom"
   for vto in "${releases[@]}"
   do
+    if [ "$vfrom" == "$vto" ]; then
+      continue
+    fi
+
+    if ./scripts/compare-releases.js "$vfrom" "$vto"; then
+      continue
+    fi
+
     git diff --binary -w -M15% origin/release/"$vfrom"..origin/release/"$vto" > wt-diffs/diffs/"$vfrom".."$vto".diff
   done
 done

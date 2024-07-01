@@ -116,9 +116,7 @@ function generateDiffs () {
             continue
         fi
 
-        echo "comparing $existingRelease to $newRelease"
         if ./scripts/compare-releases.js "$existingRelease" "$newRelease"; then
-            echo "comparing $existingRelease to $newRelease IN"
             continue
         fi
 
