@@ -118,7 +118,7 @@ function generateDiffs () {
 
     cd wt-diffs
     git add .
-    git commit -m "Add release $newRelease diffs"
+    git commit -m "Add release $newRelease diffs" || true
     git push
     cd ..
 }
