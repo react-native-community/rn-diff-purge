@@ -112,8 +112,10 @@ function generateDiffs () {
     IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
     for existingRelease in "${releases[@]}"
     do
+        if [ "$existingRelease" == "$newRelease" ]; then
+            continue
+        fi
         git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
-        git diff --binary -w -M15% origin/release/"$newRelease"..origin/release/"$existingRelease" > wt-diffs/diffs/"$newRelease".."$existingRelease".diff
     done
 
     cd wt-diffs
