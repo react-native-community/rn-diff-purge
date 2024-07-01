@@ -168,7 +168,7 @@ function cleanUp () {
 
 
 guardMissingArg $*
-newRelease=$1
+newRelease=${1#v}
 
 guardExisting
 
