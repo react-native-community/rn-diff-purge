@@ -1,0 +1,54 @@
+diff --git a/RnDiffApp/__tests__/App.test.tsx b/RnDiffApp/__tests__/App.test.tsx
+index a26d1ec09a..9eac6fbc87 100644
+--- a/RnDiffApp/__tests__/App.test.tsx
++++ b/RnDiffApp/__tests__/App.test.tsx
+@@ -10,10 +10,8 @@ import App from '../App';
+ import {it} from '@jest/globals';
+ 
+ // Note: test renderer must be required after react-native.
+-import ReactTestRenderer from 'react-test-renderer';
++import renderer from 'react-test-renderer';
+ 
+-it('renders correctly', async () => {
+-  await ReactTestRenderer.act(() => {
+-    ReactTestRenderer.create(<App />);
+-  });
++it('renders correctly', () => {
++  renderer.create(<App />);
+ });
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index dafa270141..36a396e53b 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,24 +10,24 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "19.0.0-rc-fb9a90fa48-20240614",
+-    "react-native": "0.75.0-rc.2"
++    "react": "18.3.1",
++    "react-native": "0.75.2"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
+     "@babel/preset-env": "^7.20.0",
+     "@babel/runtime": "^7.20.0",
+-    "@react-native/babel-preset": "0.75.0-rc.2",
+-    "@react-native/eslint-config": "0.75.0-rc.2",
+-    "@react-native/metro-config": "0.75.0-rc.2",
+-    "@react-native/typescript-config": "0.75.0-rc.2",
++    "@react-native/babel-preset": "0.75.2",
++    "@react-native/eslint-config": "0.75.2",
++    "@react-native/metro-config": "0.75.2",
++    "@react-native/typescript-config": "0.75.2",
+     "@types/react": "^18.2.6",
+     "@types/react-test-renderer": "^18.0.0",
+     "babel-jest": "^29.6.3",
+     "eslint": "^8.19.0",
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+-    "react-test-renderer": "19.0.0-rc-fb9a90fa48-20240614",
++    "react-test-renderer": "18.3.1",
+     "typescript": "5.0.4"
+   },
+   "engines": {
