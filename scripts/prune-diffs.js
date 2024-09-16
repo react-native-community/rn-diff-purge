@@ -4,7 +4,7 @@ import fs from "fs"
 import path from "path"
 import semver from "semver"
 
-const MINIMUM_STORED_VERSION = "0.50.0"
+const MINIMUM_STORED_VERSION = "0.65.0"
 
 const DIFFS_DIR = "./wt-diffs/diffs"
 
