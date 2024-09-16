@@ -1,0 +1,61 @@
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+index d7ba2dd775..bf32261a73 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+@@ -9,6 +9,7 @@ import com.facebook.react.ReactPackage
+ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+ import com.facebook.react.defaults.DefaultReactNativeHost
++import com.facebook.react.soloader.OpenSourceMergedSoMapping
+ import com.facebook.soloader.SoLoader
+ 
+ class MainApplication : Application(), ReactApplication {
+@@ -34,7 +35,7 @@ class MainApplication : Application(), ReactApplication {
+ 
+   override fun onCreate() {
+     super.onCreate()
+-    SoLoader.init(this, false)
++    SoLoader.init(this, OpenSourceMergedSoMapping)
+     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+       // If you opted-in for the New Architecture, we load the native entry point for this app.
+       load()
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 1ed247ec13..66cd5a0e49 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.10.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.10-all.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 43031c7d36..1e2e2ebca5 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+     "react": "18.3.1",
+-    "react-native": "0.76.0-rc.0"
++    "react-native": "0.76.0-rc.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+@@ -20,10 +20,10 @@
+     "@react-native-community/cli": "15.0.0-alpha.2",
+     "@react-native-community/cli-platform-android": "15.0.0-alpha.2",
+     "@react-native-community/cli-platform-ios": "15.0.0-alpha.2",
+-    "@react-native/babel-preset": "0.76.0-rc.0",
+-    "@react-native/eslint-config": "0.76.0-rc.0",
+-    "@react-native/metro-config": "0.76.0-rc.0",
+-    "@react-native/typescript-config": "0.76.0-rc.0",
++    "@react-native/babel-preset": "0.76.0-rc.1",
++    "@react-native/eslint-config": "0.76.0-rc.1",
++    "@react-native/metro-config": "0.76.0-rc.1",
++    "@react-native/typescript-config": "0.76.0-rc.1",
+     "@types/react": "^18.2.6",
+     "@types/react-test-renderer": "^18.0.0",
+     "babel-jest": "^29.6.3",
