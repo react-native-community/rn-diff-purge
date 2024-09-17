@@ -15,6 +15,7 @@ ReadmeTableBig=README_TABLE_BIG.md
 
 NumberOfReleases=12 # the number of releases on the table
 
+IgnorePaths=("README.md")
 
 function guardMissingArg () {
     if [ "$#" -ne 1 ]; then
@@ -120,7 +121,13 @@ function generateDiffs () {
             continue
         fi
 
-        git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
+        ignoreArgs=()
+        for path in "${IgnorePaths[@]}"; do
+            ignoreArgs+=(":!$path")
+        done
+
+        git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" \
+            -- . "${ignoreArgs[@]}" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
     done
 
     cd wt-diffs
