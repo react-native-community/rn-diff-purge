@@ -145,7 +145,7 @@ function pushMaster () {
 
 function cleanUpYarnStuff () {
     rm -rf .yarn
-    pnpx node-jq 'del(.packageManager)' package.json | npx sponge package.json
+    npx node-jq 'del(.packageManager)' package.json | npx sponge package.json
 }
 
 function generateTable () {
