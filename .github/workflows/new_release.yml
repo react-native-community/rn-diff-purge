@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
-      - run: pnpm install
+      - run: npm install
 
       - name: Run new-release script
         run: ./scripts/new-release.sh ${{ github.event.client_payload.version }}

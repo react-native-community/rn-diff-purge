@@ -39,7 +39,7 @@ function prepare () {
     # This git config setting, in combination with the `.gitattributes` file, tells the scripts to not pay attention to some files that don't need to be in the diffs, like the root `.gitignore` of this repo (not the RnDiffApp project).
     git config --local diff.nodiff.command true
     git pull
-    pnpm install
+    npm install
 }
 
 function generateNewReleaseBranch () {
@@ -175,7 +175,7 @@ function generateReadme () {
 
 function generateGHPages () {
     cp docs/_index.html docs/index.html
-    pnpm markdown "$ReadmeTableBig" >> docs/index.html
+    npm run markdown "$ReadmeTableBig" >> docs/index.html
 }
 
 function cleanUp () {
@@ -203,5 +203,5 @@ generateNewReleaseBranch
 # generateBigTable
 # generateGHPages
 
-# cleanUp
+cleanUp
 # pushMaster
