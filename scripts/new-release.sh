@@ -192,16 +192,16 @@ guardExisting
 
 prepare
 generateNewReleaseBranch
-addReleaseToList
-generateDiffs
+# addReleaseToList
+# generateDiffs
+# 
+# cleanUpYarnStuff
 
-cleanUpYarnStuff
+# generateTable
+# generateReadme
 
-generateTable
-generateReadme
+# generateBigTable
+# generateGHPages
 
-generateBigTable
-generateGHPages
-
-cleanUp
-pushMaster
+# cleanUp
+# pushMaster
