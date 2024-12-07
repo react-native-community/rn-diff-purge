@@ -32,6 +32,15 @@ index 0cab2ac6fc..d5ae456695 100644
 +!.yarn/releases
 +!.yarn/sdks
 +!.yarn/versions
+diff --git a/RnDiffApp/.yarnrc.yml b/RnDiffApp/.yarnrc.yml
+deleted file mode 100644
+index 08d714dfcb..0000000000
+--- a/RnDiffApp/.yarnrc.yml
++++ /dev/null
+@@ -1,3 +0,0 @@
+-nodeLinker: node-modules
+-
+-yarnPath: .yarn/releases/yarn-3.6.4.cjs
 diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
 index bf24c33164..125fe1b98e 100644
 --- a/RnDiffApp/App.tsx
@@ -2861,10 +2870,10 @@ index ad8f87b6d2..9d41685ef1 100644
   * @type {import('metro-config').MetroConfig}
   */
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index b593ae9349..77c011fe44 100644
+index b593ae9349..edef46977c 100644
 --- a/RnDiffApp/package.json
 +++ b/RnDiffApp/package.json
-@@ -10,28 +10,31 @@
+@@ -10,28 +10,30 @@
      "test": "jest"
    },
    "dependencies": {
@@ -2908,10 +2917,12 @@ index b593ae9349..77c011fe44 100644
    },
    "engines": {
 -    "node": ">=16"
+-  },
+-  "packageManager": "yarn@3.6.4"
 +    "node": ">=18"
-   },
-   "packageManager": "yarn@3.6.4"
++  }
  }
+\ No newline at end of file
 diff --git a/RnDiffApp/tsconfig.json b/RnDiffApp/tsconfig.json
 index 45a6c70722..304ab4e2d8 100644
 --- a/RnDiffApp/tsconfig.json
