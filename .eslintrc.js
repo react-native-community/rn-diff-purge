@@ -1,1 +1,0 @@
-.config/.eslintrc.js
