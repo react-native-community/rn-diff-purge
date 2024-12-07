@@ -163,7 +163,7 @@ function generateReadme () {
 
 function generateGHPages () {
     cp docs/_index.html docs/index.html
-    npm run markdown "$ReadmeTableBig" >> docs/index.html
+    npx markdown "$ReadmeTableBig" >> docs/index.html
 }
 
 function cleanUp () {
