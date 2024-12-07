@@ -21,7 +21,7 @@ const removeSomething = async () => {
 			}
 
 			// check on https://regex101.com
-			const toBeReplaced = /diff --git a\/RnDiffApp\/.yarnrc.yml .*?diff/s
+			const toBeReplaced = /diff --git a\/RnDiffApp\/.yrc.yml .*?diff/s
 
 			replace.sync({
 				files: fullpath,

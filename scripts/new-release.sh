@@ -66,12 +66,6 @@ function generateNewReleaseBranch () {
 
     # clean up before committing for diffing
     rm -rf "$AppName"/.git
-    rm -rf "$AppName"/.yarn
-    rm -rf "$AppName"/.yarnrc
-    echo "nodeLinker: node-modules" > "$AppName"/.yarnrc.yml
-    echo "" >> "$AppName"/.yarnrc.yml
-    echo "yarnPath: .yarn/releases/yarn-3.6.4.cjs" >> "$AppName"/.yarnrc.yml
-    npx node-jq '. + {"packageManager": "yarn@3.6.4"}' "$AppName"/package.json | npx sponge "$AppName"/package.json
 
     # commit and push branch
     git add "$AppName"
@@ -82,7 +76,6 @@ function generateNewReleaseBranch () {
 
     # go back to master
     cd ..
-    git clean -df # cleanup because rn init creates some yarn stuff but on the main directory
     rm -rf wt-app
     git worktree prune
 }
@@ -143,11 +136,6 @@ function pushMaster () {
     git push
 }
 
-function cleanUpYarnStuff () {
-    rm -rf .yarn
-    npx node-jq 'del(.packageManager)' package.json | npx sponge package.json
-}
-
 function generateTable () {
     head -n "$NumberOfReleases" "$ReleasesFile" | ./scripts/generate-table.js > "$ReadmeTable"
 }
@@ -192,16 +180,14 @@ guardExisting
 
 prepare
 generateNewReleaseBranch
-# addReleaseToList
-# generateDiffs
-# 
-# cleanUpYarnStuff
+addReleaseToList
+generateDiffs
 
-# generateTable
-# generateReadme
+generateTable
+generateReadme
 
-# generateBigTable
-# generateGHPages
+generateBigTable
+generateGHPages
 
 cleanUp
-# pushMaster
+pushMaster
