@@ -1,0 +1,441 @@
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index 0cab2ac6fc..d5ae456695 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -20,7 +20,7 @@ DerivedData
+ *.hmap
+ *.ipa
+ *.xcuserstate
+-ios/.xcode.env.local
++**/.xcode.env.local
+ 
+ # Android/IntelliJ
+ #
+@@ -56,7 +56,7 @@ yarn-error.log
+ *.jsbundle
+ 
+ # Ruby / CocoaPods
+-/ios/Pods/
++**/Pods/
+ /vendor/bundle/
+ 
+ # Temporary files created by Metro to check the health of the file watcher
+@@ -64,3 +64,11 @@ yarn-error.log
+ 
+ # testing
+ /coverage
++
++# Yarn
++.yarn/*
++!.yarn/patches
++!.yarn/plugins
++!.yarn/releases
++!.yarn/sdks
++!.yarn/versions
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 6a7d5c7a49..abb9c0a88b 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -3,5 +3,9 @@ source 'https://rubygems.org'
+ # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+ ruby ">= 2.6.10"
+ 
+-gem 'cocoapods', '~> 1.13'
+-gem 'activesupport', '>= 6.1.7.3', '< 7.1.0'
++# Cocoapods 1.15 introduced a bug which break the build. We will remove the upper
++# bound in the template on Cocoapods with next React Native release.
++gem 'cocoapods', '>= 1.13', '< 1.15'
++gem 'activesupport', '>= 6.1.7.5', '< 7.1.0'
++gem 'xcodeproj', '< 1.26.0'
++gem 'concurrent-ruby', '<= 1.3.4'
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index ecea3ea6c3..58f4e0382c 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -107,7 +107,6 @@ android {
+ dependencies {
+     // The version of react-native is set by the React Native Gradle Plugin
+     implementation("com.facebook.react:react-android")
+-    implementation("com.facebook.react:flipper-integration")
+ 
+     if (hermesEnabled.toBoolean()) {
+         implementation("com.facebook.react:hermes-android")
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+index a2cb223c28..d7ba2dd775 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+@@ -9,17 +9,16 @@ import com.facebook.react.ReactPackage
+ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+ import com.facebook.react.defaults.DefaultReactNativeHost
+-import com.facebook.react.flipper.ReactNativeFlipper
+ import com.facebook.soloader.SoLoader
+ 
+ class MainApplication : Application(), ReactApplication {
+ 
+   override val reactNativeHost: ReactNativeHost =
+       object : DefaultReactNativeHost(this) {
+-        override fun getPackages(): List<ReactPackage> {
++        override fun getPackages(): List<ReactPackage> =
++            PackageList(this).packages.apply {
+               // Packages that cannot be autolinked yet can be added manually here, for example:
+-          // packages.add(new MyReactNativePackage());
+-          return PackageList(this).packages
++              // add(MyReactNativePackage())
+             }
+ 
+         override fun getJSMainModuleName(): String = "index"
+@@ -31,7 +30,7 @@ class MainApplication : Application(), ReactApplication {
+       }
+ 
+   override val reactHost: ReactHost
+-    get() = getDefaultReactHost(this.applicationContext, reactNativeHost)
++    get() = getDefaultReactHost(applicationContext, reactNativeHost)
+ 
+   override fun onCreate() {
+     super.onCreate()
+@@ -40,6 +39,5 @@ class MainApplication : Application(), ReactApplication {
+       // If you opted-in for the New Architecture, we load the native entry point for this app.
+       load()
+     }
+-    ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
+   }
+ }
+diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
+index 73b37e4d99..5c25e728ea 100644
+--- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
++++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
+@@ -17,7 +17,8 @@
+        android:insetLeft="@dimen/abc_edit_text_inset_horizontal_material"
+        android:insetRight="@dimen/abc_edit_text_inset_horizontal_material"
+        android:insetTop="@dimen/abc_edit_text_inset_top_material"
+-       android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
++       android:insetBottom="@dimen/abc_edit_text_inset_bottom_material"
++       >
+ 
+     <selector>
+         <!--
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index cb9d6232a7..f536a79201 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -1,11 +1,11 @@
+ buildscript {
+     ext {
+         buildToolsVersion = "34.0.0"
+-        minSdkVersion = 21
++        minSdkVersion = 23
+         compileSdkVersion = 34
+         targetSdkVersion = 34
+-        ndkVersion = "25.1.8937393"
+-        kotlinVersion = "1.8.0"
++        ndkVersion = "26.1.10909125"
++        kotlinVersion = "1.9.22"
+     }
+     repositories {
+         google()
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index d11cdd907d..2ea3535dc0 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.3-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.6-all.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
+index 0adc8e1a53..1aa94a4269 100755
+--- a/RnDiffApp/android/gradlew
++++ b/RnDiffApp/android/gradlew
+@@ -145,7 +145,7 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+     case $MAX_FD in #(
+       max*)
+         # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
+-        # shellcheck disable=SC3045
++        # shellcheck disable=SC2039,SC3045
+         MAX_FD=$( ulimit -H -n ) ||
+             warn "Could not query maximum file descriptor limit"
+     esac
+@@ -153,7 +153,7 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+       '' | soft) :;; #(
+       *)
+         # In POSIX sh, ulimit -n is undefined. That's why the result is checked to see if it worked.
+-        # shellcheck disable=SC3045
++        # shellcheck disable=SC2039,SC3045
+         ulimit -n "$MAX_FD" ||
+             warn "Could not set maximum file descriptor limit to $MAX_FD"
+     esac
+@@ -202,11 +202,11 @@ fi
+ # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+ DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+ 
+-# Collect all arguments for the java command;
+-#   * $DEFAULT_JVM_OPTS, $JAVA_OPTS, and $GRADLE_OPTS can contain fragments of
+-#     shell script including quotes and variable substitutions, so put them in
+-#     double quotes to make sure that they get re-expanded; and
+-#   * put everything else in single quotes, so that it's not re-expanded.
++# Collect all arguments for the java command:
++#   * DEFAULT_JVM_OPTS, JAVA_OPTS, JAVA_OPTS, and optsEnvironmentVar are not allowed to contain shell fragments,
++#     and any embedded shellness will be escaped.
++#   * For example: A user cannot expect ${Hostname} to be expanded, as it is an environment variable and will be
++#     treated as '${Hostname}' itself on the command line.
+ 
+ set -- \
+         "-Dorg.gradle.appname=$APP_BASE_NAME" \
+diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
+index 93e3f59f13..25da30dbde 100644
+--- a/RnDiffApp/android/gradlew.bat
++++ b/RnDiffApp/android/gradlew.bat
+@@ -43,11 +43,11 @@ set JAVA_EXE=java.exe
+ %JAVA_EXE% -version >NUL 2>&1
+ if %ERRORLEVEL% equ 0 goto execute
+ 
+-echo.
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+-echo.
+-echo Please set the JAVA_HOME variable in your environment to match the
+-echo location of your Java installation.
++echo. 1>&2
++echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
++echo. 1>&2
++echo Please set the JAVA_HOME variable in your environment to match the 1>&2
++echo location of your Java installation. 1>&2
+ 
+ goto fail
+ 
+@@ -57,11 +57,11 @@ set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+ 
+ if exist "%JAVA_EXE%" goto execute
+ 
+-echo.
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+-echo.
+-echo Please set the JAVA_HOME variable in your environment to match the
+-echo location of your Java installation.
++echo. 1>&2
++echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
++echo. 1>&2
++echo Please set the JAVA_HOME variable in your environment to match the 1>&2
++echo location of your Java installation. 1>&2
+ 
+ goto fail
+ 
+diff --git a/RnDiffApp/ios/Podfile b/RnDiffApp/ios/Podfile
+index ae58cc922f..f27e216d42 100644
+--- a/RnDiffApp/ios/Podfile
++++ b/RnDiffApp/ios/Podfile
+@@ -8,17 +8,6 @@ require Pod::Executable.execute_command('node', ['-p',
+ platform :ios, min_ios_version_supported
+ prepare_react_native_project!
+ 
+-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
+-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
+-#
+-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
+-# ```js
+-# module.exports = {
+-#   dependencies: {
+-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
+-# ```
+-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+-
+ linkage = ENV['USE_FRAMEWORKS']
+ if linkage != nil
+   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+@@ -30,11 +19,6 @@ target 'RnDiffApp' do
+ 
+   use_react_native!(
+     :path => config[:reactNativePath],
+-    # Enables Flipper.
+-    #
+-    # Note that if you have use_frameworks! enabled, Flipper will not work and
+-    # you should disable the next line.
+-    :flipper_configuration => flipper_config,
+     # An absolute path to your application root.
+     :app_path => "#{Pod::Config.instance.installation_root}/.."
+   )
+@@ -49,7 +33,8 @@ target 'RnDiffApp' do
+     react_native_post_install(
+       installer,
+       config[:reactNativePath],
+-      :mac_catalyst_enabled => false
++      :mac_catalyst_enabled => false,
++      # :ccache_enabled => true
+     )
+   end
+ end
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index a32a7f2f06..658e2161b6 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -36,6 +36,7 @@
+ 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RnDiffApp/Images.xcassets; sourceTree = "<group>"; };
+ 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RnDiffApp/Info.plist; sourceTree = "<group>"; };
+ 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RnDiffApp/main.m; sourceTree = "<group>"; };
++	    13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = RnDiffApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+ 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-RnDiffApp-RnDiffAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp-RnDiffAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		3B4392A12AC88292D35C810B /* Pods-RnDiffApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.debug.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.debug.xcconfig"; sourceTree = "<group>"; };
+ 		5709B34CF0A7D63546082F79 /* Pods-RnDiffApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.release.xcconfig"; sourceTree = "<group>"; };
+@@ -92,6 +93,7 @@
+ 				13B07FB61A68108700A75B9A /* Info.plist */,
+ 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+ 				13B07FB71A68108700A75B9A /* main.m */,
++				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+ 			);
+ 			name = RnDiffApp;
+ 			sourceTree = "<group>";
+@@ -263,7 +265,7 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
++			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+ 		};
+ 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+ 			isa = PBXShellScriptBuildPhase;
+@@ -578,6 +580,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 					"-DFOLLY_CFG_NO_COROUTINES=1",
++					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+ 				);
+ 				SDKROOT = iphoneos;
+ 			};
+@@ -642,6 +645,7 @@
+ 					"-DFOLLY_MOBILE=1",
+ 					"-DFOLLY_USE_LIBCPP=1",
+ 					"-DFOLLY_CFG_NO_COROUTINES=1",
++					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+ 				);
+ 				SDKROOT = iphoneos;
+ 				VALIDATE_PRODUCT = YES;
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+index cc2e8bacb4..bae99debc3 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
+@@ -16,10 +16,10 @@
+ 
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+-  return [self getBundleURL];
++  return [self bundleURL];
+ }
+ 
+-- (NSURL *)getBundleURL
++- (NSURL *)bundleURL
+ {
+ #if DEBUG
+   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index 1b40a9f17d..7c212c9021 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -38,7 +38,7 @@
+ 	<string>LaunchScreen</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+-		<string>armv7</string>
++		<string>arm64</string>
+ 	</array>
+ 	<key>UISupportedInterfaceOrientations</key>
+ 	<array>
+diff --git a/RnDiffApp/ios/RnDiffApp/PrivacyInfo.xcprivacy b/RnDiffApp/ios/RnDiffApp/PrivacyInfo.xcprivacy
+new file mode 100644
+index 0000000000..ef1896e70c
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp/PrivacyInfo.xcprivacy
+@@ -0,0 +1,38 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<plist version="1.0">
++<dict>
++  <key>NSPrivacyCollectedDataTypes</key>
++  <array>
++  </array>
++  <key>NSPrivacyAccessedAPITypes</key>
++  <array>
++    <dict>
++      <key>NSPrivacyAccessedAPIType</key>
++      <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
++      <key>NSPrivacyAccessedAPITypeReasons</key>
++      <array>
++        <string>C617.1</string>
++      </array>
++    </dict>
++    <dict>
++      <key>NSPrivacyAccessedAPIType</key>
++      <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
++      <key>NSPrivacyAccessedAPITypeReasons</key>
++      <array>
++        <string>CA92.1</string>
++      </array>
++    </dict>
++    <dict>
++      <key>NSPrivacyAccessedAPIType</key>
++      <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
++      <key>NSPrivacyAccessedAPITypeReasons</key>
++      <array>
++        <string>35F9.1</string>
++      </array>
++    </dict>
++  </array>
++  <key>NSPrivacyTracking</key>
++  <false/>
++</dict>
++</plist>
+diff --git a/RnDiffApp/metro.config.js b/RnDiffApp/metro.config.js
+index ad8f87b6d2..9d41685ef1 100644
+--- a/RnDiffApp/metro.config.js
++++ b/RnDiffApp/metro.config.js
+@@ -2,7 +2,7 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+ 
+ /**
+  * Metro configuration
+- * https://facebook.github.io/metro/docs/configuration
++ * https://reactnative.dev/docs/metro
+  *
+  * @type {import('metro-config').MetroConfig}
+  */
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index c9b6c152e5..bccdf6a972 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,16 +11,16 @@
+   },
+   "dependencies": {
+     "react": "18.2.0",
+-    "react-native": "0.73.0"
++    "react-native": "0.74.7"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
+     "@babel/preset-env": "^7.20.0",
+     "@babel/runtime": "^7.20.0",
+-    "@react-native/babel-preset": "^0.73.18",
+-    "@react-native/eslint-config": "^0.73.1",
+-    "@react-native/metro-config": "^0.73.2",
+-    "@react-native/typescript-config": "^0.73.1",
++    "@react-native/babel-preset": "0.74.89",
++    "@react-native/eslint-config": "0.74.89",
++    "@react-native/metro-config": "0.74.89",
++    "@react-native/typescript-config": "0.74.89",
+     "@types/react": "^18.2.6",
+     "@types/react-test-renderer": "^18.0.0",
+     "babel-jest": "^29.6.3",
+diff --git a/RnDiffApp/react-native.config.js b/RnDiffApp/react-native.config.js
+deleted file mode 100644
+index 8241516525..0000000000
+--- a/RnDiffApp/react-native.config.js
++++ /dev/null
+@@ -1,7 +0,0 @@
+-module.exports = {
+-  project: {
+-    ios: {
+-      automaticPodsInstallation: true
+-    }
+-  }
+-}
+\ No newline at end of file
