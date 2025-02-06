@@ -1,0 +1,92 @@
+diff --git a/RnDiffApp/.yarnrc.yml b/RnDiffApp/.yarnrc.yml
+deleted file mode 100644
+index 08d714dfcb..0000000000
+--- a/RnDiffApp/.yarnrc.yml
++++ /dev/null
+@@ -1,3 +0,0 @@
+-nodeLinker: node-modules
+-
+-yarnPath: .yarn/releases/yarn-3.6.4.cjs
+diff --git a/RnDiffApp/Gemfile b/RnDiffApp/Gemfile
+index 2a7ce357c5..08b83b1dd6 100644
+--- a/RnDiffApp/Gemfile
++++ b/RnDiffApp/Gemfile
+@@ -6,3 +6,5 @@ ruby ">= 2.6.10"
+ # Exclude problematic versions of cocoapods and activesupport that causes build failures.
+ gem 'cocoapods', '>= 1.13', '!= 1.15.0', '!= 1.15.1'
+ gem 'activesupport', '>= 6.1.7.5', '!= 7.1.0'
++gem 'xcodeproj', '< 1.26.0'
++gem 'concurrent-ruby', '<= 1.3.4'
+diff --git a/RnDiffApp/__tests__/App.test.tsx b/RnDiffApp/__tests__/App.test.tsx
+index a26d1ec09a..9eac6fbc87 100644
+--- a/RnDiffApp/__tests__/App.test.tsx
++++ b/RnDiffApp/__tests__/App.test.tsx
+@@ -10,10 +10,8 @@ import App from '../App';
+ import {it} from '@jest/globals';
+ 
+ // Note: test renderer must be required after react-native.
+-import ReactTestRenderer from 'react-test-renderer';
++import renderer from 'react-test-renderer';
+ 
+-it('renders correctly', async () => {
+-  await ReactTestRenderer.act(() => {
+-    ReactTestRenderer.create(<App />);
+-  });
++it('renders correctly', () => {
++  renderer.create(<App />);
+ });
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index df1ce4db3b..047061127d 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -5,7 +5,7 @@ buildscript {
+         compileSdkVersion = 34
+         targetSdkVersion = 34
+         ndkVersion = "26.1.10909125"
+-        kotlinVersion = "1.9.24"
++        kotlinVersion = "1.9.25"
+     }
+     repositories {
+         google()
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index dafa270141..3ef50eb4ab 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,28 +10,27 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "19.0.0-rc-fb9a90fa48-20240614",
+-    "react-native": "0.75.0-rc.2"
++    "react": "18.3.1",
++    "react-native": "0.75.5"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.20.0",
+     "@babel/preset-env": "^7.20.0",
+     "@babel/runtime": "^7.20.0",
+-    "@react-native/babel-preset": "0.75.0-rc.2",
+-    "@react-native/eslint-config": "0.75.0-rc.2",
+-    "@react-native/metro-config": "0.75.0-rc.2",
+-    "@react-native/typescript-config": "0.75.0-rc.2",
++    "@react-native/babel-preset": "0.75.5",
++    "@react-native/eslint-config": "0.75.5",
++    "@react-native/metro-config": "0.75.5",
++    "@react-native/typescript-config": "0.75.5",
+     "@types/react": "^18.2.6",
+     "@types/react-test-renderer": "^18.0.0",
+     "babel-jest": "^29.6.3",
+     "eslint": "^8.19.0",
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+-    "react-test-renderer": "19.0.0-rc-fb9a90fa48-20240614",
++    "react-test-renderer": "18.3.1",
+     "typescript": "5.0.4"
+   },
+   "engines": {
+     "node": ">=18"
+-  },
+-  "packageManager": "yarn@3.6.4"
++  }
+ }
+\ No newline at end of file
