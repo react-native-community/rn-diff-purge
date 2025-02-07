@@ -1,50 +1,39 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euo pipefail
 
 releases=(
-0.75.0-rc.6
-0.75.0-rc.5
-0.75.0-rc.4
-0.75.0-rc.3
-0.75.0-rc.2
-0.74.4
-0.74.3
-0.74.2
-0.74.1
-0.74.1-rc.0
-0.74.0
-0.74.0-rc.9
-0.74.0-rc.8
-0.74.0-rc.7
-0.74.0-rc.6
-0.74.0-rc.5
-0.74.0-rc.4
-0.74.0-rc.3
-0.74.0-rc.2
-0.74.0-rc.0
-0.73.9
-0.73.8
-0.73.7
+  0.64.3
 )
-
 
 if [ ! -d wt-diffs ]; then
   git worktree add wt-diffs diffs
 fi
 
-for vfrom in "${releases[@]}"
-do
-  echo "from $vfrom"
-  for vto in "${releases[@]}"
-  do
-    if [ "$vfrom" == "$vto" ]; then
+for i in "${!releases[@]}"; do
+  vfrom="${releases[$i]}"
+  echo "For release $vfrom:"
+  for j in "${!releases[@]}"; do
+    # Skip if j index is less than or equal to i
+    if [ $j -le $i ]; then
       continue
     fi
+    vto="${releases[$j]}"
 
-    if ./scripts/compare-releases.js "$vfrom" "$vto"; then
-      continue
-    fi
+    result=0
+    ./scripts/compare-releases.js "$vfrom" "$vto" || result=$?
 
-    git diff --binary -w -M15% origin/release/"$vfrom"..origin/release/"$vto" > wt-diffs/diffs/"$vfrom".."$vto".diff
+    case $result in
+    1)
+      echo "with later release $vto: Generating diff file.."
+      git diff --binary -w -M15% origin/release/"$vfrom"..origin/release/"$vto" >wt-diffs/diffs/"$vfrom".."$vto".diff
+      ;;
+    3)
+      echo "with earlier release $vto: Generating diff file.."
+      git diff --binary -w -M15% origin/release/"$vto"..origin/release/"$vfrom" >wt-diffs/diffs/"$vto".."$vfrom".diff
+      ;;
+    *)
+      echo "Error: Unexpected return code $result from compare-releases.js"
+      ;;
+    esac
   done
 done

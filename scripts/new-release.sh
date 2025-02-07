@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-
 ErrorReleaseExists=2
 ErrorReleaseArgMissing=3
 ErrorReleaseTagExists=4
@@ -17,14 +16,14 @@ NumberOfReleases=12 # the number of releases on the table
 
 IgnorePaths=("README.md")
 
-function guardMissingArg () {
+function guardMissingArg() {
     if [ "$#" -ne 1 ]; then
         echo "Release argument missing."
         exit "$ErrorReleaseArgMissing"
     fi
 }
 
-function guardExisting () {
+function guardExisting() {
     if grep -qFx "$newRelease" "$ReleasesFile"; then
         echo "Release $newRelease already exists!"
         exit "$ErrorReleaseExists"
@@ -35,14 +34,14 @@ function guardExisting () {
     fi
 }
 
-function prepare () {
+function prepare() {
     # This git config setting, in combination with the `.gitattributes` file, tells the scripts to not pay attention to some files that don't need to be in the diffs, like the root `.gitignore` of this repo (not the RnDiffApp project).
     git config --local diff.nodiff.command true
     git pull
     npm install
 }
 
-function generateNewReleaseBranch () {
+function generateNewReleaseBranch() {
     # go to the base app branch
     git worktree add wt-app "$AppBaseBranch"
     cd wt-app
@@ -59,9 +58,9 @@ function generateNewReleaseBranch () {
     # generate app and remove generated git repo
     # if we're generating the template for an -rc release, let's grab cli@next
     if [[ $newRelease == *-rc* ]]; then
-      npx @react-native-community/cli@next init "$AppName" --version "$newRelease" --skip-install
+        npx @react-native-community/cli@next init "$AppName" --version "$newRelease" --skip-install
     else
-      npx @react-native-community/cli@latest init "$AppName" --version "$newRelease" --skip-install
+        npx @react-native-community/cli@latest init "$AppName" --version "$newRelease" --skip-install
     fi
 
     # clean up before committing for diffing
@@ -80,8 +79,8 @@ function generateNewReleaseBranch () {
     git worktree prune
 }
 
-function addReleaseToList () {
-    echo "$newRelease" >> "$ReleasesFile"
+function addReleaseToList() {
+    echo "$newRelease" >>"$ReleasesFile"
 
     if command -v tac; then
         #   take each line ->dedup->    sort them              -> reverse them -> save them
@@ -94,7 +93,7 @@ function addReleaseToList () {
     mv tmpfile "$ReleasesFile"
 }
 
-function generateDiffs () {
+function generateDiffs() {
     if [ ! -d wt-diffs ]; then
         git worktree add wt-diffs diffs
     fi
@@ -103,16 +102,30 @@ function generateDiffs () {
     git pull
     cd ..
 
+    echo "For release $newRelease:"
     IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
-    for existingRelease in "${releases[@]}"
-    do
-        if [ "$existingRelease" == "$newRelease" ]; then
-            continue
-        fi
+    for existingRelease in "${releases[@]}"; do
 
-        if ./scripts/compare-releases.js "$existingRelease" "$newRelease"; then
+        result=0
+        ./scripts/compare-releases.js "$newRelease" "$existingRelease" || result=$?
+
+        case $result in
+        1)
+            echo "with later release $existingRelease: Generating diff file.."
+            git diff --binary -w -M15% origin/release/"$newRelease"..origin/release/"$existingRelease" >wt-diffs/diffs/"$newRelease".."$existingRelease".diff
+            ;;
+        2)
+            echo "with same release $existingRelease: Skipping.."
             continue
-        fi
+            ;;
+        3)
+            echo "with earlier release $existingRelease: Generating diff file.."
+            git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" >wt-diffs/diffs/"$existingRelease".."$newRelease".diff
+            ;;
+        *)
+            echo "Error: Unexpected return code $result from compare-releases.js"
+            ;;
+        esac
 
         ignoreArgs=()
         for path in "${IgnorePaths[@]}"; do
@@ -120,7 +133,7 @@ function generateDiffs () {
         done
 
         git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" \
-            -- . "${ignoreArgs[@]}" > wt-diffs/diffs/"$existingRelease".."$newRelease".diff
+            -- . "${ignoreArgs[@]}" >wt-diffs/diffs/"$existingRelease".."$newRelease".diff
     done
 
     cd wt-diffs
@@ -130,48 +143,47 @@ function generateDiffs () {
     cd ..
 }
 
-function pushMaster () {
+function pushMaster() {
     git add .
     git commit -m "Add release $newRelease"
     git push
 }
 
-function generateTable () {
-    head -n "$NumberOfReleases" "$ReleasesFile" | ./scripts/generate-table.js > "$ReadmeTable"
+function generateTable() {
+    head -n "$NumberOfReleases" "$ReleasesFile" | ./scripts/generate-table.js >"$ReadmeTable"
 }
 
-function generateBigTable () {
-    cat "$ReleasesFile" | ./scripts/generate-table.js --big > "$ReadmeTableBig"
+function generateBigTable() {
+    cat "$ReleasesFile" | ./scripts/generate-table.js --big >"$ReadmeTableBig"
 }
 
 ReadmeHeader=README_HEADER.md
 ReadmeFooter=README_FOOTER.md
 
-function breakUpReadme () {
-    perl -p0e 's/(.*## Diff table[^\n]*\n\n)(.*)/$1/smg' "$ReadmeFile" > "$ReadmeHeader"
-    perl -p0e 's/(.*)(\n## To see.*)/$2/smg' "$ReadmeFile" > "$ReadmeFooter"
+function breakUpReadme() {
+    perl -p0e 's/(.*## Diff table[^\n]*\n\n)(.*)/$1/smg' "$ReadmeFile" >"$ReadmeHeader"
+    perl -p0e 's/(.*)(\n## To see.*)/$2/smg' "$ReadmeFile" >"$ReadmeFooter"
 }
 
-function makeUpReadme () {
-    cat "$ReadmeHeader" "$ReadmeTable" "$ReadmeFooter" > "$ReadmeFile"
+function makeUpReadme() {
+    cat "$ReadmeHeader" "$ReadmeTable" "$ReadmeFooter" >"$ReadmeFile"
 }
 
-function generateReadme () {
+function generateReadme() {
     breakUpReadme
     makeUpReadme
 }
 
-function generateGHPages () {
+function generateGHPages() {
     cp docs/_index.html docs/index.html
-    npx markdown "$ReadmeTableBig" >> docs/index.html
+    npx markdown "$ReadmeTableBig" >>docs/index.html
 }
 
-function cleanUp () {
+function cleanUp() {
     rm -rf "$ReadmeHeader" "$ReadmeFooter" "$ReadmeTable" "$ReadmeTableBig"
     rm -rf wt-app
     git worktree prune
 }
-
 
 guardMissingArg $*
 newRelease=${1#v}
