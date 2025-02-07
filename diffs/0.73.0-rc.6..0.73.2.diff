@@ -2,23 +2,20 @@ diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.k
 index a2cb223c28..d6869ad95b 100644
 --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
 +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
-@@ -16,11 +16,11 @@ class MainApplication : Application(), ReactApplication {
+@@ -16,10 +16,10 @@ class MainApplication : Application(), ReactApplication {
  
    override val reactNativeHost: ReactNativeHost =
        object : DefaultReactNativeHost(this) {
 -        override fun getPackages(): List<ReactPackage> {
--          // Packages that cannot be autolinked yet can be added manually here, for example:
--          // packages.add(new MyReactNativePackage());
--          return PackageList(this).packages
--        }
 +        override fun getPackages(): List<ReactPackage> =
 +            PackageList(this).packages.apply {
-+              // Packages that cannot be autolinked yet can be added manually here, for example:
+               // Packages that cannot be autolinked yet can be added manually here, for example:
+-          // packages.add(new MyReactNativePackage());
+-          return PackageList(this).packages
 +              // add(MyReactNativePackage())
-+            }
+             }
  
          override fun getJSMainModuleName(): String = "index"
- 
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
 index df4295b90c..6b44b372e8 100644
 --- a/RnDiffApp/package.json
