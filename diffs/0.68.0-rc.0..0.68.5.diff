@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
 index 08c564b420..975227dab4 100644
 --- a/RnDiffApp/.flowconfig
@@ -185,11 +195,9 @@ index aeb1f56b05..7460d7f415 100644
 -    if (isNewArchitectureEnabled()) {
 -        implementation project(":ReactAndroid")
 -    } else {
--        //noinspection GradleDynamicVersion
--        implementation "com.facebook.react:react-native:+"  // From node_modules
+     //noinspection GradleDynamicVersion
+     implementation "com.facebook.react:react-native:+"  // From node_modules
 -    }
-+    //noinspection GradleDynamicVersion
-+    implementation "com.facebook.react:react-native:+"  // From node_modules
  
      implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
  
@@ -222,22 +230,22 @@ index 8a1d68f9c5..5dfc68a632 100644
  // Top-level build file where you can add configuration options common to all sub-projects/modules.
  
  buildscript {
-@@ -6,7 +8,14 @@ buildscript {
+@@ -6,8 +8,15 @@ buildscript {
          minSdkVersion = 21
          compileSdkVersion = 31
          targetSdkVersion = 31
--        ndkVersion = "21.4.7075529"
 +
 +        if (System.properties['os.arch'] == "aarch64") {
 +            // For M1 Users we need to use the NDK 24 which added support for aarch64
 +            ndkVersion = "24.0.8215888"
 +        } else {
 +            // Otherwise we default to the side-by-side NDK version from AGP.
-+            ndkVersion = "21.4.7075529"
-+        }
-     }
+             ndkVersion = "21.4.7075529"
+         }
++    }
      repositories {
          google()
+         mavenCentral()
 diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
 index 6e1a46f01b..fa4feae5f1 100644
 --- a/RnDiffApp/android/gradle.properties

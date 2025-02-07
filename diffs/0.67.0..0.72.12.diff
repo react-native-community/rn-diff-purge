@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
 index 934256cb29..0000000000
@@ -169,14 +179,6 @@ index 84196d95f4..2b540746a7 100644
    trailingComma: 'all',
 -  arrowParens: 'avoid',
  };
-diff --git a/RnDiffApp/.watchmanconfig b/RnDiffApp/.watchmanconfig
-index 9e26dfeeb6..0967ef424b 100644
---- a/RnDiffApp/.watchmanconfig
-+++ b/RnDiffApp/.watchmanconfig
-@@ -1 +1 @@
--{}
-\ No newline at end of file
-+{}
 diff --git a/RnDiffApp/App.js b/RnDiffApp/App.tsx
 similarity index 83%
 rename from RnDiffApp/App.js
@@ -548,12 +550,13 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index e8c55e06bc..083631f32f 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,135 +1,79 @@
+@@ -1,105 +1,62 @@
  apply plugin: "com.android.application"
 -
 -import com.android.build.OutputFile
--
--/**
++apply plugin: "com.facebook.react"
+ 
+ /**
 - * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
 - * and bundleReleaseJsAndAssets).
 - * These basically call `react-native bundle` with the correct arguments during the Android build
@@ -626,25 +629,24 @@ index e8c55e06bc..083631f32f 100644
 - *   // supply additional arguments to the packager
 - *   extraPackagerArgs: []
 - * ]
-- */
++ * This is the configuration block to customize your React Native Android app.
++ * By default you don't need to apply any configuration, just uncomment the lines you need.
+  */
 -
 -project.ext.react = [
 -    enableHermes: false,  // clean and rebuild if changing
 -]
 -
 -apply from: "../../node_modules/react-native/react.gradle"
-+apply plugin: "com.facebook.react"
- 
- /**
+-
+-/**
 - * Set this to true to create two separate APKs instead of one:
 - *   - An APK that only works on ARM devices
 - *   - An APK that only works on x86 devices
 - * The advantage is the size of the APK is reduced by about 4MB.
 - * Upload all the APKs to the Play Store and people will download
 - * the correct one based on the CPU architecture of their device.
-+ * This is the configuration block to customize your React Native Android app.
-+ * By default you don't need to apply any configuration, just uncomment the lines you need.
-  */
+- */
 -def enableSeparateBuildPerCPUArchitecture = false
 +react {
 +    /* Folders */
@@ -703,12 +705,7 @@ index e8c55e06bc..083631f32f 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
+@@ -111,25 +68,12 @@ def enableProguardInReleaseBuilds = false
   */
  def jscFlavor = 'org.webkit:android-jsc:+'
  
@@ -1054,19 +1051,6 @@ index 04df56cf60..8687dc632f 100644
 +    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
    }
  }
-diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-index f35d996202..73b37e4d99 100644
---- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-+++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-@@ -20,7 +20,7 @@
-        android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
- 
-     <selector>
--        <!-- 
-+        <!--
-           This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
-           The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
-           NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
 diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 new file mode 100644
 index 0000000000..b755b303ce
@@ -2880,22 +2864,22 @@ index 4f906e0c81..65dcd68d65 100755
 -    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
 -        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
 -    fi
-+if "$cygwin" || "$msys" ; then
-+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
-+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
-+
-+    JAVACMD=$( cygpath --unix "$JAVACMD" )
-+
-     # Now convert the arguments - kludge to limit ourselves to /bin/sh
+-    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 -    i=0
 -    for arg in "$@" ; do
 -        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
 -        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
--
++if "$cygwin" || "$msys" ; then
++    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
++    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+ 
 -        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
 -            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
 -        else
 -            eval `echo args$i`="\"$arg\""
++    JAVACMD=$( cygpath --unix "$JAVACMD" )
++
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 +    for arg do
 +        if
 +            case $arg in                                #(
@@ -2989,21 +2973,10 @@ diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
 index 107acd32c4..93e3f59f13 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
-@@ -14,7 +14,7 @@
- @rem limitations under the License.
- @rem
- 
--@if "%DEBUG%" == "" @echo off
-+@if "%DEBUG%"=="" @echo off
- @rem ##########################################################################
- @rem
- @rem  Gradle startup script for Windows
-@@ -25,7 +25,8 @@
- if "%OS%"=="Windows_NT" setlocal
+@@ -26,6 +26,7 @@ if "%OS%"=="Windows_NT" setlocal
  
  set DIRNAME=%~dp0
--if "%DIRNAME%" == "" set DIRNAME=.
-+if "%DIRNAME%"=="" set DIRNAME=.
+ if "%DIRNAME%"=="" set DIRNAME=.
 +@rem This is normally unused
  set APP_BASE_NAME=%~n0
  set APP_HOME=%DIRNAME%
@@ -3045,17 +3018,6 @@ index 73a47b2eda..e5f65b56c5 100644
  apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
  include ':app'
 +includeBuild('../node_modules/@react-native/gradle-plugin')
-diff --git a/RnDiffApp/app.json b/RnDiffApp/app.json
-index 0462e26ea9..55102ab939 100644
---- a/RnDiffApp/app.json
-+++ b/RnDiffApp/app.json
-@@ -1,4 +1,4 @@
- {
-   "name": "RnDiffApp",
-   "displayName": "RnDiffApp"
--}
-\ No newline at end of file
-+}
 diff --git a/RnDiffApp/ios/.xcode.env b/RnDiffApp/ios/.xcode.env
 new file mode 100644
 index 0000000000..3d5782c715
@@ -3750,9 +3712,7 @@ index 118c98f746..81213230de 100644
 +    "author" : "xcode",
 +    "version" : 1
    }
--}
-\ No newline at end of file
-+}
+ }
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
 index 903b7921cf..91e8626f36 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
@@ -3789,52 +3749,26 @@ diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDif
 index fe83ad2442..fae48110ab 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-@@ -13,7 +13,7 @@
- 
- @implementation RnDiffAppTests
- 
--- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
-+- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
- {
-   if (test(view)) {
-     return YES;
-@@ -34,23 +34,25 @@
+@@ -34,7 +34,8 @@
  
    __block NSString *redboxError = nil;
  #ifdef DEBUG
 -  RCTSetLogFunction(^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
--    if (level >= RCTLogLevelError) {
--      redboxError = message;
--    }
--  });
 +  RCTSetLogFunction(
 +      ^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
-+        if (level >= RCTLogLevelError) {
-+          redboxError = message;
-+        }
-+      });
- #endif
- 
-   while ([date timeIntervalSinceNow] > 0 && !foundElement && !redboxError) {
+         if (level >= RCTLogLevelError) {
+           redboxError = message;
+         }
+@@ -45,7 +46,8 @@
      [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
      [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
  
 -    foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
--      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
--        return YES;
--      }
--      return NO;
--    }];
 +    foundElement = [self findSubviewInView:vc.view
 +                                  matching:^BOOL(UIView *view) {
-+                                    if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
-+                                      return YES;
-+                                    }
-+                                    return NO;
-+                                  }];
-   }
- 
- #ifdef DEBUG
+                                     if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
+                                       return YES;
+                                     }
 @@ -61,5 +63,4 @@
    XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
  }

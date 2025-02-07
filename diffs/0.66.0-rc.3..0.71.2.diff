@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
 index 934256cb29..0000000000
@@ -348,7 +358,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index c6d61c164b..fccf99f937 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,135 +1,99 @@
+@@ -1,105 +1,72 @@
  apply plugin: "com.android.application"
 +apply plugin: "com.facebook.react"
  
@@ -507,13 +517,7 @@ index c6d61c164b..fccf99f937 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
-  */
+@@ -112,24 +79,21 @@ def enableProguardInReleaseBuilds = false
  def jscFlavor = 'org.webkit:android-jsc:+'
  
  /**
@@ -580,11 +584,11 @@ index c6d61c164b..fccf99f937 100644
 -    implementation fileTree(dir: "libs", include: ["*.jar"])
 -    //noinspection GradleDynamicVersion
 -    implementation "com.facebook.react:react-native:+"  // From node_modules
--
--    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 +    // The version of react-native is set by the React Native Gradle Plugin
 +    implementation("com.facebook.react:react-android")
  
+-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+-
 -    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
 -        exclude group:'com.facebook.fbjni'
 -    }
@@ -2047,22 +2051,22 @@ index 4f906e0c81..1b6c787337 100755
 -    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
 -        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
 -    fi
-+if "$cygwin" || "$msys" ; then
-+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
-+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
-+
-+    JAVACMD=$( cygpath --unix "$JAVACMD" )
-+
-     # Now convert the arguments - kludge to limit ourselves to /bin/sh
+-    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 -    i=0
 -    for arg in "$@" ; do
 -        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
 -        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
--
++if "$cygwin" || "$msys" ; then
++    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
++    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+ 
 -        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
 -            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
 -        else
 -            eval `echo args$i`="\"$arg\""
++    JAVACMD=$( cygpath --unix "$JAVACMD" )
++
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 +    for arg do
 +        if
 +            case $arg in                                #(
@@ -2775,16 +2779,16 @@ index c3420dada6..fe439f4026 100644
 -#ifdef FB_SONARKIT_ENABLED
 -  InitializeFlipper(application);
 -#endif
+-
+-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                                   moduleName:@"RnDiffApp"
+-                                            initialProperties:nil];
 +  self.moduleName = @"RnDiffApp";
 +  // You can add your custom initial props in the dictionary below.
 +  // They will be passed down to the ViewController used by React Native.
 +  self.initialProps = @{};
  
--  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
--  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
--                                                   moduleName:@"RnDiffApp"
--                                            initialProperties:nil];
--
 -  if (@available(iOS 13.0, *)) {
 -      rootView.backgroundColor = [UIColor systemBackgroundColor];
 -  } else {
@@ -2891,9 +2895,7 @@ index 118c98f746..81213230de 100644
 +    "author" : "xcode",
 +    "version" : 1
    }
--}
-\ No newline at end of file
-+}
+ }
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
 index 903b7921cf..91e8626f36 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
@@ -2930,52 +2932,26 @@ diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDif
 index fe83ad2442..fae48110ab 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-@@ -13,7 +13,7 @@
- 
- @implementation RnDiffAppTests
- 
--- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
-+- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
- {
-   if (test(view)) {
-     return YES;
-@@ -34,23 +34,25 @@
+@@ -34,7 +34,8 @@
  
    __block NSString *redboxError = nil;
  #ifdef DEBUG
 -  RCTSetLogFunction(^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
--    if (level >= RCTLogLevelError) {
--      redboxError = message;
--    }
--  });
 +  RCTSetLogFunction(
 +      ^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
-+        if (level >= RCTLogLevelError) {
-+          redboxError = message;
-+        }
-+      });
- #endif
- 
-   while ([date timeIntervalSinceNow] > 0 && !foundElement && !redboxError) {
+         if (level >= RCTLogLevelError) {
+           redboxError = message;
+         }
+@@ -45,7 +46,8 @@
      [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
      [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
  
 -    foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
--      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
--        return YES;
--      }
--      return NO;
--    }];
 +    foundElement = [self findSubviewInView:vc.view
 +                                  matching:^BOOL(UIView *view) {
-+                                    if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
-+                                      return YES;
-+                                    }
-+                                    return NO;
-+                                  }];
-   }
- 
- #ifdef DEBUG
+                                     if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
+                                       return YES;
+                                     }
 @@ -61,5 +63,4 @@
    XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
  }

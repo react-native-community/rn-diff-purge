@@ -295,15 +295,6 @@ diff --git a/RnDiffApp/android/app/src/main/jni/Android.mk b/RnDiffApp/android/a
 index 22303eea49..842579d5ed 100644
 --- a/RnDiffApp/android/app/src/main/jni/Android.mk
 +++ b/RnDiffApp/android/app/src/main/jni/Android.mk
-@@ -17,7 +17,7 @@ LOCAL_SRC_FILES := $(wildcard $(LOCAL_PATH)/*.cpp)
- LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
- 
- # If you wish to add a custom TurboModule or Fabric component in your app you
--# will have to uncomment those lines to include the generated source 
-+# will have to uncomment those lines to include the generated source
- # files from the codegen (placed in $(GENERATED_SRC_DIR)/codegen/jni)
- #
- # LOCAL_C_INCLUDES += $(GENERATED_SRC_DIR)/codegen/jni
 @@ -28,8 +28,7 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
  LOCAL_SHARED_LIBRARIES := \
    libfabricjni \
@@ -328,7 +319,6 @@ index 8a1d68f9c5..a53bfbfd50 100644
          minSdkVersion = 21
          compileSdkVersion = 31
          targetSdkVersion = 31
--        ndkVersion = "21.4.7075529"
 +
 +        if (System.properties['os.arch'] == "aarch64") {
 +            // For M1 Users we need to use the NDK 24 which added support for aarch64
@@ -339,9 +329,9 @@ index 8a1d68f9c5..a53bfbfd50 100644
 +            ndkVersion = "23.1.7779620"
 +        } else {
 +            // Otherwise we default to the side-by-side NDK version from AGP.
-+            ndkVersion = "21.4.7075529"
-+        }
-     }
+             ndkVersion = "21.4.7075529"
+         }
++    }
      repositories {
          google()
          mavenCentral()

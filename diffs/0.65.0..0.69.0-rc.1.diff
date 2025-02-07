@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.bundle/config b/RnDiffApp/.bundle/config
 new file mode 100644
 index 0000000000..848943bb52
@@ -229,8 +239,8 @@ index 9126656058..6be24a247c 100644
 +                    dependsOn("preReleaseBuild")
 +                }
 +            }
-+        }
-     }
+         }
++    }
 +
      splits {
          abi {
@@ -242,7 +252,7 @@ index 9126656058..6be24a247c 100644
          }
      }
      signingConfigs {
-@@ -180,13 +257,14 @@ android {
+@@ -180,6 +257,7 @@ android {
  
  dependencies {
      implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -250,14 +260,6 @@ index 9126656058..6be24a247c 100644
      //noinspection GradleDynamicVersion
      implementation "com.facebook.react:react-native:+"  // From node_modules
  
-     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
- 
-     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
--      exclude group:'com.facebook.fbjni'
-+        exclude group:'com.facebook.fbjni'
-     }
- 
-     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
 @@ -199,19 +277,44 @@ dependencies {
      }
  
@@ -436,13 +438,12 @@ index 04df56cf60..9f29592946 100644
 +
    @Override
    public ReactNativeHost getReactNativeHost() {
--    return mReactNativeHost;
 +    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 +      return mNewArchitectureNativeHost;
 +    } else {
-+      return mReactNativeHost;
-+    }
-   }
+       return mReactNativeHost;
+     }
++  }
  
    @Override
    public void onCreate() {
@@ -2086,22 +2087,22 @@ index 4f906e0c81..1b6c787337 100755
 -    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
 -        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
 -    fi
-+if "$cygwin" || "$msys" ; then
-+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
-+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
-+
-+    JAVACMD=$( cygpath --unix "$JAVACMD" )
-+
-     # Now convert the arguments - kludge to limit ourselves to /bin/sh
+-    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 -    i=0
 -    for arg in "$@" ; do
 -        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
 -        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
--
++if "$cygwin" || "$msys" ; then
++    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
++    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+ 
 -        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
 -            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
 -        else
 -            eval `echo args$i`="\"$arg\""
++    JAVACMD=$( cygpath --unix "$JAVACMD" )
++
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 +    for arg do
 +        if
 +            case $arg in                                #(
@@ -2737,7 +2738,7 @@ rename to RnDiffApp/ios/RnDiffApp/AppDelegate.mm
 index c3420dada6..e3debc9fd6 100644
 --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.m
 +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.mm
-@@ -4,42 +4,52 @@
+@@ -4,37 +4,47 @@
  #import <React/RCTBundleURLProvider.h>
  #import <React/RCTRootView.h>
  
@@ -2806,14 +2807,7 @@ index c3420dada6..e3debc9fd6 100644
 +  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"RnDiffApp", initProps);
  
    if (@available(iOS 13.0, *)) {
--      rootView.backgroundColor = [UIColor systemBackgroundColor];
-+    rootView.backgroundColor = [UIColor systemBackgroundColor];
-   } else {
--      rootView.backgroundColor = [UIColor whiteColor];
-+    rootView.backgroundColor = [UIColor whiteColor];
-   }
- 
-   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+     rootView.backgroundColor = [UIColor systemBackgroundColor];
 @@ -50,13 +60,74 @@ static void InitializeFlipper(UIApplication *application) {
    return YES;
  }
@@ -2960,9 +2954,7 @@ index 118c98f746..81213230de 100644
 +    "author" : "xcode",
 +    "version" : 1
    }
--}
-\ No newline at end of file
-+}
+ }
 diff --git a/RnDiffApp/ios/RnDiffApp/main.m b/RnDiffApp/ios/RnDiffApp/main.m
 index b1df44b953..d645c7246c 100644
 --- a/RnDiffApp/ios/RnDiffApp/main.m
@@ -2981,52 +2973,26 @@ diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDif
 index fe83ad2442..fae48110ab 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-@@ -13,7 +13,7 @@
- 
- @implementation RnDiffAppTests
- 
--- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
-+- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
- {
-   if (test(view)) {
-     return YES;
-@@ -34,23 +34,25 @@
+@@ -34,7 +34,8 @@
  
    __block NSString *redboxError = nil;
  #ifdef DEBUG
 -  RCTSetLogFunction(^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
--    if (level >= RCTLogLevelError) {
--      redboxError = message;
--    }
--  });
 +  RCTSetLogFunction(
 +      ^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
-+        if (level >= RCTLogLevelError) {
-+          redboxError = message;
-+        }
-+      });
- #endif
- 
-   while ([date timeIntervalSinceNow] > 0 && !foundElement && !redboxError) {
+         if (level >= RCTLogLevelError) {
+           redboxError = message;
+         }
+@@ -45,7 +46,8 @@
      [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
      [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
  
 -    foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
--      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
--        return YES;
--      }
--      return NO;
--    }];
 +    foundElement = [self findSubviewInView:vc.view
 +                                  matching:^BOOL(UIView *view) {
-+                                    if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
-+                                      return YES;
-+                                    }
-+                                    return NO;
-+                                  }];
-   }
- 
- #ifdef DEBUG
+                                     if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
+                                       return YES;
+                                     }
 @@ -61,5 +63,4 @@
    XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
  }

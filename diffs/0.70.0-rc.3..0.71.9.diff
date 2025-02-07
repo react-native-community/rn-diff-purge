@@ -284,7 +284,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index 4e19cfde8b..fccf99f937 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,128 +1,87 @@
+@@ -1,106 +1,72 @@
  apply plugin: "com.android.application"
 +apply plugin: "com.facebook.react"
  
@@ -444,13 +444,7 @@ index 4e19cfde8b..fccf99f937 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
-  */
+@@ -113,16 +79,9 @@ def enableProguardInReleaseBuilds = false
  def jscFlavor = 'org.webkit:android-jsc:+'
  
  /**
@@ -552,11 +546,11 @@ index 4e19cfde8b..fccf99f937 100644
 -
 -    //noinspection GradleDynamicVersion
 -    implementation "com.facebook.react:react-native:+"  // From node_modules
--
--    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 +    // The version of react-native is set by the React Native Gradle Plugin
 +    implementation("com.facebook.react:react-android")
  
+-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+-
 -    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
 -        exclude group:'com.facebook.fbjni'
 -    }
@@ -721,7 +715,10 @@ index 31ae98f7f6..98eb1cdead 100644
 -    @Override
 -    protected ReactRootView createRootView() {
 -      ReactRootView reactRootView = new ReactRootView(getContext());
--      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
++    return new DefaultReactActivityDelegate(
++        this,
++        getMainComponentName(),
+         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
 -      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
 -      return reactRootView;
 -    }
@@ -732,10 +729,6 @@ index 31ae98f7f6..98eb1cdead 100644
 -      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
 -      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
 -    }
-+    return new DefaultReactActivityDelegate(
-+        this,
-+        getMainComponentName(),
-+        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
 +        DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
 +        // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
 +        DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
@@ -796,10 +789,9 @@ index 9f29592946..8687dc632f 100644
 -    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 -      return mNewArchitectureNativeHost;
 -    } else {
--      return mReactNativeHost;
--    }
-+    return mReactNativeHost;
+     return mReactNativeHost;
    }
+-  }
  
    @Override
    public void onCreate() {
@@ -1662,11 +1654,7 @@ index e3debc9fd6..fe439f4026 100644
 -  } else {
 -    rootView.backgroundColor = [UIColor whiteColor];
 -  }
-+  self.moduleName = @"RnDiffApp";
-+  // You can add your custom initial props in the dictionary below.
-+  // They will be passed down to the ViewController used by React Native.
-+  self.initialProps = @{};
- 
+-
 -  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 -  UIViewController *rootViewController = [UIViewController new];
 -  rootViewController.view = rootView;
@@ -1693,7 +1681,11 @@ index e3debc9fd6..fe439f4026 100644
 -#ifdef RCT_NEW_ARCH_ENABLED
 -  initProps[kRNConcurrentRoot] = @([self concurrentRootEnabled]);
 -#endif
--
++  self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
+ 
 -  return initProps;
 +  return [super application:application didFinishLaunchingWithOptions:launchOptions];
  }

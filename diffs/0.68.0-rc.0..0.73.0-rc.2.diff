@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
 index 934256cb29..0000000000
@@ -157,14 +167,6 @@ index a4dd9dba4f..0000000000
 +++ /dev/null
 @@ -1 +0,0 @@
 -2.7.4
-diff --git a/RnDiffApp/.watchmanconfig b/RnDiffApp/.watchmanconfig
-index 9e26dfeeb6..0967ef424b 100644
---- a/RnDiffApp/.watchmanconfig
-+++ b/RnDiffApp/.watchmanconfig
-@@ -1 +1 @@
--{}
-\ No newline at end of file
-+{}
 diff --git a/RnDiffApp/App.js b/RnDiffApp/App.tsx
 similarity index 82%
 rename from RnDiffApp/App.js
@@ -527,7 +529,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index aeb1f56b05..d4670439cf 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,201 +1,86 @@
+@@ -1,105 +1,63 @@
  apply plugin: "com.android.application"
 -
 -import com.android.build.OutputFile
@@ -683,12 +685,7 @@ index aeb1f56b05..d4670439cf 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
+@@ -111,91 +69,18 @@ def enableProguardInReleaseBuilds = false
   */
  def jscFlavor = 'org.webkit:android-jsc:+'
  
@@ -811,10 +808,7 @@ index aeb1f56b05..d4670439cf 100644
  
  dependencies {
 -    implementation fileTree(dir: "libs", include: ["*.jar"])
-+    // The version of react-native is set by the React Native Gradle Plugin
-+    implementation("com.facebook.react:react-android")
-+    implementation("com.facebook.react:flipper-integration")
- 
+-
 -    // If new architecture is enabled, we let you build RN from source
 -    // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
 -    if (isNewArchitectureEnabled()) {
@@ -829,7 +823,10 @@ index aeb1f56b05..d4670439cf 100644
 -    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
 -        exclude group:'com.facebook.fbjni'
 -    }
--
++    // The version of react-native is set by the React Native Gradle Plugin
++    implementation("com.facebook.react:react-android")
++    implementation("com.facebook.react:flipper-integration")
+ 
 -    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
 -        exclude group:'com.facebook.flipper'
 -        exclude group:'com.squareup.okhttp3', module:'okhttp'
@@ -1770,19 +1767,6 @@ index c569b6e865..0000000000
 -    facebook::react::MainComponentsRegistry::registerNatives();
 -  });
 -}
-diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-index f35d996202..73b37e4d99 100644
---- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-+++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-@@ -20,7 +20,7 @@
-        android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
- 
-     <selector>
--        <!-- 
-+        <!--
-           This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
-           The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
-           NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
 diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
 index 8a1d68f9c5..7e6117e3ab 100644
 --- a/RnDiffApp/android/build.gradle
@@ -3517,8 +3501,8 @@ index 1b6c787337..0adc8e1a53 100755
  
  Please set the JAVA_HOME variable in your environment to match the
  location of your Java installation."
-+    fi
- fi
+     fi
++fi
  
  # Increase the maximum file descriptors if we can.
  if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
@@ -3565,21 +3549,10 @@ diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
 index 107acd32c4..93e3f59f13 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
-@@ -14,7 +14,7 @@
- @rem limitations under the License.
- @rem
- 
--@if "%DEBUG%" == "" @echo off
-+@if "%DEBUG%"=="" @echo off
- @rem ##########################################################################
- @rem
- @rem  Gradle startup script for Windows
-@@ -25,7 +25,8 @@
- if "%OS%"=="Windows_NT" setlocal
+@@ -26,6 +26,7 @@ if "%OS%"=="Windows_NT" setlocal
  
  set DIRNAME=%~dp0
--if "%DIRNAME%" == "" set DIRNAME=.
-+if "%DIRNAME%"=="" set DIRNAME=.
+ if "%DIRNAME%"=="" set DIRNAME=.
 +@rem This is normally unused
  set APP_BASE_NAME=%~n0
  set APP_HOME=%DIRNAME%
@@ -3627,17 +3600,6 @@ index f935eee62d..e5f65b56c5 100644
 -    project(":ReactAndroid").projectDir = file('../node_modules/react-native/ReactAndroid')
 -}
 +includeBuild('../node_modules/@react-native/gradle-plugin')
-diff --git a/RnDiffApp/app.json b/RnDiffApp/app.json
-index 0462e26ea9..55102ab939 100644
---- a/RnDiffApp/app.json
-+++ b/RnDiffApp/app.json
-@@ -1,4 +1,4 @@
- {
-   "name": "RnDiffApp",
-   "displayName": "RnDiffApp"
--}
-\ No newline at end of file
-+}
 diff --git a/RnDiffApp/babel.config.js b/RnDiffApp/babel.config.js
 index f842b77fcf..f7b3da3b33 100644
 --- a/RnDiffApp/babel.config.js
@@ -3953,7 +3915,11 @@ index 2ce420e8e4..cc2e8bacb4 100644
  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
 -  RCTAppSetupPrepareApp(application);
--
++  self.moduleName = @"RnDiffApp";
++  // You can add your custom initial props in the dictionary below.
++  // They will be passed down to the ViewController used by React Native.
++  self.initialProps = @{};
+ 
 -  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 -
 -#if RCT_NEW_ARCH_ENABLED
@@ -3970,11 +3936,8 @@ index 2ce420e8e4..cc2e8bacb4 100644
 -    rootView.backgroundColor = [UIColor systemBackgroundColor];
 -  } else {
 -    rootView.backgroundColor = [UIColor whiteColor];
--  }
-+  self.moduleName = @"RnDiffApp";
-+  // You can add your custom initial props in the dictionary below.
-+  // They will be passed down to the ViewController used by React Native.
-+  self.initialProps = @{};
++  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+ }
  
 -  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 -  UIViewController *rootViewController = [UIViewController new];
@@ -3982,14 +3945,12 @@ index 2ce420e8e4..cc2e8bacb4 100644
 -  self.window.rootViewController = rootViewController;
 -  [self.window makeKeyAndVisible];
 -  return YES;
-+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
- }
- 
- - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
++- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 +{
 +  return [self getBundleURL];
-+}
-+
+ }
+ 
+-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 +- (NSURL *)getBundleURL
  {
  #if DEBUG
@@ -4042,7 +4003,7 @@ diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.p
 index 903b7921cf..1b40a9f17d 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
-@@ -17,23 +17,20 @@
+@@ -17,24 +17,21 @@
  	<key>CFBundlePackageType</key>
  	<string>APPL</string>
  	<key>CFBundleShortVersionString</key>
@@ -4062,17 +4023,17 @@ index 903b7921cf..1b40a9f17d 100644
 -			<key>localhost</key>
 -			<dict>
 -				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
 +	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 +		<key>NSAllowsArbitraryLoads</key>
 +		<false/>
 +		<key>NSAllowsLocalNetworking</key>
-+		<true/>
+ 		<true/>
  	</dict>
+-		</dict>
+-	</dict>
  	<key>NSLocationWhenInUseUsageDescription</key>
  	<string></string>
+ 	<key>UILaunchStoryboardName</key>
 diff --git a/RnDiffApp/jest.config.js b/RnDiffApp/jest.config.js
 new file mode 100644
 index 0000000000..8eb675e9bc

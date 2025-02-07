@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.flowconfig b/RnDiffApp/.flowconfig
 index 08c564b420..74f3a75e7b 100644
 --- a/RnDiffApp/.flowconfig
@@ -242,11 +252,9 @@ index aeb1f56b05..6be24a247c 100644
 -    if (isNewArchitectureEnabled()) {
 -        implementation project(":ReactAndroid")
 -    } else {
--        //noinspection GradleDynamicVersion
--        implementation "com.facebook.react:react-native:+"  // From node_modules
+     //noinspection GradleDynamicVersion
+     implementation "com.facebook.react:react-native:+"  // From node_modules
 -    }
-+    //noinspection GradleDynamicVersion
-+    implementation "com.facebook.react:react-native:+"  // From node_modules
  
      implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
  
@@ -339,15 +347,6 @@ diff --git a/RnDiffApp/android/app/src/main/jni/Android.mk b/RnDiffApp/android/a
 index 22303eea49..842579d5ed 100644
 --- a/RnDiffApp/android/app/src/main/jni/Android.mk
 +++ b/RnDiffApp/android/app/src/main/jni/Android.mk
-@@ -17,7 +17,7 @@ LOCAL_SRC_FILES := $(wildcard $(LOCAL_PATH)/*.cpp)
- LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
- 
- # If you wish to add a custom TurboModule or Fabric component in your app you
--# will have to uncomment those lines to include the generated source 
-+# will have to uncomment those lines to include the generated source
- # files from the codegen (placed in $(GENERATED_SRC_DIR)/codegen/jni)
- #
- # LOCAL_C_INCLUDES += $(GENERATED_SRC_DIR)/codegen/jni
 @@ -28,8 +28,7 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
  LOCAL_SHARED_LIBRARIES := \
    libfabricjni \
@@ -372,16 +371,15 @@ index 8a1d68f9c5..c9bc539de9 100644
          minSdkVersion = 21
          compileSdkVersion = 31
          targetSdkVersion = 31
--        ndkVersion = "21.4.7075529"
 +
 +        if (System.properties['os.arch'] == "aarch64") {
 +            // For M1 Users we need to use the NDK 24 which added support for aarch64
 +            ndkVersion = "24.0.8215888"
 +        } else {
 +            // Otherwise we default to the side-by-side NDK version from AGP.
-+            ndkVersion = "21.4.7075529"
-+        }
-     }
+             ndkVersion = "21.4.7075529"
+         }
++    }
      repositories {
          google()
          mavenCentral()
