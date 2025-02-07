@@ -106,13 +106,18 @@ function generateDiffs() {
     IFS=$'\n' GLOBIGNORE='*' command eval 'releases=($(cat "$ReleasesFile"))'
     for existingRelease in "${releases[@]}"; do
 
+        ignoreArgs=()
+        for path in "${IgnorePaths[@]}"; do
+            ignoreArgs+=(":!$path")
+        done
+
         result=0
         ./scripts/compare-releases.js "$newRelease" "$existingRelease" || result=$?
 
         case $result in
         1)
             echo "with later release $existingRelease: Generating diff file.."
-            git diff --binary -w -M15% origin/release/"$newRelease"..origin/release/"$existingRelease" >wt-diffs/diffs/"$newRelease".."$existingRelease".diff
+            git diff --binary -w -M15% origin/release/"$newRelease"..origin/release/"$existingRelease" -- . "${ignoreArgs[@]}" >wt-diffs/diffs/"$newRelease".."$existingRelease".diff
             ;;
         2)
             echo "with same release $existingRelease: Skipping.."
@@ -120,20 +125,12 @@ function generateDiffs() {
             ;;
         3)
             echo "with earlier release $existingRelease: Generating diff file.."
-            git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" >wt-diffs/diffs/"$existingRelease".."$newRelease".diff
+            git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" -- . "${ignoreArgs[@]}" >wt-diffs/diffs/"$existingRelease".."$newRelease".diff
             ;;
         *)
             echo "Error: Unexpected return code $result from compare-releases.js"
             ;;
         esac
-
-        ignoreArgs=()
-        for path in "${IgnorePaths[@]}"; do
-            ignoreArgs+=(":!$path")
-        done
-
-        git diff --binary -w -M15% origin/release/"$existingRelease"..origin/release/"$newRelease" \
-            -- . "${ignoreArgs[@]}" >wt-diffs/diffs/"$existingRelease".."$newRelease".diff
     done
 
     cd wt-diffs
