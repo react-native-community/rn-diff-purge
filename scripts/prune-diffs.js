@@ -29,6 +29,20 @@ function pruneDiffFiles() {
 	})
 }
 
+function pruneRELEASESFile() {
+	const releasesContent = fs.readFileSync("RELEASES", "utf8")
+	const releases = releasesContent.split("\n").filter(Boolean) // Remove empty lines
+	
+	const keptReleases = releases.filter(version => 
+		!semver.lt(version, MINIMUM_STORED_VERSION)
+	)
+	
+	fs.writeFileSync("RELEASES", keptReleases.join("\n") + "\n")
+	
+	const removedCount = releases.length - keptReleases.length
+	console.log(`Removed ${removedCount} old releases from RELEASES file`)
+}
+
 const exists = fs.existsSync(DIFFS_DIR)
 if (!exists) {
 	console.log("Diffs worktree does not exist.")
@@ -37,3 +51,4 @@ if (!exists) {
 }
 
 pruneDiffFiles()
+pruneRELEASESFile()
