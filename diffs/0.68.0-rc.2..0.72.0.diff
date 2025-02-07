@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
 index 934256cb29..0000000000
@@ -159,14 +169,6 @@ index a4dd9dba4f..0000000000
 +++ /dev/null
 @@ -1 +0,0 @@
 -2.7.4
-diff --git a/RnDiffApp/.watchmanconfig b/RnDiffApp/.watchmanconfig
-index 9e26dfeeb6..0967ef424b 100644
---- a/RnDiffApp/.watchmanconfig
-+++ b/RnDiffApp/.watchmanconfig
-@@ -1 +1 @@
--{}
-\ No newline at end of file
-+{}
 diff --git a/RnDiffApp/App.js b/RnDiffApp/App.tsx
 similarity index 83%
 rename from RnDiffApp/App.js
@@ -443,7 +445,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index d132dfee38..083631f32f 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,201 +1,85 @@
+@@ -1,105 +1,62 @@
  apply plugin: "com.android.application"
 -
 -import com.android.build.OutputFile
@@ -598,12 +600,7 @@ index d132dfee38..083631f32f 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
+@@ -111,91 +68,18 @@ def enableProguardInReleaseBuilds = false
   */
  def jscFlavor = 'org.webkit:android-jsc:+'
  
@@ -885,14 +882,13 @@ index 615951b73b..720c374709 100644
 -    @Override
 -    protected ReactRootView createRootView() {
 -      ReactRootView reactRootView = new ReactRootView(getContext());
--      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
--      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
--      return reactRootView;
--    }
 +    return new DefaultReactActivityDelegate(
 +        this,
 +        getMainComponentName(),
-+        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+-      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+-      return reactRootView;
+-    }
 +        DefaultNewArchitectureEntryPoint.getFabricEnabled());
    }
  }
@@ -950,10 +946,9 @@ index 9f29592946..8687dc632f 100644
 -    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 -      return mNewArchitectureNativeHost;
 -    } else {
--      return mReactNativeHost;
--    }
-+    return mReactNativeHost;
+     return mReactNativeHost;
    }
+-  }
  
    @Override
    public void onCreate() {
@@ -1541,19 +1536,6 @@ index c569b6e865..0000000000
 -    facebook::react::MainComponentsRegistry::registerNatives();
 -  });
 -}
-diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-index f35d996202..73b37e4d99 100644
---- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-+++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-@@ -20,7 +20,7 @@
-        android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
- 
-     <selector>
--        <!-- 
-+        <!--
-           This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
-           The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
-           NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
 diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 new file mode 100644
 index 0000000000..b755b303ce
@@ -3097,21 +3079,10 @@ diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
 index 107acd32c4..93e3f59f13 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
-@@ -14,7 +14,7 @@
- @rem limitations under the License.
- @rem
- 
--@if "%DEBUG%" == "" @echo off
-+@if "%DEBUG%"=="" @echo off
- @rem ##########################################################################
- @rem
- @rem  Gradle startup script for Windows
-@@ -25,7 +25,8 @@
- if "%OS%"=="Windows_NT" setlocal
+@@ -26,6 +26,7 @@ if "%OS%"=="Windows_NT" setlocal
  
  set DIRNAME=%~dp0
--if "%DIRNAME%" == "" set DIRNAME=.
-+if "%DIRNAME%"=="" set DIRNAME=.
+ if "%DIRNAME%"=="" set DIRNAME=.
 +@rem This is normally unused
  set APP_BASE_NAME=%~n0
  set APP_HOME=%DIRNAME%
@@ -3159,17 +3130,6 @@ index f935eee62d..e5f65b56c5 100644
 -    project(":ReactAndroid").projectDir = file('../node_modules/react-native/ReactAndroid')
 -}
 +includeBuild('../node_modules/@react-native/gradle-plugin')
-diff --git a/RnDiffApp/app.json b/RnDiffApp/app.json
-index 0462e26ea9..55102ab939 100644
---- a/RnDiffApp/app.json
-+++ b/RnDiffApp/app.json
-@@ -1,4 +1,4 @@
- {
-   "name": "RnDiffApp",
-   "displayName": "RnDiffApp"
--}
-\ No newline at end of file
-+}
 diff --git a/RnDiffApp/ios/.xcode.env b/RnDiffApp/ios/.xcode.env
 new file mode 100644
 index 0000000000..3d5782c715
@@ -3407,13 +3367,13 @@ index 2ce420e8e4..09b0b7a0cf 100644
  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
 -  RCTAppSetupPrepareApp(application);
--
--  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 +  self.moduleName = @"RnDiffApp";
 +  // You can add your custom initial props in the dictionary below.
 +  // They will be passed down to the ViewController used by React Native.
 +  self.initialProps = @{};
  
+-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+-
 -#if RCT_NEW_ARCH_ENABLED
 -  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
 -  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();

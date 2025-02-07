@@ -321,7 +321,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index 7460d7f415..04d6cfaf0f 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,128 +1,87 @@
+@@ -1,106 +1,72 @@
  apply plugin: "com.android.application"
 +apply plugin: "com.facebook.react"
  
@@ -481,13 +481,7 @@ index 7460d7f415..04d6cfaf0f 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
-  */
+@@ -113,16 +79,9 @@ def enableProguardInReleaseBuilds = false
  def jscFlavor = 'org.webkit:android-jsc:+'
  
  /**
@@ -597,12 +591,12 @@ index 7460d7f415..04d6cfaf0f 100644
  
  dependencies {
 -    implementation fileTree(dir: "libs", include: ["*.jar"])
--
--    //noinspection GradleDynamicVersion
--    implementation "com.facebook.react:react-native:+"  // From node_modules
 +    // The version of react-native is set by the React Native Gradle Plugin
 +    implementation("com.facebook.react:react-android")
  
+-    //noinspection GradleDynamicVersion
+-    implementation "com.facebook.react:react-native:+"  // From node_modules
+-
 -    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 -
 -    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
@@ -763,14 +757,13 @@ index 615951b73b..98eb1cdead 100644
 -    @Override
 -    protected ReactRootView createRootView() {
 -      ReactRootView reactRootView = new ReactRootView(getContext());
--      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
--      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
--      return reactRootView;
--    }
 +    return new DefaultReactActivityDelegate(
 +        this,
 +        getMainComponentName(),
-+        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+-      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+-      return reactRootView;
+-    }
 +        DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
 +        // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
 +        DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
@@ -831,10 +824,9 @@ index 9f29592946..8687dc632f 100644
 -    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 -      return mNewArchitectureNativeHost;
 -    } else {
--      return mReactNativeHost;
--    }
-+    return mReactNativeHost;
+     return mReactNativeHost;
    }
+-  }
  
    @Override
    public void onCreate() {
@@ -2141,13 +2133,20 @@ index 2ce420e8e4..e14c4b4182 100644
 -#pragma mark - RCTCxxBridgeDelegate
 -
 -- (std::unique_ptr<facebook::react::JSExecutorFactory>)jsExecutorFactoryForBridge:(RCTBridge *)bridge
--{
++/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
++///
++/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
++/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
++/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
++- (BOOL)concurrentRootEnabled
+ {
 -  _turboModuleManager = [[RCTTurboModuleManager alloc] initWithBridge:bridge
 -                                                             delegate:self
 -                                                            jsInvoker:bridge.jsCallInvoker];
 -  return RCTAppSetupDefaultJsExecutorFactory(bridge, _turboModuleManager);
--}
--
++  return true;
+ }
+ 
 -#pragma mark RCTTurboModuleManagerDelegate
 -
 -- (Class)getModuleClassFromName:(const char *)name
@@ -2157,17 +2156,10 @@ index 2ce420e8e4..e14c4b4182 100644
 -
 -- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
 -                                                      jsInvoker:(std::shared_ptr<facebook::react::CallInvoker>)jsInvoker
-+/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
-+///
-+/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
-+/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
-+/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
-+- (BOOL)concurrentRootEnabled
- {
+-{
 -  return nullptr;
-+  return true;
- }
- 
+-}
+-
 -- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
 -                                                     initParams:
 -                                                         (const facebook::react::ObjCTurboModule::InitParams &)params

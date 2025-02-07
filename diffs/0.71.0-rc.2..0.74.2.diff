@@ -58,14 +58,6 @@ index 49cdd668e1..0000000000
 +++ /dev/null
 @@ -1 +0,0 @@
 -2.7.6
-diff --git a/RnDiffApp/.watchmanconfig b/RnDiffApp/.watchmanconfig
-index 9e26dfeeb6..0967ef424b 100644
---- a/RnDiffApp/.watchmanconfig
-+++ b/RnDiffApp/.watchmanconfig
-@@ -1 +1 @@
--{}
-\ No newline at end of file
-+{}
 diff --git a/RnDiffApp/.yarnrc.yml b/RnDiffApp/.yarnrc.yml
 new file mode 100644
 index 0000000000..08d714dfcb
@@ -607,7 +599,7 @@ diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.x
 index f35d996202..5c25e728ea 100644
 --- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
 +++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-@@ -17,10 +17,11 @@
+@@ -17,7 +17,8 @@
         android:insetLeft="@dimen/abc_edit_text_inset_horizontal_material"
         android:insetRight="@dimen/abc_edit_text_inset_horizontal_material"
         android:insetTop="@dimen/abc_edit_text_inset_top_material"
@@ -616,11 +608,7 @@ index f35d996202..5c25e728ea 100644
 +       >
  
      <selector>
--        <!-- 
-+        <!--
-           This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
-           The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
-           NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
+         <!--
 diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 deleted file mode 100644
 index b755b303ce..0000000000
@@ -2365,8 +2353,8 @@ index 1b6c787337..1aa94a4269 100755
  
  Please set the JAVA_HOME variable in your environment to match the
  location of your Java installation."
-+    fi
- fi
+     fi
++fi
  
  # Increase the maximum file descriptors if we can.
  if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
@@ -2423,21 +2411,10 @@ diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
 index 107acd32c4..25da30dbde 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
-@@ -14,7 +14,7 @@
- @rem limitations under the License.
- @rem
- 
--@if "%DEBUG%" == "" @echo off
-+@if "%DEBUG%"=="" @echo off
- @rem ##########################################################################
- @rem
- @rem  Gradle startup script for Windows
-@@ -25,7 +25,8 @@
- if "%OS%"=="Windows_NT" setlocal
+@@ -26,6 +26,7 @@ if "%OS%"=="Windows_NT" setlocal
  
  set DIRNAME=%~dp0
--if "%DIRNAME%" == "" set DIRNAME=.
-+if "%DIRNAME%"=="" set DIRNAME=.
+ if "%DIRNAME%"=="" set DIRNAME=.
 +@rem This is normally unused
  set APP_BASE_NAME=%~n0
  set APP_HOME=%DIRNAME%
@@ -2508,17 +2485,6 @@ index 67adcdce46..e5f65b56c5 100644
  include ':app'
 -includeBuild('../node_modules/react-native-gradle-plugin')
 +includeBuild('../node_modules/@react-native/gradle-plugin')
-diff --git a/RnDiffApp/app.json b/RnDiffApp/app.json
-index 0462e26ea9..55102ab939 100644
---- a/RnDiffApp/app.json
-+++ b/RnDiffApp/app.json
-@@ -1,4 +1,4 @@
- {
-   "name": "RnDiffApp",
-   "displayName": "RnDiffApp"
--}
-\ No newline at end of file
-+}
 diff --git a/RnDiffApp/babel.config.js b/RnDiffApp/babel.config.js
 index f842b77fcf..f7b3da3b33 100644
 --- a/RnDiffApp/babel.config.js
@@ -2768,7 +2734,7 @@ diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.p
 index 91e8626f36..7c212c9021 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
-@@ -26,14 +26,11 @@
+@@ -26,22 +26,19 @@
  	<true/>
  	<key>NSAppTransportSecurity</key>
  	<dict>
@@ -2777,18 +2743,17 @@ index 91e8626f36..7c212c9021 100644
 -			<key>localhost</key>
 -			<dict>
 -				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
 +	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 +		<key>NSAllowsArbitraryLoads</key>
 +		<false/>
 +		<key>NSAllowsLocalNetworking</key>
-+		<true/>
+ 		<true/>
  	</dict>
+-		</dict>
+-	</dict>
  	<key>NSLocationWhenInUseUsageDescription</key>
  	<string></string>
-@@ -41,7 +38,7 @@
+ 	<key>UILaunchStoryboardName</key>
  	<string>LaunchScreen</string>
  	<key>UIRequiredDeviceCapabilities</key>
  	<array>

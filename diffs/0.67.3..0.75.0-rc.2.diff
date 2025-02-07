@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
 index 934256cb29..0000000000
@@ -181,14 +191,6 @@ index a4dd9dba4f..0000000000
 +++ /dev/null
 @@ -1 +0,0 @@
 -2.7.4
-diff --git a/RnDiffApp/.watchmanconfig b/RnDiffApp/.watchmanconfig
-index 9e26dfeeb6..0967ef424b 100644
---- a/RnDiffApp/.watchmanconfig
-+++ b/RnDiffApp/.watchmanconfig
-@@ -1 +1 @@
--{}
-\ No newline at end of file
-+{}
 diff --git a/RnDiffApp/.yarnrc.yml b/RnDiffApp/.yarnrc.yml
 new file mode 100644
 index 0000000000..08d714dfcb
@@ -569,7 +571,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index e8c55e06bc..7ce274303e 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,135 +1,83 @@
+@@ -1,105 +1,66 @@
  apply plugin: "com.android.application"
 -
 -import com.android.build.OutputFile
@@ -649,9 +651,7 @@ index e8c55e06bc..7ce274303e 100644
 - *   // supply additional arguments to the packager
 - *   extraPackagerArgs: []
 - * ]
-+ * This is the configuration block to customize your React Native Android app.
-+ * By default you don't need to apply any configuration, just uncomment the lines you need.
-  */
+- */
 -
 -project.ext.react = [
 -    enableHermes: false,  // clean and rebuild if changing
@@ -666,7 +666,9 @@ index e8c55e06bc..7ce274303e 100644
 - * The advantage is the size of the APK is reduced by about 4MB.
 - * Upload all the APKs to the Play Store and people will download
 - * the correct one based on the CPU architecture of their device.
-- */
++ * This is the configuration block to customize your React Native Android app.
++ * By default you don't need to apply any configuration, just uncomment the lines you need.
+  */
 -def enableSeparateBuildPerCPUArchitecture = false
 +react {
 +    /* Folders */
@@ -728,12 +730,7 @@ index e8c55e06bc..7ce274303e 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
+@@ -111,25 +72,12 @@ def enableProguardInReleaseBuilds = false
   */
  def jscFlavor = 'org.webkit:android-jsc:+'
  
@@ -826,13 +823,13 @@ index e8c55e06bc..7ce274303e 100644
 -        exclude group:'com.facebook.flipper'
 -        exclude group:'com.squareup.okhttp3', module:'okhttp'
 -    }
-+    // The version of react-native is set by the React Native Gradle Plugin
-+    implementation("com.facebook.react:react-android")
- 
+-
 -    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
 -        exclude group:'com.facebook.flipper'
 -    }
--
++    // The version of react-native is set by the React Native Gradle Plugin
++    implementation("com.facebook.react:react-android")
+ 
 -    if (enableHermes) {
 -        def hermesPath = "../../node_modules/hermes-engine/android/";
 -        debugImplementation files(hermesPath + "hermes-debug.aar")
@@ -1179,7 +1176,7 @@ diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.x
 index f35d996202..5c25e728ea 100644
 --- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
 +++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-@@ -17,10 +17,11 @@
+@@ -17,7 +17,8 @@
         android:insetLeft="@dimen/abc_edit_text_inset_horizontal_material"
         android:insetRight="@dimen/abc_edit_text_inset_horizontal_material"
         android:insetTop="@dimen/abc_edit_text_inset_top_material"
@@ -1188,11 +1185,7 @@ index f35d996202..5c25e728ea 100644
 +       >
  
      <selector>
--        <!-- 
-+        <!--
-           This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
-           The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
-           NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
+         <!--
 diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
 index 3be1031fb2..df1ce4db3b 100644
 --- a/RnDiffApp/android/build.gradle
@@ -3184,10 +3177,10 @@ index 4f906e0c81..b740cf1339 100755
 -cd "`dirname \"$PRG\"`/" >/dev/null
 -APP_HOME="`pwd -P`"
 -cd "$SAVED" >/dev/null
- 
+-
 -APP_NAME="Gradle"
 -APP_BASE_NAME=`basename "$0"`
--
+ 
 -# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 -DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 +# This is normally unused
@@ -3264,8 +3257,8 @@ index 4f906e0c81..b740cf1339 100755
  
  Please set the JAVA_HOME variable in your environment to match the
  location of your Java installation."
-+    fi
- fi
+     fi
++fi
  
  # Increase the maximum file descriptors if we can.
 -if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
@@ -3330,22 +3323,22 @@ index 4f906e0c81..b740cf1339 100755
 -    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
 -        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
 -    fi
-+if "$cygwin" || "$msys" ; then
-+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
-+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
-+
-+    JAVACMD=$( cygpath --unix "$JAVACMD" )
-+
-     # Now convert the arguments - kludge to limit ourselves to /bin/sh
+-    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 -    i=0
 -    for arg in "$@" ; do
 -        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
 -        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
--
++if "$cygwin" || "$msys" ; then
++    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
++    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+ 
 -        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
 -            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
 -        else
 -            eval `echo args$i`="\"$arg\""
++    JAVACMD=$( cygpath --unix "$JAVACMD" )
++
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
 +    for arg do
 +        if
 +            case $arg in                                #(
@@ -3443,21 +3436,10 @@ diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
 index 107acd32c4..25da30dbde 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
-@@ -14,7 +14,7 @@
- @rem limitations under the License.
- @rem
- 
--@if "%DEBUG%" == "" @echo off
-+@if "%DEBUG%"=="" @echo off
- @rem ##########################################################################
- @rem
- @rem  Gradle startup script for Windows
-@@ -25,7 +25,8 @@
- if "%OS%"=="Windows_NT" setlocal
+@@ -26,6 +26,7 @@ if "%OS%"=="Windows_NT" setlocal
  
  set DIRNAME=%~dp0
--if "%DIRNAME%" == "" set DIRNAME=.
-+if "%DIRNAME%"=="" set DIRNAME=.
+ if "%DIRNAME%"=="" set DIRNAME=.
 +@rem This is normally unused
  set APP_BASE_NAME=%~n0
  set APP_HOME=%DIRNAME%
@@ -3530,17 +3512,6 @@ index 73a47b2eda..41b6e2a81f 100644
 -apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
  include ':app'
 +includeBuild('../node_modules/@react-native/gradle-plugin')
-diff --git a/RnDiffApp/app.json b/RnDiffApp/app.json
-index 0462e26ea9..55102ab939 100644
---- a/RnDiffApp/app.json
-+++ b/RnDiffApp/app.json
-@@ -1,4 +1,4 @@
- {
-   "name": "RnDiffApp",
-   "displayName": "RnDiffApp"
--}
-\ No newline at end of file
-+}
 diff --git a/RnDiffApp/babel.config.js b/RnDiffApp/babel.config.js
 index f842b77fcf..f7b3da3b33 100644
 --- a/RnDiffApp/babel.config.js
@@ -4191,22 +4162,21 @@ index c3420dada6..bae99debc3 100644
 -      rootView.backgroundColor = [UIColor systemBackgroundColor];
 -  } else {
 -      rootView.backgroundColor = [UIColor whiteColor];
--  }
--
++  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+ }
+ 
 -  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 -  UIViewController *rootViewController = [UIViewController new];
 -  rootViewController.view = rootView;
 -  self.window.rootViewController = rootViewController;
 -  [self.window makeKeyAndVisible];
 -  return YES;
-+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
- }
- 
- - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
++- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 +{
 +  return [self bundleURL];
-+}
-+
+ }
+ 
+-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 +- (NSURL *)bundleURL
  {
  #if DEBUG
@@ -4285,14 +4255,12 @@ index 118c98f746..81213230de 100644
 +    "author" : "xcode",
 +    "version" : 1
    }
--}
-\ No newline at end of file
-+}
+ }
 diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
 index 903b7921cf..7c212c9021 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
-@@ -17,23 +17,20 @@
+@@ -17,31 +17,28 @@
  	<key>CFBundlePackageType</key>
  	<string>APPL</string>
  	<key>CFBundleShortVersionString</key>
@@ -4312,18 +4280,17 @@ index 903b7921cf..7c212c9021 100644
 -			<key>localhost</key>
 -			<dict>
 -				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
 +	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 +		<key>NSAllowsArbitraryLoads</key>
 +		<false/>
 +		<key>NSAllowsLocalNetworking</key>
-+		<true/>
+ 		<true/>
  	</dict>
+-		</dict>
+-	</dict>
  	<key>NSLocationWhenInUseUsageDescription</key>
  	<string></string>
-@@ -41,7 +38,7 @@
+ 	<key>UILaunchStoryboardName</key>
  	<string>LaunchScreen</string>
  	<key>UIRequiredDeviceCapabilities</key>
  	<array>
@@ -4393,52 +4360,26 @@ diff --git a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m b/RnDiffApp/ios/RnDif
 index fe83ad2442..fae48110ab 100644
 --- a/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
 +++ b/RnDiffApp/ios/RnDiffAppTests/RnDiffAppTests.m
-@@ -13,7 +13,7 @@
- 
- @implementation RnDiffAppTests
- 
--- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
-+- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
- {
-   if (test(view)) {
-     return YES;
-@@ -34,23 +34,25 @@
+@@ -34,7 +34,8 @@
  
    __block NSString *redboxError = nil;
  #ifdef DEBUG
 -  RCTSetLogFunction(^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
--    if (level >= RCTLogLevelError) {
--      redboxError = message;
--    }
--  });
 +  RCTSetLogFunction(
 +      ^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
-+        if (level >= RCTLogLevelError) {
-+          redboxError = message;
-+        }
-+      });
- #endif
- 
-   while ([date timeIntervalSinceNow] > 0 && !foundElement && !redboxError) {
+         if (level >= RCTLogLevelError) {
+           redboxError = message;
+         }
+@@ -45,7 +46,8 @@
      [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
      [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
  
 -    foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
--      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
--        return YES;
--      }
--      return NO;
--    }];
 +    foundElement = [self findSubviewInView:vc.view
 +                                  matching:^BOOL(UIView *view) {
-+                                    if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
-+                                      return YES;
-+                                    }
-+                                    return NO;
-+                                  }];
-   }
- 
- #ifdef DEBUG
+                                     if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
+                                       return YES;
+                                     }
 @@ -61,5 +63,4 @@
    XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
  }

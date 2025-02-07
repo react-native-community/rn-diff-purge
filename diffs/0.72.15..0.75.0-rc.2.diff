@@ -2406,7 +2406,7 @@ index 65dcd68d65..b740cf1339 100755
  
  # Use the maximum available, or set MAX_FD != -1 to use that value.
  MAX_FD=maximum
-@@ -133,10 +131,13 @@ location of your Java installation."
+@@ -133,18 +131,21 @@ location of your Java installation."
      fi
  else
      JAVACMD=java
@@ -2417,11 +2417,11 @@ index 65dcd68d65..b740cf1339 100755
  
  Please set the JAVA_HOME variable in your environment to match the
  location of your Java installation."
-+    fi
- fi
+     fi
++fi
  
  # Increase the maximum file descriptors if we can.
-@@ -144,7 +145,7 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
      case $MAX_FD in #(
        max*)
          # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
@@ -2757,7 +2757,7 @@ diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.p
 index 91e8626f36..7c212c9021 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
-@@ -26,14 +26,11 @@
+@@ -26,22 +26,19 @@
  	<true/>
  	<key>NSAppTransportSecurity</key>
  	<dict>
@@ -2766,18 +2766,17 @@ index 91e8626f36..7c212c9021 100644
 -			<key>localhost</key>
 -			<dict>
 -				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
 +	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 +		<key>NSAllowsArbitraryLoads</key>
 +		<false/>
 +		<key>NSAllowsLocalNetworking</key>
-+		<true/>
+ 		<true/>
  	</dict>
+-		</dict>
+-	</dict>
  	<key>NSLocationWhenInUseUsageDescription</key>
  	<string></string>
-@@ -41,7 +38,7 @@
+ 	<key>UILaunchStoryboardName</key>
  	<string>LaunchScreen</string>
  	<key>UIRequiredDeviceCapabilities</key>
  	<array>
@@ -2790,75 +2789,25 @@ diff --git a/RnDiffApp/ios/RnDiffApp/PrivacyInfo.xcprivacy b/RnDiffApp/ios/RnDif
 index ef1896e70c..41b8317f06 100644
 --- a/RnDiffApp/ios/RnDiffApp/PrivacyInfo.xcprivacy
 +++ b/RnDiffApp/ios/RnDiffApp/PrivacyInfo.xcprivacy
-@@ -2,37 +2,36 @@
+@@ -2,9 +2,6 @@
  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
  <plist version="1.0">
  <dict>
 -  <key>NSPrivacyCollectedDataTypes</key>
 -  <array>
 -  </array>
--  <key>NSPrivacyAccessedAPITypes</key>
--  <array>
--    <dict>
--      <key>NSPrivacyAccessedAPIType</key>
--      <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
--      <key>NSPrivacyAccessedAPITypeReasons</key>
--      <array>
--        <string>C617.1</string>
--      </array>
--    </dict>
--    <dict>
--      <key>NSPrivacyAccessedAPIType</key>
--      <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
--      <key>NSPrivacyAccessedAPITypeReasons</key>
--      <array>
--        <string>CA92.1</string>
--      </array>
--    </dict>
--    <dict>
--      <key>NSPrivacyAccessedAPIType</key>
--      <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
--      <key>NSPrivacyAccessedAPITypeReasons</key>
--      <array>
--        <string>35F9.1</string>
--      </array>
--    </dict>
--  </array>
--  <key>NSPrivacyTracking</key>
--  <false/>
-+	<key>NSPrivacyAccessedAPITypes</key>
-+	<array>
-+		<dict>
-+			<key>NSPrivacyAccessedAPIType</key>
-+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
-+			<key>NSPrivacyAccessedAPITypeReasons</key>
-+			<array>
-+				<string>C617.1</string>
-+			</array>
-+		</dict>
-+		<dict>
-+			<key>NSPrivacyAccessedAPIType</key>
-+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
-+			<key>NSPrivacyAccessedAPITypeReasons</key>
-+			<array>
-+				<string>CA92.1</string>
-+			</array>
-+		</dict>
-+		<dict>
-+			<key>NSPrivacyAccessedAPIType</key>
-+			<string>NSPrivacyAccessedAPICategorySystemBootTime</string>
-+			<key>NSPrivacyAccessedAPITypeReasons</key>
-+			<array>
-+				<string>35F9.1</string>
-+			</array>
-+		</dict>
-+	</array>
+ 	<key>NSPrivacyAccessedAPITypes</key>
+ 	<array>
+ 		<dict>
+@@ -32,6 +29,8 @@
+ 			</array>
+ 		</dict>
+ 	</array>
 +	<key>NSPrivacyCollectedDataTypes</key>
 +	<array/>
-+	<key>NSPrivacyTracking</key>
-+	<false/>
+ 	<key>NSPrivacyTracking</key>
+ 	<false/>
  </dict>
- </plist>
 diff --git a/RnDiffApp/metro.config.js b/RnDiffApp/metro.config.js
 index ad8f87b6d2..9d41685ef1 100644
 --- a/RnDiffApp/metro.config.js

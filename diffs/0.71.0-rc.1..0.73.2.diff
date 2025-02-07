@@ -35,14 +35,6 @@ index 49cdd668e1..0000000000
 +++ /dev/null
 @@ -1 +0,0 @@
 -2.7.6
-diff --git a/RnDiffApp/.watchmanconfig b/RnDiffApp/.watchmanconfig
-index 9e26dfeeb6..0967ef424b 100644
---- a/RnDiffApp/.watchmanconfig
-+++ b/RnDiffApp/.watchmanconfig
-@@ -1 +1 @@
--{}
-\ No newline at end of file
-+{}
 diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
 index bf24c33164..125fe1b98e 100644
 --- a/RnDiffApp/App.tsx
@@ -572,19 +564,6 @@ index 0000000000..d6869ad95b
 +    ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
 +  }
 +}
-diff --git a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-index f35d996202..73b37e4d99 100644
---- a/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-+++ b/RnDiffApp/android/app/src/main/res/drawable/rn_edit_text_material.xml
-@@ -20,7 +20,7 @@
-        android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
- 
-     <selector>
--        <!-- 
-+        <!--
-           This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
-           The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
-           NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
 diff --git a/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java b/RnDiffApp/android/app/src/release/java/com/rndiffapp/ReactNativeFlipper.java
 deleted file mode 100644
 index b755b303ce..0000000000
@@ -2328,8 +2307,8 @@ index 1b6c787337..0adc8e1a53 100755
  
  Please set the JAVA_HOME variable in your environment to match the
  location of your Java installation."
-+    fi
- fi
+     fi
++fi
  
  # Increase the maximum file descriptors if we can.
  if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
@@ -2376,21 +2355,10 @@ diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
 index 107acd32c4..93e3f59f13 100644
 --- a/RnDiffApp/android/gradlew.bat
 +++ b/RnDiffApp/android/gradlew.bat
-@@ -14,7 +14,7 @@
- @rem limitations under the License.
- @rem
- 
--@if "%DEBUG%" == "" @echo off
-+@if "%DEBUG%"=="" @echo off
- @rem ##########################################################################
- @rem
- @rem  Gradle startup script for Windows
-@@ -25,7 +25,8 @@
- if "%OS%"=="Windows_NT" setlocal
+@@ -26,6 +26,7 @@ if "%OS%"=="Windows_NT" setlocal
  
  set DIRNAME=%~dp0
--if "%DIRNAME%" == "" set DIRNAME=.
-+if "%DIRNAME%"=="" set DIRNAME=.
+ if "%DIRNAME%"=="" set DIRNAME=.
 +@rem This is normally unused
  set APP_BASE_NAME=%~n0
  set APP_HOME=%DIRNAME%
@@ -2433,17 +2401,6 @@ index 67adcdce46..e5f65b56c5 100644
  include ':app'
 -includeBuild('../node_modules/react-native-gradle-plugin')
 +includeBuild('../node_modules/@react-native/gradle-plugin')
-diff --git a/RnDiffApp/app.json b/RnDiffApp/app.json
-index 0462e26ea9..55102ab939 100644
---- a/RnDiffApp/app.json
-+++ b/RnDiffApp/app.json
-@@ -1,4 +1,4 @@
- {
-   "name": "RnDiffApp",
-   "displayName": "RnDiffApp"
--}
-\ No newline at end of file
-+}
 diff --git a/RnDiffApp/babel.config.js b/RnDiffApp/babel.config.js
 index f842b77fcf..f7b3da3b33 100644
 --- a/RnDiffApp/babel.config.js
@@ -2669,7 +2626,7 @@ diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.p
 index 91e8626f36..1b40a9f17d 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
-@@ -26,14 +26,11 @@
+@@ -26,15 +26,12 @@
  	<true/>
  	<key>NSAppTransportSecurity</key>
  	<dict>
@@ -2678,17 +2635,17 @@ index 91e8626f36..1b40a9f17d 100644
 -			<key>localhost</key>
 -			<dict>
 -				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
 +	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 +		<key>NSAllowsArbitraryLoads</key>
 +		<false/>
 +		<key>NSAllowsLocalNetworking</key>
-+		<true/>
+ 		<true/>
  	</dict>
+-		</dict>
+-	</dict>
  	<key>NSLocationWhenInUseUsageDescription</key>
  	<string></string>
+ 	<key>UILaunchStoryboardName</key>
 diff --git a/RnDiffApp/jest.config.js b/RnDiffApp/jest.config.js
 new file mode 100644
 index 0000000000..8eb675e9bc

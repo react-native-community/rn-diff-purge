@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/.buckconfig b/RnDiffApp/.buckconfig
 deleted file mode 100644
 index 934256cb29..0000000000
@@ -287,7 +297,7 @@ diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gr
 index 6be24a247c..04d6cfaf0f 100644
 --- a/RnDiffApp/android/app/build.gradle
 +++ b/RnDiffApp/android/app/build.gradle
-@@ -1,127 +1,87 @@
+@@ -1,105 +1,72 @@
  apply plugin: "com.android.application"
 +apply plugin: "com.facebook.react"
  
@@ -446,13 +456,7 @@ index 6be24a247c..04d6cfaf0f 100644
   *
   * For example, to use the international variant, you can use:
   * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-  *
-  * The international variant includes ICU i18n library and necessary data
-  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-- * give correct results when using with locales other than en-US.  Note that
-+ * give correct results when using with locales other than en-US. Note that
-  * this variant is about 6MiB larger per architecture than default.
-  */
+@@ -112,16 +79,9 @@ def enableProguardInReleaseBuilds = false
  def jscFlavor = 'org.webkit:android-jsc:+'
  
  /**
@@ -562,11 +566,11 @@ index 6be24a247c..04d6cfaf0f 100644
 -
 -    //noinspection GradleDynamicVersion
 -    implementation "com.facebook.react:react-native:+"  // From node_modules
--
--    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 +    // The version of react-native is set by the React Native Gradle Plugin
 +    implementation("com.facebook.react:react-android")
  
+-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+-
 -    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
 -        exclude group:'com.facebook.fbjni'
 -    }
@@ -731,7 +735,10 @@ index 31ae98f7f6..98eb1cdead 100644
 -    @Override
 -    protected ReactRootView createRootView() {
 -      ReactRootView reactRootView = new ReactRootView(getContext());
--      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
++    return new DefaultReactActivityDelegate(
++        this,
++        getMainComponentName(),
+         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
 -      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
 -      return reactRootView;
 -    }
@@ -742,10 +749,6 @@ index 31ae98f7f6..98eb1cdead 100644
 -      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
 -      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
 -    }
-+    return new DefaultReactActivityDelegate(
-+        this,
-+        getMainComponentName(),
-+        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
 +        DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
 +        // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
 +        DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
@@ -806,10 +809,9 @@ index 9f29592946..8687dc632f 100644
 -    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 -      return mNewArchitectureNativeHost;
 -    } else {
--      return mReactNativeHost;
--    }
-+    return mReactNativeHost;
+     return mReactNativeHost;
    }
+-  }
  
    @Override
    public void onCreate() {
@@ -1447,13 +1449,12 @@ index a53bfbfd50..67d887b030 100644
 -        } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
 -            // For Android Users, we need to use NDK 23, otherwise the build will
 -            // fail due to paths longer than the OS limit
--            ndkVersion = "23.1.7779620"
++        // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
+         ndkVersion = "23.1.7779620"
 -        } else {
 -            // Otherwise we default to the side-by-side NDK version from AGP.
 -            ndkVersion = "21.4.7075529"
 -        }
-+        // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
-+        ndkVersion = "23.1.7779620"
      }
      repositories {
          google()

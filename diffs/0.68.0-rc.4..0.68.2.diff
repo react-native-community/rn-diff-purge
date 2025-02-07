@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 85fcb058ac..7fc11fb03e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,5 @@
+ # lock files
+ RnDiffApp/yarn.lock
+ RnDiffApp/package-lock.json
++RnDiffApp/Gemfile.lock
+ RnDiffApp/ios/Podfile.lock
 diff --git a/RnDiffApp/Gemfile.lock b/RnDiffApp/Gemfile.lock
 deleted file mode 100644
 index 88c2fa2876..0000000000
@@ -142,22 +152,22 @@ index 8a1d68f9c5..5dfc68a632 100644
  // Top-level build file where you can add configuration options common to all sub-projects/modules.
  
  buildscript {
-@@ -6,7 +8,14 @@ buildscript {
+@@ -6,8 +8,15 @@ buildscript {
          minSdkVersion = 21
          compileSdkVersion = 31
          targetSdkVersion = 31
--        ndkVersion = "21.4.7075529"
 +
 +        if (System.properties['os.arch'] == "aarch64") {
 +            // For M1 Users we need to use the NDK 24 which added support for aarch64
 +            ndkVersion = "24.0.8215888"
 +        } else {
 +            // Otherwise we default to the side-by-side NDK version from AGP.
-+            ndkVersion = "21.4.7075529"
-+        }
-     }
+             ndkVersion = "21.4.7075529"
+         }
++    }
      repositories {
          google()
+         mavenCentral()
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
 index 1a95c285b3..d0767fe119 100644
 --- a/RnDiffApp/package.json

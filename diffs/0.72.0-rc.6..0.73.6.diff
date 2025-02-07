@@ -2052,7 +2052,7 @@ index 65dcd68d65..0adc8e1a53 100755
  
  # Use the maximum available, or set MAX_FD != -1 to use that value.
  MAX_FD=maximum
-@@ -133,10 +131,13 @@ location of your Java installation."
+@@ -133,11 +131,14 @@ location of your Java installation."
      fi
  else
      JAVACMD=java
@@ -2063,28 +2063,11 @@ index 65dcd68d65..0adc8e1a53 100755
  
  Please set the JAVA_HOME variable in your environment to match the
  location of your Java installation."
-+    fi
- fi
+     fi
++fi
  
  # Increase the maximum file descriptors if we can.
-@@ -144,7 +145,7 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
-     case $MAX_FD in #(
-       max*)
-         # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
--        # shellcheck disable=SC3045 
-+        # shellcheck disable=SC3045
-         MAX_FD=$( ulimit -H -n ) ||
-             warn "Could not query maximum file descriptor limit"
-     esac
-@@ -152,7 +153,7 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
-       '' | soft) :;; #(
-       *)
-         # In POSIX sh, ulimit -n is undefined. That's why the result is checked to see if it worked.
--        # shellcheck disable=SC3045 
-+        # shellcheck disable=SC3045
-         ulimit -n "$MAX_FD" ||
-             warn "Could not set maximum file descriptor limit to $MAX_FD"
-     esac
+ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
 @@ -197,6 +198,10 @@ if "$cygwin" || "$msys" ; then
      done
  fi
@@ -2259,7 +2242,7 @@ diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.p
 index 91e8626f36..1b40a9f17d 100644
 --- a/RnDiffApp/ios/RnDiffApp/Info.plist
 +++ b/RnDiffApp/ios/RnDiffApp/Info.plist
-@@ -26,14 +26,11 @@
+@@ -26,15 +26,12 @@
  	<true/>
  	<key>NSAppTransportSecurity</key>
  	<dict>
@@ -2268,17 +2251,17 @@ index 91e8626f36..1b40a9f17d 100644
 -			<key>localhost</key>
 -			<dict>
 -				<key>NSExceptionAllowsInsecureHTTPLoads</key>
--				<true/>
--			</dict>
--		</dict>
 +	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 +		<key>NSAllowsArbitraryLoads</key>
 +		<false/>
 +		<key>NSAllowsLocalNetworking</key>
-+		<true/>
+ 		<true/>
  	</dict>
+-		</dict>
+-	</dict>
  	<key>NSLocationWhenInUseUsageDescription</key>
  	<string></string>
+ 	<key>UILaunchStoryboardName</key>
 diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
 index 7c50072a65..64b020d73f 100644
 --- a/RnDiffApp/package.json
