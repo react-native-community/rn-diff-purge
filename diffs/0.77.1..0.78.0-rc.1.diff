@@ -1,0 +1,169 @@
+diff --git a/RnDiffApp/.gitignore b/RnDiffApp/.gitignore
+index d5ae456695..de99955957 100644
+--- a/RnDiffApp/.gitignore
++++ b/RnDiffApp/.gitignore
+@@ -33,6 +33,7 @@ local.properties
+ .cxx/
+ *.keystore
+ !debug.keystore
++.kotlin/
+ 
+ # node.js
+ #
+diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
+index 125fe1b98e..b6930038db 100644
+--- a/RnDiffApp/App.tsx
++++ b/RnDiffApp/App.tsx
+@@ -8,7 +8,6 @@
+ import React from 'react';
+ import type {PropsWithChildren} from 'react';
+ import {
+-  SafeAreaView,
+   ScrollView,
+   StatusBar,
+   StyleSheet,
+@@ -62,19 +61,33 @@ function App(): React.JSX.Element {
+     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+   };
+ 
++  /*
++   * To keep the template simple and small we're adding padding to prevent view
++   * from rendering under the System UI.
++   * For bigger apps the reccomendation is to use `react-native-safe-area-context`:
++   * https://github.com/AppAndFlow/react-native-safe-area-context
++   *
++   * You can read more about it here:
++   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
++   */
++  const safePadding = '5%';
++
+   return (
+-    <SafeAreaView style={backgroundStyle}>
++    <View style={backgroundStyle}>
+       <StatusBar
+         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+         backgroundColor={backgroundStyle.backgroundColor}
+       />
+       <ScrollView
+-        contentInsetAdjustmentBehavior="automatic"
+         style={backgroundStyle}>
++        <View style={{paddingRight: safePadding}}>
+           <Header/>
++        </View>
+         <View
+           style={{
+             backgroundColor: isDarkMode ? Colors.black : Colors.white,
++            paddingHorizontal: safePadding,
++            paddingBottom: safePadding,
+           }}>
+           <Section title="Step One">
+             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+@@ -92,7 +105,7 @@ function App(): React.JSX.Element {
+           <LearnMoreLinks />
+         </View>
+       </ScrollView>
+-    </SafeAreaView>
++    </View>
+   );
+ }
+ 
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index 7ce274303e..f7c3220de8 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -63,14 +63,14 @@ def enableProguardInReleaseBuilds = false
+  * The preferred build flavor of JavaScriptCore (JSC)
+  *
+  * For example, to use the international variant, you can use:
+- * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
++ * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
+  *
+  * The international variant includes ICU i18n library and necessary data
+  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+  * give correct results when using with locales other than en-US. Note that
+  * this variant is about 6MiB larger per architecture than default.
+  */
+-def jscFlavor = 'org.webkit:android-jsc:+'
++def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
+ 
+ android {
+     ndkVersion rootProject.ext.ndkVersion
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index a62d6daa43..9766946918 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -3,7 +3,7 @@ buildscript {
+         buildToolsVersion = "35.0.0"
+         minSdkVersion = 24
+         compileSdkVersion = 35
+-        targetSdkVersion = 34
++        targetSdkVersion = 35
+         ndkVersion = "27.1.12297006"
+         kotlinVersion = "2.0.21"
+     }
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 79eb9d003f..e0fd02028b 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.10.2-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.12-all.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
+index f5feea6d6b..f3b75f3b0d 100755
+--- a/RnDiffApp/android/gradlew
++++ b/RnDiffApp/android/gradlew
+@@ -86,8 +86,7 @@ done
+ # shellcheck disable=SC2034
+ APP_BASE_NAME=${0##*/}
+ # Discard cd standard output in case $CDPATH is set (https://github.com/gradle/gradle/issues/25036)
+-APP_HOME=$( cd -P "${APP_HOME:-./}" > /dev/null && printf '%s
+-' "$PWD" ) || exit
++APP_HOME=$( cd -P "${APP_HOME:-./}" > /dev/null && printf '%s\n' "$PWD" ) || exit
+ 
+ # Use the maximum available, or set MAX_FD != -1 to use that value.
+ MAX_FD=maximum
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index fd463e7785..f0a6f985c7 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,8 +10,8 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "18.3.1",
+-    "react-native": "0.77.1"
++    "react": "19.0.0",
++    "react-native": "0.78.0-rc.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+@@ -20,17 +20,17 @@
+     "@react-native-community/cli": "15.0.1",
+     "@react-native-community/cli-platform-android": "15.0.1",
+     "@react-native-community/cli-platform-ios": "15.0.1",
+-    "@react-native/babel-preset": "0.77.1",
+-    "@react-native/eslint-config": "0.77.1",
+-    "@react-native/metro-config": "0.77.1",
+-    "@react-native/typescript-config": "0.77.1",
++    "@react-native/babel-preset": "0.78.0-rc.1",
++    "@react-native/eslint-config": "0.78.0-rc.1",
++    "@react-native/metro-config": "0.78.0-rc.1",
++    "@react-native/typescript-config": "0.78.0-rc.1",
+     "@types/jest": "^29.5.13",
+-    "@types/react": "^18.2.6",
+-    "@types/react-test-renderer": "^18.0.0",
++    "@types/react": "^19.0.0",
++    "@types/react-test-renderer": "^19.0.0",
+     "eslint": "^8.19.0",
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+-    "react-test-renderer": "18.3.1",
++    "react-test-renderer": "19.0.0",
+     "typescript": "5.0.4"
+   },
+   "engines": {
