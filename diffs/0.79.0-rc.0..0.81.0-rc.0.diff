@@ -1,0 +1,429 @@
+diff --git a/RnDiffApp/.prettierrc.js b/RnDiffApp/.prettierrc.js
+index 2b540746a7..06860c8d1b 100644
+--- a/RnDiffApp/.prettierrc.js
++++ b/RnDiffApp/.prettierrc.js
+@@ -1,7 +1,5 @@
+ module.exports = {
+   arrowParens: 'avoid',
+-  bracketSameLine: true,
+-  bracketSpacing: false,
+   singleQuote: true,
+   trailingComma: 'all',
+ };
+diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
+index 7d8838a527..d09122306f 100644
+--- a/RnDiffApp/App.tsx
++++ b/RnDiffApp/App.tsx
+@@ -5,126 +5,23 @@
+  * @format
+  */
+ 
+-import React from 'react';
+-import type {PropsWithChildren} from 'react';
+-import {
+-  ScrollView,
+-  StatusBar,
+-  StyleSheet,
+-  Text,
+-  useColorScheme,
+-  View,
+-} from 'react-native';
++import { NewAppScreen } from '@react-native/new-app-screen';
++import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+ 
+-import {
+-  Colors,
+-  DebugInstructions,
+-  Header,
+-  LearnMoreLinks,
+-  ReloadInstructions,
+-} from 'react-native/Libraries/NewAppScreen';
+-
+-type SectionProps = PropsWithChildren<{
+-  title: string;
+-}>;
+-
+-function Section({children, title}: SectionProps): React.JSX.Element {
+-  const isDarkMode = useColorScheme() === 'dark';
+-  return (
+-    <View style={styles.sectionContainer}>
+-      <Text
+-        style={[
+-          styles.sectionTitle,
+-          {
+-            color: isDarkMode ? Colors.white : Colors.black,
+-          },
+-        ]}>
+-        {title}
+-      </Text>
+-      <Text
+-        style={[
+-          styles.sectionDescription,
+-          {
+-            color: isDarkMode ? Colors.light : Colors.dark,
+-          },
+-        ]}>
+-        {children}
+-      </Text>
+-    </View>
+-  );
+-}
+-
+-function App(): React.JSX.Element {
++function App() {
+   const isDarkMode = useColorScheme() === 'dark';
+ 
+-  const backgroundStyle = {
+-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+-  };
+-
+-  /*
+-   * To keep the template simple and small we're adding padding to prevent view
+-   * from rendering under the System UI.
+-   * For bigger apps the recommendation is to use `react-native-safe-area-context`:
+-   * https://github.com/AppAndFlow/react-native-safe-area-context
+-   *
+-   * You can read more about it here:
+-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
+-   */
+-  const safePadding = '5%';
+-
+   return (
+-    <View style={backgroundStyle}>
+-      <StatusBar
+-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+-        backgroundColor={backgroundStyle.backgroundColor}
+-      />
+-      <ScrollView
+-        style={backgroundStyle}>
+-        <View style={{paddingRight: safePadding}}>
+-          <Header/>
+-        </View>
+-        <View
+-          style={{
+-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+-            paddingHorizontal: safePadding,
+-            paddingBottom: safePadding,
+-          }}>
+-          <Section title="Step One">
+-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+-            screen and then come back to see your edits.
+-          </Section>
+-          <Section title="See Your Changes">
+-            <ReloadInstructions />
+-          </Section>
+-          <Section title="Debug">
+-            <DebugInstructions />
+-          </Section>
+-          <Section title="Learn More">
+-            Read the docs to discover what to do next:
+-          </Section>
+-          <LearnMoreLinks />
+-        </View>
+-      </ScrollView>
++    <View style={styles.container}>
++      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
++      <NewAppScreen templateFileName="App.tsx" />
+     </View>
+   );
+ }
+ 
+ const styles = StyleSheet.create({
+-  sectionContainer: {
+-    marginTop: 32,
+-    paddingHorizontal: 24,
+-  },
+-  sectionTitle: {
+-    fontSize: 24,
+-    fontWeight: '600',
+-  },
+-  sectionDescription: {
+-    marginTop: 8,
+-    fontSize: 18,
+-    fontWeight: '400',
+-  },
+-  highlight: {
+-    fontWeight: '700',
++  container: {
++    flex: 1,
+   },
+ });
+ 
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+index bf32261a73..8694b99d56 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.kt
+@@ -4,13 +4,11 @@ import android.app.Application
+ import com.facebook.react.PackageList
+ import com.facebook.react.ReactApplication
+ import com.facebook.react.ReactHost
++import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
+ import com.facebook.react.ReactNativeHost
+ import com.facebook.react.ReactPackage
+-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+ import com.facebook.react.defaults.DefaultReactNativeHost
+-import com.facebook.react.soloader.OpenSourceMergedSoMapping
+-import com.facebook.soloader.SoLoader
+ 
+ class MainApplication : Application(), ReactApplication {
+ 
+@@ -35,10 +33,6 @@ class MainApplication : Application(), ReactApplication {
+ 
+   override fun onCreate() {
+     super.onCreate()
+-    SoLoader.init(this, OpenSourceMergedSoMapping)
+-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+-      // If you opted-in for the New Architecture, we load the native entry point for this app.
+-      load()
+-    }
++    loadReactNative(this)
+   }
+ }
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index 9766946918..dad99b022a 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -1,11 +1,11 @@
+ buildscript {
+     ext {
+-        buildToolsVersion = "35.0.0"
++        buildToolsVersion = "36.0.0"
+         minSdkVersion = 24
+-        compileSdkVersion = 35
+-        targetSdkVersion = 35
++        compileSdkVersion = 36
++        targetSdkVersion = 36
+         ndkVersion = "27.1.12297006"
+-        kotlinVersion = "2.0.21"
++        kotlinVersion = "2.1.20"
+     }
+     repositories {
+         google()
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index 5e24e3aa8d..9afe61598f 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -37,3 +37,8 @@ newArchEnabled=true
+ # Use this property to enable or disable the Hermes JS engine.
+ # If set to false, you will be using JSC instead.
+ hermesEnabled=true
++
++# Use this property to enable edge-to-edge display support.
++# This allows your app to draw behind system bars for an immersive UI.
++# Note: Only works with ReactActivity and should not be used with custom Activity.
++edgeToEdgeEnabled=false
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.jar
+index 9bbc975c742b298b441bfb90dbc124400a3751b9..1b33c55baabb587c669f562ae36f953de2481846 100644
+GIT binary patch
+delta 642
+zcmdmamFde>rVZJA^}0Q$xegf!xPEW^+5YDM%iT2bEgct9o+jH~+sJas#HZ=szO|**
+z=Pj=X_vx?W&DSwKck|WWn~hffsvnQ+42*W$b7b0$SCcOoZ`{W{^$^pk;4>8-A*-)$
+z?n(Po`1$6Jn_u?t-L+tsPyZ2#X}8T6OS8pAU;kdgd+_Hw4z4TW0p9E!T+=f7-c&O%
+zFic^X{7^$?^Ho04eona9<j-?s7{5&pn3vAfATT*_p3LN00ny11Rtil1HBXAkTNo_F
+zzkq$Rzpyk|IAy*RlYkgpSVT+(EPNd(yipP=9LB_`2v^ayz>n#mGMxKhA=~8B%JN`M
+zMhm5wc-2v)$``sY$!Q`9xiU@DhI73ZxiGEKg>yIPs)NmWwMdF-ngLXpZSqV5ez36n
+zVkxF2rjrjWR+_xr6e6@_u@s~2<o%12m_J)HOm?uBn*82c8LYT)i4=33JxI(O%zp{w
+z$2u}hws-UZ^W&CEF->uv{9vi*<o>1pj2)BjFD+-%@&pRVP1f{O1glxTOp2-62Ph;v
+z`N1+vCd)9ea)af*Ol1*JCfnp$%Uu}%OuoN7g2}3C@`L5FlP#(sA=|h@iixuZC?qp^
+z=L$=v$ZoI}|87Wh=&h7udff{aieKr*l+zDp?pf)_bbRvUf>kn;HCDMXNlgbbo!QRK
+I1x7am0No)LiU0rr
+
+delta 584
+zcmexzm1*ZyrVZJAexH5Moc8h7)w{^+t*dqJ%=yhh23L$9JpFV=_k`zJ-?Q4DI*eSe
+z+ES)HSrVnWLtJ&)lO<X$;;LdIOT<1FeJo;R2=Hd-$lYjX>%hRkV9zl5qqWRt0e;bb
+zPPo`)y?HTAyZI&u&X<|2$FDHCf4;!v8}p=?Tm`^F0`u(|1ttf~&t$qP3KUSD>@TJQ
+zRwJ}Pim6NzEc8KA6)e;S6gs8=7IIL8sQL*MYEuRYO;Uj<%3UbMbV&^&!Zvx+LKmjT
+z8Zch6rYP7Tw?$Hn(UTJwWiS=$f{lB(C=e*%usDV})0AQIK~sat=ND@+Gg*Pyij!rR
+z*fa02W|%BsV++>4W{DKDGSIUEHd2$P+8ct!RF+CHDowUuTEZOZ%rJSQv*qOXOSPDN
+zT|sP-$p*_3ncsWB*qoD7JQcyZ9xan%cJP6Tb4-?AZpr*F6v98hoNaPJm@HV`yya5N
+z))6pqFXn@}P(3T0nEzM8*c_9KtE9o|_pFd&K35GBXP^9Kg(b6GH-z8S4GDzIl~T+b
+zdLd#meKKHu$5u))8cu$=GKINkGDPOUD)!0$C(BH(U!}!-e;Q0ok8Sc?V1zRO04>ts
+AA^-pY
+
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 37f853b1c8..002b867c48 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.1-bin.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/RnDiffApp/android/gradlew b/RnDiffApp/android/gradlew
+index faf93008b7..23d15a9367 100755
+--- a/RnDiffApp/android/gradlew
++++ b/RnDiffApp/android/gradlew
+@@ -114,7 +114,7 @@ case "$( uname )" in                #(
+   NONSTOP* )        nonstop=true ;;
+ esac
+ 
+-CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
++CLASSPATH="\\\"\\\""
+ 
+ 
+ # Determine the Java command to use to start the JVM.
+@@ -213,7 +213,7 @@ DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+ set -- \
+         "-Dorg.gradle.appname=$APP_BASE_NAME" \
+         -classpath "$CLASSPATH" \
+-        org.gradle.wrapper.GradleWrapperMain \
++        -jar "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" \
+         "$@"
+ 
+ # Stop when "xargs" is not available.
+diff --git a/RnDiffApp/android/gradlew.bat b/RnDiffApp/android/gradlew.bat
+index 9d21a21834..dd2b8eedbd 100644
+--- a/RnDiffApp/android/gradlew.bat
++++ b/RnDiffApp/android/gradlew.bat
+@@ -1,3 +1,8 @@
++@REM Copyright (c) Meta Platforms, Inc. and affiliates.
++@REM
++@REM This source code is licensed under the MIT license found in the
++@REM LICENSE file in the root directory of this source tree.
++
+ @rem
+ @rem Copyright 2015 the original author or authors.
+ @rem
+@@ -70,11 +75,11 @@ goto fail
+ :execute
+ @rem Setup the command line
+ 
+-set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
++set CLASSPATH=
+ 
+ 
+ @rem Execute Gradle
+-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
++"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %*
+ 
+ :end
+ @rem End local scope for the variables with windows NT shell
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index a25a6bb7db..f5cdb89997 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -13,18 +13,7 @@
+ 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+ /* End PBXBuildFile section */
+ 
+-/* Begin PBXContainerItemProxy section */
+-		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+-			proxyType = 1;
+-			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+-			remoteInfo = RnDiffApp;
+-		};
+-/* End PBXContainerItemProxy section */
+-
+ /* Begin PBXFileReference section */
+-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+ 		13B07F961A680F5B00A75B9A /* RnDiffApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RnDiffApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RnDiffApp/Images.xcassets; sourceTree = "<group>"; };
+ 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RnDiffApp/Info.plist; sourceTree = "<group>"; };
+@@ -49,14 +38,6 @@
+ /* End PBXFrameworksBuildPhase section */
+ 
+ /* Begin PBXGroup section */
+-		00E356F01AD99517003FC87E /* Supporting Files */ = {
+-			isa = PBXGroup;
+-			children = (
+-				00E356F11AD99517003FC87E /* Info.plist */,
+-			);
+-			name = "Supporting Files";
+-			sourceTree = "<group>";
+-		};
+ 		13B07FAE1A68108700A75B9A /* RnDiffApp */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -172,13 +153,6 @@
+ /* End PBXProject section */
+ 
+ /* Begin PBXResourcesBuildPhase section */
+-		00E356EC1AD99517003FC87E /* Resources */ = {
+-			isa = PBXResourcesBuildPhase;
+-			buildActionMask = 2147483647;
+-			files = (
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+ 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+ 			isa = PBXResourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+@@ -276,14 +250,6 @@
+ 		};
+ /* End PBXSourcesBuildPhase section */
+ 
+-/* Begin PBXTargetDependency section */
+-		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
+-			isa = PBXTargetDependency;
+-			target = 13B07F861A680F5B00A75B9A /* RnDiffApp */;
+-			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
+-		};
+-/* End PBXTargetDependency section */
+-
+ /* Begin XCBuildConfiguration section */
+ 		13B07F941A680F5B00A75B9A /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 76222566af..85e9decbdc 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,28 +10,29 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "19.0.0",
+-    "react-native": "0.79.0-rc.0"
++    "react": "19.1.0",
++    "react-native": "0.81.0-rc.0",
++    "@react-native/new-app-screen": "0.81.0-rc.0"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+     "@babel/preset-env": "^7.25.3",
+     "@babel/runtime": "^7.25.0",
+-    "@react-native-community/cli": "15.0.1",
+-    "@react-native-community/cli-platform-android": "15.0.1",
+-    "@react-native-community/cli-platform-ios": "15.0.1",
+-    "@react-native/babel-preset": "0.79.0-rc.0",
+-    "@react-native/eslint-config": "0.79.0-rc.0",
+-    "@react-native/metro-config": "0.79.0-rc.0",
+-    "@react-native/typescript-config": "0.79.0-rc.0",
++    "@react-native-community/cli": "20.0.0-alpha.0",
++    "@react-native-community/cli-platform-android": "20.0.0-alpha.0",
++    "@react-native-community/cli-platform-ios": "20.0.0-alpha.0",
++    "@react-native/babel-preset": "0.81.0-rc.0",
++    "@react-native/eslint-config": "0.81.0-rc.0",
++    "@react-native/metro-config": "0.81.0-rc.0",
++    "@react-native/typescript-config": "0.81.0-rc.0",
+     "@types/jest": "^29.5.13",
+-    "@types/react": "^19.0.0",
+-    "@types/react-test-renderer": "^19.0.0",
++    "@types/react": "^19.1.0",
++    "@types/react-test-renderer": "^19.1.0",
+     "eslint": "^8.19.0",
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+-    "react-test-renderer": "19.0.0",
+-    "typescript": "5.0.4"
++    "react-test-renderer": "19.1.0",
++    "typescript": "^5.8.3"
+   },
+   "engines": {
+     "node": ">=18"
+diff --git a/RnDiffApp/tsconfig.json b/RnDiffApp/tsconfig.json
+index 304ab4e2d8..c41b7e2014 100644
+--- a/RnDiffApp/tsconfig.json
++++ b/RnDiffApp/tsconfig.json
+@@ -1,3 +1,5 @@
+ {
+-  "extends": "@react-native/typescript-config/tsconfig.json"
++  "extends": "@react-native/typescript-config",
++  "include": ["**/*.ts", "**/*.tsx"],
++  "exclude": ["**/node_modules", "**/Pods"]
+ }
