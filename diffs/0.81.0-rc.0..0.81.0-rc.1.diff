@@ -1,0 +1,65 @@
+diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
+index d09122306f..9ea2fe03e9 100644
+--- a/RnDiffApp/App.tsx
++++ b/RnDiffApp/App.tsx
+@@ -12,8 +12,17 @@ function App() {
+   const isDarkMode = useColorScheme() === 'dark';
+ 
+   return (
+-    <View style={styles.container}>
++    <>
+       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
++      <AppContent />
++    </>
++  );
++}
++
++function AppContent() {
++  // TODO(huntie): Restore safeAreaInsets assignment (see #153)
++  return (
++    <View style={styles.container}>
+       <NewAppScreen templateFileName="App.tsx" />
+     </View>
+   );
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 002b867c48..d4081da476 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.1-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 85e9decbdc..443fc166b2 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,8 +11,8 @@
+   },
+   "dependencies": {
+     "react": "19.1.0",
+-    "react-native": "0.81.0-rc.0",
+-    "@react-native/new-app-screen": "0.81.0-rc.0"
++    "react-native": "0.81.0-rc.1",
++    "@react-native/new-app-screen": "0.81.0-rc.1"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+@@ -21,10 +21,10 @@
+     "@react-native-community/cli": "20.0.0-alpha.0",
+     "@react-native-community/cli-platform-android": "20.0.0-alpha.0",
+     "@react-native-community/cli-platform-ios": "20.0.0-alpha.0",
+-    "@react-native/babel-preset": "0.81.0-rc.0",
+-    "@react-native/eslint-config": "0.81.0-rc.0",
+-    "@react-native/metro-config": "0.81.0-rc.0",
+-    "@react-native/typescript-config": "0.81.0-rc.0",
++    "@react-native/babel-preset": "0.81.0-rc.1",
++    "@react-native/eslint-config": "0.81.0-rc.1",
++    "@react-native/metro-config": "0.81.0-rc.1",
++    "@react-native/typescript-config": "0.81.0-rc.1",
+     "@types/jest": "^29.5.13",
+     "@types/react": "^19.1.0",
+     "@types/react-test-renderer": "^19.1.0",
