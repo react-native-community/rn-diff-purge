@@ -1,0 +1,202 @@
+diff --git a/RnDiffApp/App.tsx b/RnDiffApp/App.tsx
+index d09122306f..5e963b129a 100644
+--- a/RnDiffApp/App.tsx
++++ b/RnDiffApp/App.tsx
+@@ -7,14 +7,31 @@
+ 
+ import { NewAppScreen } from '@react-native/new-app-screen';
+ import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
++import {
++  SafeAreaProvider,
++  useSafeAreaInsets,
++} from 'react-native-safe-area-context';
+ 
+ function App() {
+   const isDarkMode = useColorScheme() === 'dark';
+ 
+   return (
+-    <View style={styles.container}>
++    <SafeAreaProvider>
+       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+-      <NewAppScreen templateFileName="App.tsx" />
++      <AppContent />
++    </SafeAreaProvider>
++  );
++}
++
++function AppContent() {
++  const safeAreaInsets = useSafeAreaInsets();
++
++  return (
++    <View style={styles.container}>
++      <NewAppScreen
++        templateFileName="App.tsx"
++        safeAreaInsets={safeAreaInsets}
++      />
+     </View>
+   );
+ }
+diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
+index b4f3ad9dea..dad99b022a 100644
+--- a/RnDiffApp/android/build.gradle
++++ b/RnDiffApp/android/build.gradle
+@@ -1,9 +1,9 @@
+ buildscript {
+     ext {
+-        buildToolsVersion = "35.0.0"
++        buildToolsVersion = "36.0.0"
+         minSdkVersion = 24
+-        compileSdkVersion = 35
+-        targetSdkVersion = 35
++        compileSdkVersion = 36
++        targetSdkVersion = 36
+         ndkVersion = "27.1.12297006"
+         kotlinVersion = "2.1.20"
+     }
+diff --git a/RnDiffApp/android/gradle.properties b/RnDiffApp/android/gradle.properties
+index 5e24e3aa8d..9afe61598f 100644
+--- a/RnDiffApp/android/gradle.properties
++++ b/RnDiffApp/android/gradle.properties
+@@ -37,3 +37,8 @@ newArchEnabled=true
+ # Use this property to enable or disable the Hermes JS engine.
+ # If set to false, you will be using JSC instead.
+ hermesEnabled=true
++
++# Use this property to enable edge-to-edge display support.
++# This allows your app to draw behind system bars for an immersive UI.
++# Note: Only works with ReactActivity and should not be used with custom Activity.
++edgeToEdgeEnabled=false
+diff --git a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+index 002b867c48..d4081da476 100644
+--- a/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
++++ b/RnDiffApp/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.1-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index a25a6bb7db..f5cdb89997 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -13,18 +13,7 @@
+ 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+ /* End PBXBuildFile section */
+ 
+-/* Begin PBXContainerItemProxy section */
+-		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
+-			isa = PBXContainerItemProxy;
+-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+-			proxyType = 1;
+-			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+-			remoteInfo = RnDiffApp;
+-		};
+-/* End PBXContainerItemProxy section */
+-
+ /* Begin PBXFileReference section */
+-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+ 		13B07F961A680F5B00A75B9A /* RnDiffApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RnDiffApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RnDiffApp/Images.xcassets; sourceTree = "<group>"; };
+ 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RnDiffApp/Info.plist; sourceTree = "<group>"; };
+@@ -49,14 +38,6 @@
+ /* End PBXFrameworksBuildPhase section */
+ 
+ /* Begin PBXGroup section */
+-		00E356F01AD99517003FC87E /* Supporting Files */ = {
+-			isa = PBXGroup;
+-			children = (
+-				00E356F11AD99517003FC87E /* Info.plist */,
+-			);
+-			name = "Supporting Files";
+-			sourceTree = "<group>";
+-		};
+ 		13B07FAE1A68108700A75B9A /* RnDiffApp */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -172,13 +153,6 @@
+ /* End PBXProject section */
+ 
+ /* Begin PBXResourcesBuildPhase section */
+-		00E356EC1AD99517003FC87E /* Resources */ = {
+-			isa = PBXResourcesBuildPhase;
+-			buildActionMask = 2147483647;
+-			files = (
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+ 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+ 			isa = PBXResourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+@@ -276,14 +250,6 @@
+ 		};
+ /* End PBXSourcesBuildPhase section */
+ 
+-/* Begin PBXTargetDependency section */
+-		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
+-			isa = PBXTargetDependency;
+-			target = 13B07F861A680F5B00A75B9A /* RnDiffApp */;
+-			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
+-		};
+-/* End PBXTargetDependency section */
+-
+ /* Begin XCBuildConfiguration section */
+ 		13B07F941A680F5B00A75B9A /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 95c9b59164..faee0a05eb 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -11,20 +11,21 @@
+   },
+   "dependencies": {
+     "react": "19.1.0",
+-    "react-native": "0.80.0-rc.5",
+-    "@react-native/new-app-screen": "0.80.0-rc.5"
++    "react-native": "0.81.0-rc.5",
++    "@react-native/new-app-screen": "0.81.0-rc.5",
++    "react-native-safe-area-context": "^5.5.2"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+     "@babel/preset-env": "^7.25.3",
+     "@babel/runtime": "^7.25.0",
+-    "@react-native-community/cli": "19.0.0",
+-    "@react-native-community/cli-platform-android": "19.0.0",
+-    "@react-native-community/cli-platform-ios": "19.0.0",
+-    "@react-native/babel-preset": "0.80.0-rc.5",
+-    "@react-native/eslint-config": "0.80.0-rc.5",
+-    "@react-native/metro-config": "0.80.0-rc.5",
+-    "@react-native/typescript-config": "0.80.0-rc.5",
++    "@react-native-community/cli": "20.0.0-alpha.2",
++    "@react-native-community/cli-platform-android": "20.0.0-alpha.2",
++    "@react-native-community/cli-platform-ios": "20.0.0-alpha.2",
++    "@react-native/babel-preset": "0.81.0-rc.5",
++    "@react-native/eslint-config": "0.81.0-rc.5",
++    "@react-native/metro-config": "0.81.0-rc.5",
++    "@react-native/typescript-config": "0.81.0-rc.5",
+     "@types/jest": "^29.5.13",
+     "@types/react": "^19.1.0",
+     "@types/react-test-renderer": "^19.1.0",
+@@ -32,7 +33,7 @@
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+     "react-test-renderer": "19.1.0",
+-    "typescript": "5.0.4"
++    "typescript": "^5.8.3"
+   },
+   "engines": {
+     "node": ">=18"
+diff --git a/RnDiffApp/tsconfig.json b/RnDiffApp/tsconfig.json
+index 88fa317f10..c41b7e2014 100644
+--- a/RnDiffApp/tsconfig.json
++++ b/RnDiffApp/tsconfig.json
+@@ -1,3 +1,5 @@
+ {
+-  "extends": "@react-native/typescript-config"
++  "extends": "@react-native/typescript-config",
++  "include": ["**/*.ts", "**/*.tsx"],
++  "exclude": ["**/node_modules", "**/Pods"]
+ }
