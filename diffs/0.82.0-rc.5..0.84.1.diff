@@ -1,0 +1,132 @@
+diff --git a/RnDiffApp/android/app/build.gradle b/RnDiffApp/android/app/build.gradle
+index f7c3220de8..2594ac4043 100644
+--- a/RnDiffApp/android/app/build.gradle
++++ b/RnDiffApp/android/app/build.gradle
+@@ -19,9 +19,9 @@ react {
+ 
+     /* Variants */
+     //   The list of variants to that are debuggable. For those we're going to
+-    //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
++    //   skip the bundling of the JS bundle and the assets. Default is "debug", "debugOptimized".
+     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
+-    // debuggableVariants = ["liteDebug", "prodDebug"]
++    // debuggableVariants = ["liteDebug", "liteDebugOptimized", "prodDebug", "prodDebugOptimized"]
+ 
+     /* Bundling */
+     //   A list containing the node command and its flags. Default is just 'node'.
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index f5cdb89997..305084f7e8 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -179,7 +179,7 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
++			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"\\\"$WITH_ENVIRONMENT\\\" \\\"$REACT_NATIVE_XCODE\\\"\"\n";
+ 		};
+ 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+ 			isa = PBXShellScriptBuildPhase;
+@@ -273,8 +273,10 @@
+ 				);
+ 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = RnDiffApp;
++				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+ 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+ 				SWIFT_VERSION = 5.0;
++				TARGETED_DEVICE_FAMILY = "1,2";
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+ 			name = Debug;
+@@ -300,7 +302,9 @@
+ 				);
+ 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+ 				PRODUCT_NAME = RnDiffApp;
++				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+ 				SWIFT_VERSION = 5.0;
++				TARGETED_DEVICE_FAMILY = "1,2";
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 			};
+ 			name = Release;
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index 9b1f24c349..a4b0f7e14e 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -45,8 +45,13 @@
+ 	<key>UISupportedInterfaceOrientations</key>
+ 	<array>
+ 		<string>UIInterfaceOrientationPortrait</string>
++	</array>
++	<key>UISupportedInterfaceOrientations~ipad</key>
++	<array>
+ 		<string>UIInterfaceOrientationLandscapeLeft</string>
+ 		<string>UIInterfaceOrientationLandscapeRight</string>
++		<string>UIInterfaceOrientationPortrait</string>
++		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+ 	</array>
+ 	<key>UIViewControllerBasedStatusBarAppearance</key>
+ 	<false/>
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index ad05904952..9b66d4ccbf 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,32 +10,32 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "19.1.1",
+-    "react-native": "0.82.0-rc.5",
+-    "@react-native/new-app-screen": "0.82.0-rc.5",
++    "react": "19.2.3",
++    "react-native": "0.84.1",
++    "@react-native/new-app-screen": "0.84.1",
+     "react-native-safe-area-context": "^5.5.2"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+     "@babel/preset-env": "^7.25.3",
+     "@babel/runtime": "^7.25.0",
+-    "@react-native-community/cli": "20.0.0",
+-    "@react-native-community/cli-platform-android": "20.0.0",
+-    "@react-native-community/cli-platform-ios": "20.0.0",
+-    "@react-native/babel-preset": "0.82.0-rc.5",
+-    "@react-native/eslint-config": "0.82.0-rc.5",
+-    "@react-native/metro-config": "0.82.0-rc.5",
+-    "@react-native/typescript-config": "0.82.0-rc.5",
++    "@react-native-community/cli": "20.1.0",
++    "@react-native-community/cli-platform-android": "20.1.0",
++    "@react-native-community/cli-platform-ios": "20.1.0",
++    "@react-native/babel-preset": "0.84.1",
++    "@react-native/eslint-config": "0.84.1",
++    "@react-native/metro-config": "0.84.1",
++    "@react-native/typescript-config": "0.84.1",
+     "@types/jest": "^29.5.13",
+-    "@types/react": "^19.1.1",
++    "@types/react": "^19.2.0",
+     "@types/react-test-renderer": "^19.1.0",
+     "eslint": "^8.19.0",
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+-    "react-test-renderer": "19.1.1",
++    "react-test-renderer": "19.2.3",
+     "typescript": "^5.8.3"
+   },
+   "engines": {
+-    "node": ">=20"
++    "node": ">= 22.11.0"
+   }
+ }
+\ No newline at end of file
+diff --git a/RnDiffApp/tsconfig.json b/RnDiffApp/tsconfig.json
+index c41b7e2014..266ba9ca23 100644
+--- a/RnDiffApp/tsconfig.json
++++ b/RnDiffApp/tsconfig.json
+@@ -1,5 +1,8 @@
+ {
+   "extends": "@react-native/typescript-config",
++  "compilerOptions": {
++    "types": ["jest"]
++  },
+   "include": ["**/*.ts", "**/*.tsx"],
+   "exclude": ["**/node_modules", "**/Pods"]
+ }
