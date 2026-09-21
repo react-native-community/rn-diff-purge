@@ -1,0 +1,224 @@
+diff --git a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+index 305084f7e8..1795e4fc9c 100644
+--- a/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
++++ b/RnDiffApp/ios/RnDiffApp.xcodeproj/project.pbxproj
+@@ -10,6 +10,7 @@
+ 		0C80B921A6F3F58F76C31292 /* libPods-RnDiffApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-RnDiffApp.a */; };
+ 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+ 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
++		761780EF2CA45674006654EF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EE2CA45674006654EF /* SceneDelegate.swift */; };
+ 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+ /* End PBXBuildFile section */
+ 
+@@ -22,6 +23,7 @@
+ 		5709B34CF0A7D63546082F79 /* Pods-RnDiffApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnDiffApp.release.xcconfig"; path = "Target Support Files/Pods-RnDiffApp/Pods-RnDiffApp.release.xcconfig"; sourceTree = "<group>"; };
+ 		5DCACB8F33CDC322A6C60F78 /* libPods-RnDiffApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RnDiffApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RnDiffApp/AppDelegate.swift; sourceTree = "<group>"; };
++		761780EE2CA45674006654EF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = RnDiffApp/SceneDelegate.swift; sourceTree = "<group>"; };
+ 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = RnDiffApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+ 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+ /* End PBXFileReference section */
+@@ -43,6 +45,7 @@
+ 			children = (
+ 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+ 				761780EC2CA45674006654EE /* AppDelegate.swift */,
++				761780EE2CA45674006654EF /* SceneDelegate.swift */,
+ 				13B07FB61A68108700A75B9A /* Info.plist */,
+ 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+ 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+@@ -245,6 +248,7 @@
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
++				761780EF2CA45674006654EF /* SceneDelegate.swift in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.swift b/RnDiffApp/ios/RnDiffApp/AppDelegate.swift
+index 9f18a6865c..0d14d1b0ac 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.swift
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.swift
+@@ -1,48 +1,11 @@
+ import UIKit
+-import React
+-import React_RCTAppDelegate
+-import ReactAppDependencyProvider
+ 
+ @main
+ class AppDelegate: UIResponder, UIApplicationDelegate {
+-  var window: UIWindow?
+-
+-  var reactNativeDelegate: ReactNativeDelegate?
+-  var reactNativeFactory: RCTReactNativeFactory?
+-
+   func application(
+     _ application: UIApplication,
+     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+   ) -> Bool {
+-    let delegate = ReactNativeDelegate()
+-    let factory = RCTReactNativeFactory(delegate: delegate)
+-    delegate.dependencyProvider = RCTAppDependencyProvider()
+-
+-    reactNativeDelegate = delegate
+-    reactNativeFactory = factory
+-
+-    window = UIWindow(frame: UIScreen.main.bounds)
+-
+-    factory.startReactNative(
+-      withModuleName: "RnDiffApp",
+-      in: window,
+-      launchOptions: launchOptions
+-    )
+-
+-    return true
+-  }
+-}
+-
+-class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+-  override func sourceURL(for bridge: RCTBridge) -> URL? {
+-    self.bundleURL()
+-  }
+-
+-  override func bundleURL() -> URL? {
+-#if DEBUG
+-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+-#else
+-    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+-#endif
++    true
+   }
+ }
+diff --git a/RnDiffApp/ios/RnDiffApp/Info.plist b/RnDiffApp/ios/RnDiffApp/Info.plist
+index a4b0f7e14e..e242005b4f 100644
+--- a/RnDiffApp/ios/RnDiffApp/Info.plist
++++ b/RnDiffApp/ios/RnDiffApp/Info.plist
+@@ -36,6 +36,25 @@
+ 	</dict>
+ 	<key>NSLocationWhenInUseUsageDescription</key>
+ 	<string></string>
++	<key>RCTNewArchEnabled</key>
++	<true/>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>LaunchScreen</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+diff --git a/RnDiffApp/ios/RnDiffApp/SceneDelegate.swift b/RnDiffApp/ios/RnDiffApp/SceneDelegate.swift
+new file mode 100644
+index 0000000000..ab19528eac
+--- /dev/null
++++ b/RnDiffApp/ios/RnDiffApp/SceneDelegate.swift
+@@ -0,0 +1,56 @@
++import React
++import React_RCTAppDelegate
++import ReactAppDependencyProvider
++import UIKit
++
++class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate {
++  var window: UIWindow?
++  var reactNativeFactory: RCTReactNativeFactory?
++
++  func scene(
++    _ scene: UIScene,
++    willConnectTo session: UISceneSession,
++    options connectionOptions: UIScene.ConnectionOptions
++  ) {
++    guard let windowScene = scene as? UIWindowScene else {
++      return
++    }
++
++    dependencyProvider = RCTAppDependencyProvider()
++    reactNativeFactory = RCTReactNativeFactory(delegate: self)
++    window = UIWindow(windowScene: windowScene)
++    
++    #if DEBUG
++    let devMenuConfiguration = RCTDevMenuConfiguration(
++      devMenuEnabled: true,
++      shakeGestureEnabled: true,
++      keyboardShortcutsEnabled: true
++    )
++    reactNativeFactory?.devMenuConfiguration = devMenuConfiguration
++    #endif
++    
++    reactNativeFactory?.startReactNative(
++      withModuleName: "RnDiffApp",
++      in: window,
++      connectionOptions: connectionOptions
++    )
++
++   
++  }
++
++  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
++    RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
++  }
++
++  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
++    RCTLinkingManager.scene(scene, continue: userActivity)
++  }
++
++  override func bundleURL() -> URL? {
++    #if DEBUG
++    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
++    #else
++    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
++    #endif
++  }
++}
+diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
+index 72bb43c463..a609576526 100644
+--- a/RnDiffApp/package.json
++++ b/RnDiffApp/package.json
+@@ -10,9 +10,9 @@
+     "test": "jest"
+   },
+   "dependencies": {
+-    "react": "19.2.3",
+-    "react-native": "0.87.0-rc.1",
+-    "@react-native/new-app-screen": "0.87.0-rc.1",
++    "react": "19.3.0",
++    "react-native": "0.88.0-rc.2",
++    "@react-native/new-app-screen": "0.88.0-rc.2",
+     "react-native-safe-area-context": "^5.5.2"
+   },
+   "devDependencies": {
+@@ -22,18 +22,18 @@
+     "@react-native-community/cli": "20.2.0",
+     "@react-native-community/cli-platform-android": "20.2.0",
+     "@react-native-community/cli-platform-ios": "20.2.0",
+-    "@react-native/babel-preset": "0.87.0-rc.1",
+-    "@react-native/eslint-config": "0.87.0-rc.1",
+-    "@react-native/jest-preset": "0.87.0-rc.1",
+-    "@react-native/metro-config": "0.87.0-rc.1",
+-    "@react-native/typescript-config": "0.87.0-rc.1",
++    "@react-native/babel-preset": "0.88.0-rc.2",
++    "@react-native/eslint-config": "0.88.0-rc.2",
++    "@react-native/jest-preset": "0.88.0-rc.2",
++    "@react-native/metro-config": "0.88.0-rc.2",
++    "@react-native/typescript-config": "0.88.0-rc.2",
+     "@types/jest": "^29.5.13",
+     "@types/react": "^19.2.0",
+     "@types/react-test-renderer": "^19.1.0",
+     "eslint": "^8.19.0",
+     "jest": "^29.6.3",
+     "prettier": "2.8.8",
+-    "react-test-renderer": "19.2.3",
++    "react-test-renderer": "19.3.0",
+     "typescript": "^6.0.3"
+   },
+   "engines": {
